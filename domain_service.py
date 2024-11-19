@@ -1,6 +1,7 @@
 import requests
 import socket
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 
 
 class DomainService:
@@ -29,12 +30,27 @@ class DomainService:
             try:
                 ip_address = socket.gethostbyname(domain)
                 response = requests.get(f"http://{domain}", timeout=5)
-                return {"domain": domain, "status": "OK", "ip": ip_address, "http_status": response.status_code}
+                result = {
+                    "status": "OK",
+                    "ip": ip_address,
+                    "http_status": response.status_code,
+                    "last_checked": datetime.utcnow().isoformat()  # Current UTC timestamp
+                }
             except socket.gaierror:
-                return {"domain": domain, "status": "Failed", "error": "DNS resolution failed"}
+                result = {
+                    "status": "Failed",
+                    "error": "DNS resolution failed",
+                    "last_checked": datetime.utcnow().isoformat()
+                }
             except requests.RequestException as e:
-                return {"domain": domain, "status": "Failed", "error": str(e)}
+                result = {
+                    "status": "Failed",
+                    "error": str(e),
+                    "last_checked": datetime.utcnow().isoformat()
+                }
 
-        # Use threads for parallel scanning
+            self.domain_repository.update_monitoring_results(user_id, domain, result)
+            return result
+
         results = list(self.executor.map(scan, domains))
         return results
