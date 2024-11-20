@@ -2,6 +2,8 @@ import threading
 
 from flask import Flask
 
+from register_api import RegisterApi
+
 class CertisApp:
 
     # static variables
@@ -32,14 +34,12 @@ class CertisApp:
 
         # yes we can create routes after running the flask app
 
-        # http://127.0.0.1:8080/hello
-        @self._app.route('/hello', methods=['GET'])
-        def say_hello():
-            return 'hello'
-
         @self._app.route('/', methods=['GET'])
         def main():
             return 'hello1'
+
+        # APIs creations
+        RegisterApi().initRoutes(self._app)
 
     def get_app(self):
         return self._app
