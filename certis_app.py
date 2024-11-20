@@ -36,7 +36,7 @@ class CertisApp:
 
         @self._app.route('/', methods=['GET'])
         def main():
-            return 'hello1'
+            return 'hello from certis app'
 
         # APIs creations
         RegisterApi().initRoutes(self._app)
