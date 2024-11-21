@@ -2,6 +2,7 @@ import threading
 
 from flask import Flask
 
+from login_api import LoginApi
 from register_api import RegisterApi
 
 class CertisApp:
@@ -38,8 +39,13 @@ class CertisApp:
         def main():
             return 'hello from certis app'
 
+        @self._app.route('/<filename>')
+        def file(filename):
+            return self._app.send_static_file(filename)
+
         # APIs creations
         RegisterApi().initRoutes(self._app)
+        LoginApi().initRoutes(self._app)
 
     def get_app(self):
         return self._app
