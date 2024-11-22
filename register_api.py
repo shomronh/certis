@@ -55,11 +55,3 @@ class RegisterApi:
             except Exception as e:
                 print(f"An error occurred: {e}")
                 return jsonify({"message": f"An error occurred: {e}"}), 500
-
-        @app.route('/')
-        def clock():
-            return render_template('url.html')
-
-        @app.route('/<filename>')
-        def file(filename):
-            return app.send_static_file(filename)
