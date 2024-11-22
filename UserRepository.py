@@ -20,7 +20,7 @@ class UserRepository:
 
         # Check if the username already exists
         if any(user["username"] == username for user in credentials):
-            return jsonify({"message": "Username is taken"})
+            return "Username is taken"
         else:
             print("Username is available. You can add it.")
             # Add the new user
@@ -31,4 +31,4 @@ class UserRepository:
             with open("users.json", "w") as file:
                 json.dump(users, file, indent=4)
 
-        return jsonify({"message": "User registered successfully"})
+        return "User registered successfully"

@@ -28,11 +28,21 @@ class RegisterApi:
                     return jsonify({"message": "Password should not contain spaces"}), 400
 
                 # Check if users.json exists, create it if not
-                UserRepository.check_if_file_exist()
+
+                user_repo = UserRepository()
+
+                user_repo.check_if_file_exist()
 
                 # Load JSON data from a file
-                UserRepository.register(username,password)
+                answer = user_repo.register(username, password)
+                return jsonify({"message": f"{answer}"})
+
+
 
             except Exception as e:
                 print(f"An error occurred: {e}")
                 return jsonify({"message": f"An error occurred: {e}"}), 500
+
+        @app.route('/registerPage')
+        def RegisterPage():
+            return render_template('registerPage.html')
