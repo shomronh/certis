@@ -2,6 +2,8 @@ import json
 from flask import Flask, render_template, request, jsonify
 import os
 
+
+
 class RegisterApi:
 
     def initRoutes(self, app: Flask):
