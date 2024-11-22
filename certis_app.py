@@ -12,6 +12,7 @@ class CertisApp:
 
     # other variables
 
+
     @staticmethod
     def get_instance():
         if not CertisApp._instance:
@@ -31,7 +32,6 @@ class CertisApp:
         self._thread = threading.Thread(target=self._app.run, kwargs={'host': '0.0.0.0', 'port': 8080})
         self._thread.daemon = True  # Daemon thread will exit when the main program exits
         self._thread.start()
-        # thread.join()
 
         # yes we can create routes after running the flask app
 
