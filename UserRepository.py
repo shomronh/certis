@@ -32,3 +32,22 @@ class UserRepository:
                 json.dump(users, file, indent=4)
 
         return "User registered successfully"
+
+    def login(self,username,password):
+        try:
+            with open('users.json', 'r') as file:
+                user_data = json.load(file)
+
+            for user in user_data['credentials']:
+                if username == user['username'] and password == user['password']:
+                    return "Login successful"
+                else:
+                    return "Invalid credentials, please try again"
+        except FileNotFoundError:
+            print("File not found error.")
+            return "Please register before trying to log in"
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return f"An error occurred: {e}"
+
+
