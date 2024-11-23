@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain Monitoring System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            cursor: pointer;
+        }
+        #message {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Domain Monitoring System</h1>
+
+        <!-- Add Single Domain -->
+        <section>
+            <h2>Add Domain</h2>
+            <form id="add-domain-form">
+                <input type="text" id="user-id" placeholder="User ID" required>
+                <input type="text" id="domain" placeholder="Domain" required>
+                <button type="submit">Add Domain</button>
+            </form>
+            <div id="add-domain-message"></div>
+        </section>
+
+        <!-- Bulk Upload -->
+        <section>
+            <h2>Bulk Upload</h2>
+            <form id="bulk-upload-form" enctype="multipart/form-data">
+                <input type="text" id="bulk-user-id" placeholder="User ID" required>
+                <input type="file" id="bulk-file" accept=".txt" required>
+                <button type="submit">Upload</button>
+            </form>
+            <div id="bulk-upload-message"></div>
+        </section>
+
+        <!-- Health Check -->
+        <section>
+            <h2>Health Check</h2>
+            <button id="health-check-button">Check Health</button>
+            <div id="health-check-message"></div>
+        </section>
+    </div>
+
+    <script>
+        const backendUrl = "http://127.0.0.1:5000";
+
+        // Add Domain
+        document.getElementById("add-domain-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const userId = document.getElementById("user-id").value;
+            const domain = document.getElementById("domain").value;
+            const messageBox = document.getElementById("add-domain-message");
+
+            try {
+                const response = await fetch(`${backendUrl}/add_domain`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ user_id: userId, domain }),
+                });
+
+                const data = await response.json();
+                messageBox.textContent = data.message || data.error;
+                messageBox.style.color = response.ok ? "green" : "red";
+            } catch (error) {
+                messageBox.textContent = "An error occurred while adding the domain.";
+                messageBox.style.color = "red";
+            }
+        });
+
+        // Bulk Upload
+        document.getElementById("bulk-upload-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const userId = document.getElementById("bulk-user-id").value;
+            const file = document.getElementById("bulk-file").files[0];
+            const messageBox = document.getElementById("bulk-upload-message");
+
+            const formData = new FormData();
+            formData.append("user_id", userId);
+            formData.append("file", file);
+
+            try {
+                const response = await fetch(`${backendUrl}/bulk_upload`, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const data = await response.json();
+                messageBox.textContent = data.message || data.error;
+                messageBox.style.color = response.ok ? "green" : "red";
+            } catch (error) {
+                messageBox.textContent = "An error occurred during bulk upload.";
+                messageBox.style.color = "red";
+            }
+        });
+
+        // Health Check
+        document.getElementById("health-check-button").addEventListener("click", async () => {
+            const messageBox = document.getElementById("health-check-message");
+
+            try {
+                const response = await fetch(`${backendUrl}/health`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageBox.textContent = "Status: " + data.status;
+                    messageBox.style.color = "green";
+                } else {
+                    messageBox.textContent = "Status: " + data.status;
+                    messageBox.style.color = "red";
+                }
+            } catch (error) {
+                messageBox.textContent = "Health check failed.";
+                messageBox.style.color = "red";
+            }
+        });
+    </script>
+</body>
+</html>
