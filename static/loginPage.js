@@ -1,5 +1,6 @@
 const loginForm = document.getElementById('login-form');
 
+
 loginForm.addEventListener('submit', async function(event) {
     console.log('Form is submitted!');
     event.preventDefault(); // Prevent the default form submission
@@ -26,13 +27,18 @@ async function Login(username, password) {
 
         // Parse the JSON response
         const data = await response.json();
+        console.log('Response status:', response.status);
+        console.log('Response message:', data.message);
 
         if (response.ok) {
-            // Redirect to the dashboard if login is successful
+            alert(data.message); // Successful login
             window.location.href = "/dashboard";
+        } else if (response.status === 404) {
+            alert(data.message); // Missing users.json or registration required
+        } else if (response.status === 401) {
+            alert(data.message); // Invalid credentials
         } else {
-            // Alert the message returned by the server
-            alert(data.message);
+            alert("An unexpected error occurred. Please try again.");
         }
 
     } catch (error) {
