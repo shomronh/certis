@@ -1,6 +1,8 @@
 import json
 from flask import Flask, render_template, request, jsonify
 import os
+from UserRepository import UserRepository
+
 
 class RegisterApi:
 
@@ -26,32 +28,21 @@ class RegisterApi:
                     return jsonify({"message": "Password should not contain spaces"}), 400
 
                 # Check if users.json exists, create it if not
-                if not os.path.isfile("users.json"):
-                    with open("users.json", "w") as file:
-                        json.dump({"credentials": []}, file, indent=4)
+
+                user_repo = UserRepository()
+
+                user_repo.check_if_file_exist()
 
                 # Load JSON data from a file
-                with open("users.json", "r") as file:
-                    users = json.load(file)
+                answer = user_repo.register(username, password)
+                return jsonify({"message": f"{answer}"})
 
-                # Extract the credentials list
-                credentials = users.get("credentials", [])
 
-                # Check if the username already exists
-                if any(user["username"] == username for user in credentials):
-                    return jsonify({"message": "Username is taken"})
-                else:
-                    print("Username is available. You can add it.")
-                    # Add the new user
-                    credentials.append({"username": username, "password": password})
-
-                    # Save the updated data back to the JSON file
-                    users["credentials"] = credentials
-                    with open("users.json", "w") as file:
-                        json.dump(users, file, indent=4)
-
-                return jsonify({"message": "User registered successfully"})
 
             except Exception as e:
                 print(f"An error occurred: {e}")
                 return jsonify({"message": f"An error occurred: {e}"}), 500
+
+        @app.route('/registerPage')
+        def RegisterPage():
+            return render_template('registerPage.html')
