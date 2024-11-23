@@ -76,5 +76,17 @@ def bulk_upload():
     os.remove(file_path)
     return jsonify({"message": "Bulk Upload Successful"})
 
+@app.route("/health", methods=["GET"])
+def health_check():
+    try:
+        # Perform a simple check, e.g., ensuring the repository is accessible
+        repository_status = repository.check_health()
+        if repository_status:
+            return jsonify({"status": "healthy"}), 200
+        else:
+            return jsonify({"status": "unhealthy"}), 500
+    except Exception as e:
+        return jsonify({"status": "unhealthy", "error": str(e)}), 500
+
 if __name__ == "__main__":
     app.run(debug=True)
