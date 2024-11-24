@@ -32,7 +32,8 @@ class LoginApi:
                 session['username'] = username
                 return jsonify({"message": message}), HTTPStatus.OK
 
-            s
+            except Exception as e:
+                return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR
 
         # Visual Routes
         @app.route('/dashboardPage')

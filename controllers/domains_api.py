@@ -18,6 +18,9 @@ class DomainsApi:
         def add_domain():
 
             try:
+
+                # TODO: ensure that username from the session is the same as the user_id, otherwise return HTTPStatus.UNAUTHORIZED
+
                 if "username" not in session:
                     return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
 
