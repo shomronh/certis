@@ -60,13 +60,6 @@
             </form>
             <div id="bulk-upload-message"></div>
         </section>
-
-        <!-- Health Check -->
-        <section>
-            <h2>Health Check</h2>
-            <button id="health-check-button">Check Health</button>
-            <div id="health-check-message"></div>
-        </section>
     </div>
 
     <script>
@@ -123,26 +116,6 @@
             }
         });
 
-        // Health Check
-        document.getElementById("health-check-button").addEventListener("click", async () => {
-            const messageBox = document.getElementById("health-check-message");
-
-            try {
-                const response = await fetch(`${backendUrl}/health`);
-                const data = await response.json();
-
-                if (response.ok) {
-                    messageBox.textContent = "Status: " + data.status;
-                    messageBox.style.color = "green";
-                } else {
-                    messageBox.textContent = "Status: " + data.status;
-                    messageBox.style.color = "red";
-                }
-            } catch (error) {
-                messageBox.textContent = "Health check failed.";
-                messageBox.style.color = "red";
-            }
-        });
     </script>
 </body>
 </html>
