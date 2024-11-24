@@ -1,11 +1,13 @@
+
 const form = document.getElementById('register');
 const status = document.getElementById('status');
 
 form.addEventListener('submit', function(event) {
-    console.log('Form is submitted!');
     event.preventDefault();
+
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
+
     // Check for spaces in the username
     // if (username.includes(' ')) {
     //     alert("Username should not contain spaces");
@@ -17,6 +19,7 @@ form.addEventListener('submit', function(event) {
     // }
 
     event.target.reset();
+    
     console.log(`Username: ${username}, Password: ${password}`);
     dataInsert(username, password);
 });
@@ -37,6 +40,7 @@ async function dataInsert(username, password) {
 
         if (data.message === "User registered successfully") {
             alert("User registered successfully");
+            window.location.href = "/loginPage";
         }else if (data.message === "Username is taken") {
             alert("Username is already taken. Please choose a different one.");
         }else if (data.message === "Username should not contain spaces"||data.message ==="password should not contain spaces") {

@@ -3,23 +3,28 @@ import socket
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
+from repositories.domains_repository import DomainsRepository
+from repositories.settings_repository import SettingsRepository
 
-class DomainService:
-    def __init__(self, domain_repository):
-        self.domain_repository = domain_repository
+
+class DomainsStatusUpdater:
+    # static variables
+    _instance: 'DomainsStatusUpdater' = None
+
+    # other variables
+
+    # TODO: ensure the singleton is thread safe
+    @staticmethod
+    def get_instance():
+        if not DomainsStatusUpdater._instance:
+            DomainsStatusUpdater._instance = DomainsStatusUpdater()
+            DomainsStatusUpdater._instance.__start()
+        return DomainsStatusUpdater._instance
+
+    def __start(self):
+        self.domain_repository = DomainsRepository()
+        self.settings_repository = SettingsRepository()
         self.executor = ThreadPoolExecutor(max_workers=5)
-
-    def add_domain(self, user_id, domain):
-        # Validate domain
-        if not domain.startswith("http://") and not domain.startswith("https://"):
-            return {"error": "Invalid domain. Must start with http:// or https://"}
-
-        domains = self.domain_repository.get_domains(user_id)
-        if domain in domains:
-            return {"error": "Domain already exists."}
-
-        self.domain_repository.save_domain(user_id, domain)
-        return {"message": f"Domain {domain} added successfully."}
 
     def scan_domains(self, user_id):
         domains = self.domain_repository.get_domains(user_id)

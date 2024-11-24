@@ -2,14 +2,11 @@ const loginForm = document.getElementById('login-form');
 
 
 loginForm.addEventListener('submit', async function(event) {
-    console.log('Form is submitted!');
     event.preventDefault(); // Prevent the default form submission
 
     // Get input values
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-
-    console.log(`Username: ${username}, Password: ${password}`); // Corrected template literals
 
     await Login(username, password);
 });
@@ -22,17 +19,17 @@ async function Login(username, password) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username, password }), // Shorter object syntax
+            body: JSON.stringify({ username, password })
         });
 
-        // Parse the JSON response
         const data = await response.json();
+
         console.log('Response status:', response.status);
         console.log('Response message:', data.message);
 
         if (response.ok) {
             alert(data.message); // Successful login
-            window.location.href = "/dashboard";
+            window.location.href = "/dashboardPage";
         } else if (response.status === 404) {
             alert(data.message); // Missing users.json or registration required
         } else if (response.status === 401) {
