@@ -23,6 +23,17 @@ class DomainsService:
         result = self.domain_repository.add_domain(user_id, cleanedDomain)
 
         return result
+    
+    def get_domains(self, user_id):
+
+        # Validations
+        if not user_id or ' ' in user_id or len(user_id) == 0 or len(user_id) <= 3:
+            return 'Empty or Invalid username', False
+
+        result = self.domain_repository.get_domains(user_id)
+
+        return result
+
 
     def is_valid_domain(self, domain):
         """Validate domain format using a regex."""

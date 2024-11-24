@@ -24,7 +24,7 @@ class DomainsRepository:
 
         return f"Domain {domain} added successfully", True
 
-    def __get_domains(self, user_id: str) -> dict[str, any]:
+    def get_domains(self, user_id: str) -> dict[str, any]:
         file_path = self.__get_file_path(user_id)
         if not os.path.exists(file_path):
             return {}
@@ -37,7 +37,7 @@ class DomainsRepository:
             json.dump(domains_table, file, indent=4)
 
     def update_domain_status(self, user_id: str, domain: str, status: str):
-        domains_table = self.__get_domains(user_id)
+        domains_table = self.get_domains(user_id)
         if domain in domains_table:
             domains_table[domain] = {"status": status}
             self.__save_domains(user_id, domains_table)
