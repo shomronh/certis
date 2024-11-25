@@ -5,31 +5,45 @@
 
 
 // 2. add domain OR add domains bulk (POST)
- // Bulk Upload
- document.getElementById("bulk-upload-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const userId = document.getElementById("bulk-user-id").value;
-    const file = document.getElementById("bulk-file").files[0];
-    const messageBox = document.getElementById("bulk-upload-message");
+const backendUrl = "http://127.0.0.1:5000";
 
-    const formData = new FormData();
-    formData.append("user_id", userId);
-    formData.append("file", file);
+// Function to handle Add Domain
+async function addDomain(data, messageBox) {
+    try {
+        const response = await fetch(`${backendUrl}/add_domain`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
 
+        const responseData = await response.json();
+        return responseData; // Return the response data to be handled in dataListener.js
+    } catch (error) {
+        messageBox.textContent = "An error occurred while adding the domain.";
+        messageBox.style.color = "red";
+        return { message: "An error occurred", error: true, ok: false };
+    }
+}
+
+// Function to handle Bulk Upload
+async function bulkUpload(formData, messageBox) {
     try {
         const response = await fetch(`${backendUrl}/bulk_upload`, {
             method: "POST",
             body: formData,
         });
 
-        const data = await response.json();
-        messageBox.textContent = data.message || data.error;
-        messageBox.style.color = response.ok ? "green" : "red";
+        const responseData = await response.json();
+        return responseData; // Return the response data to be handled in dataListener.js
     } catch (error) {
-        messageBox.textContent = "An error occurred during bulk upload.";
+        messageBox.textContent = "An error occurred during the bulk upload.";
         messageBox.style.color = "red";
+        return { message: "An error occurred", error: true, ok: false };
     }
-});
+}
+
 
 
 // 3. get domains (get all domains from API GET METHOD)
