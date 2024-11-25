@@ -1,0 +1,98 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Registration container */
+.register-container {
+    background-color: #ffffff;
+    width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Logo and header */
+.register-container .brand-header {
+    margin-bottom: 20px;
+}
+
+.register-container .logo {
+    max-width: 100px;
+    margin-bottom: 10px;
+}
+
+.register-container h1 {
+    font-size: 1.5rem;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+/* Form header */
+.register-container h2 {
+    font-size: 1.2rem;
+    color: #444444;
+    margin-bottom: 20px;
+}
+
+/* Input fields */
+.register-container .input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.register-container label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555555;
+}
+
+.register-container input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.register-container input:focus {
+    border-color: #007bff;
+}
+
+/* Register button */
+.register-container .register-btn {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.register-container .register-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Footer */
+.register-container footer {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #777777;
+}
