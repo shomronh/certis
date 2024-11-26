@@ -58,6 +58,15 @@ class UsersRepository:
             print(f"An error occurred: {e}")
             return f"An error occurred: {e}"
 
+    def get_users(self):
+        self.create_file_datasource_if_not_exist()
+
+        # Open and read the JSON file
+        with open(self.__get_file_path(), 'r') as file:
+            users = json.load(file)
+
+        return users
+
     def __get_file_path(self):
         return os.path.join(self.directory, "users.json")
 

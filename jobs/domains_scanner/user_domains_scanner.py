@@ -1,34 +1,16 @@
 import requests
-import socket
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import ssl
 import socket
 
 from repositories.domains_repository import DomainsRepository
-from repositories.settings_repository import SettingsRepository
 
 
-class DomainsStatusUpdater:
-    # static variables
-    _instance: 'DomainsStatusUpdater' = None
+class UserDomainsScanner:
 
-    # other variables
 
-    # TODO: ensure the singleton is thread safe
-    @staticmethod
-    def get_instance():
-        if not DomainsStatusUpdater._instance:
-            DomainsStatusUpdater._instance = DomainsStatusUpdater()
-            DomainsStatusUpdater._instance.__start()
-        return DomainsStatusUpdater._instance
-
-    def __start(self):
+    def __init__(self):
         self.domain_repository = DomainsRepository()
-        self.settings_repository = SettingsRepository()
-
-    def start_scaning(self):
-        pass
 
     def scan_user_domains(self, user_id):
         try:
@@ -41,15 +23,15 @@ class DomainsStatusUpdater:
             domainsKeys = list(domains_dict.keys())
 
             # test one case for now
-            first_domain_dict: dict[str, any] = domains_dict[domainsKeys[0]]
+            domain_obj: dict[str, any] = domains_dict[domainsKeys[0]]
 
-            if not "domain" in first_domain_dict:
+            if not "domain" in domain_obj:
                 raise Exception("domain property is missing")
 
-            self.scan_domain(first_domain_dict)
-            self.get_ssl_properties(first_domain_dict)
+            self.scan_domain(domain_obj)
+            self.get_ssl_properties(domain_obj)
 
-            self.domain_repository.update_domain_status(user_id, first_domain_dict)
+            self.domain_repository.update_domain_status(user_id, domain_obj)
 
         except Exception as e:
             print(str(e))

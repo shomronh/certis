@@ -1,3 +1,4 @@
+from jobs.domains_scanner.users_domains_scanner_job import UsersDomainsScannerJob
 from repositories.settings_repository import SettingsRepository
 
 
@@ -15,5 +16,7 @@ class SettingsService:
             return 'Empty or Invalid settings', False
 
         results = self.settingsRepository.update_scheduler_settings(user_id, settings)
+
+        UsersDomainsScannerJob.get_instance().re_schedule_job(user_id)
 
         return results

@@ -2,14 +2,14 @@ import os
 import threading
 from datetime import timedelta
 
-from flask import Flask, session
+from flask import Flask
 
 from controllers.domains_api import DomainsApi
 from controllers.health_check_api import HealthCheckApi
 from controllers.login_api import LoginApi
 from controllers.register_api import RegisterApi
 from controllers.settings_api import SettingsApi
-from services.domains_status_updater import DomainsStatusUpdater
+from jobs.domains_scanner.users_domains_scanner_job import UsersDomainsScannerJob
 
 
 class CertisApp:
@@ -36,7 +36,7 @@ class CertisApp:
         self.__setup_session()
 
         # Services bootstrap
-        DomainsStatusUpdater.get_instance()
+        UsersDomainsScannerJob.get_instance()
 
         # APIs creations
         @self._app.route('/<filename>')
@@ -66,11 +66,11 @@ class CertisApp:
         # flask_config = {'host': '0.0.0.0', 'port': 8080, 'debug': False}
 
         self._thread = threading.Thread(target=self._app.run, kwargs=flask_config)
-
         self._thread.daemon = True  # Daemon thread will exit when the main program exits
         self._thread.start()
 
-        DomainsStatusUpdater.get_instance().scan_user_domains("test1")
+        #
+        UsersDomainsScannerJob.get_instance().start()
 
     def __setup_session(self):
         is_prod = False
