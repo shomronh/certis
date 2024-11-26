@@ -13,12 +13,12 @@ class DomainsRepository:
 
     def add_domain(self, user_id: str, domain: str):
 
-        domains_table = self.__get_domains(user_id)
+        domains_table = self.get_domains(user_id)
 
         if domain in domains_table:
             return f"Domain {domain} already exists.", False
 
-        domains_table[domain] = {"url": domain, "status": "Pending"}
+        domains_table[domain] = {"domain": domain, "status": "Pending", "last_check": "N/A", "status_error": "N/A"}
 
         self.__save_domains(user_id, domains_table)
 
@@ -36,10 +36,13 @@ class DomainsRepository:
         with open(file_path, "w") as file:
             json.dump(domains_table, file, indent=4)
 
-    def update_domain_status(self, user_id: str, domain: str, status: str):
+    def update_domain_status(self, user_id: str, domain_dict: dict[str, any]):
+
         domains_table = self.get_domains(user_id)
+        domain = domain_dict["domain"]
+
         if domain in domains_table:
-            domains_table[domain] = {"status": status}
+            domains_table[domain] = domain_dict
             self.__save_domains(user_id, domains_table)
         else:
             raise ValueError(f"Domain '{domain}' not found for user '{user_id}'.")

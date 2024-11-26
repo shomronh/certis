@@ -49,8 +49,6 @@ class CertisApp:
         LoginApi().initRoutes(self._app)
         DomainsApi().initRoutes(self._app)
 
-        DomainsStatusUpdater.get_instance()
-
         # by default Flask enables multithreading by default
 
         # after calling the run() method, this will block the access
@@ -71,6 +69,8 @@ class CertisApp:
 
         self._thread.daemon = True  # Daemon thread will exit when the main program exits
         self._thread.start()
+
+        DomainsStatusUpdater.get_instance().scan_user_domains("test1")
 
     def __setup_session(self):
         is_prod = False
