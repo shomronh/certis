@@ -51,15 +51,15 @@ class UsersDomainsScannerJob:
 
         self.is_started = True
 
-        # self.users = self.usersRepository.get_users()
-        self.users = {"test1": {}}
+        self.users = self.usersRepository.get_users()
+        # self.users = {"test1": {}}
 
         thread_pool = ThreadPoolExecutor(min(len(self.users), 5))
         self.scheduler.add_executor(thread_pool, alias='default')
 
         index = 0
         for user_id in self.users.keys():
-            index += 1
+            # index += 1
             self.__add_schedular_job(user_id, index)
 
         self.scheduler.start()
@@ -81,7 +81,11 @@ class UsersDomainsScannerJob:
 
         # get user settings
         settings = self.settings_repository.get_user_settings(user_id)
-        seconds = settings['scheduler']['seconds']
+
+        if "scheduler" in settings and "seconds" in settings['scheduler']:
+            seconds = settings['scheduler']['seconds']
+        else:
+            seconds = 1
 
         # if len(settings.keys()) == 0:
 
@@ -92,7 +96,7 @@ class UsersDomainsScannerJob:
         self.scheduler.add_job(
             self.__start_user_domains_scanning,
             'interval',
-            max_instances=1,
+            # max_instances=1,
             seconds=delta_t,
             id=f"{user_id}",
             args=[user_id, delta_t])
