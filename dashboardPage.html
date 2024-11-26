@@ -5,11 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoniTin System Dashboard</title>
     <link rel="stylesheet" href="/static/dashboard.css">
+    <style>
+        .dashboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .dashboard-table th, .dashboard-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .dashboard-table th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        .dashboard-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .dashboard-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .modal-footer {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .modal-footer button {
+            padding: 10px 15px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal-footer .close-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .modal-footer .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .modal input, .modal label {
+            display: block;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .delete-icon {
+            cursor: pointer;
+            color: #f44336;
+            font-size: 18px;
+        }
+
+    </style>
 </head>
 <body>
     <header>
         <h1>MoniTin System Dashboard</h1>
-        <a href="#" class="logout">LOGOUT</a>
+        <a href="loginPage.html" class="logout">LOGOUT</a>
     </header>
 
     <div class="main-container">
@@ -17,7 +107,7 @@
         <aside class="sidebar">
             <ul>
                 <li><a href="#">Upload Domains</a></li>
-                <li><a href="#">Add Domain</a></li>
+                <li><a href="#" id="addDomainBtn">Add Domain</a></li>
                 <li><a href="setting.html">Settings</a></li> <!-- Link to Settings Page -->
             </ul>
         </aside>
@@ -25,20 +115,41 @@
         <!-- Main Dashboard Content -->
         <main class="dashboard-content">
             <div class="container">
-                <div class="card">
-                    <h3>Liveness Status</h3>
-                    <div class="chart">Chart Placeholder</div>
-                </div>
-
-                <div class="card">
-                    <h3>SSL Expiration Date</h3>
-                    <div class="chart">Chart Placeholder</div>
-                </div>
-
-                <div class="card">
-                    <h3>SSL Issuer</h3>
-                    <div class="chart">Chart Placeholder</div>
-                </div>
+                <table class="dashboard-table" id="domainTable">
+                    <thead>
+                        <tr>
+                            <th>Domain Name</th>
+                            <th>Liveness Status</th>
+                            <th>SSL Expiration Date</th>
+                            <th>SSL Issuer</th>
+                            <th>Action</th> <!-- Added Action Column -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>example.com</td>
+                            <td>Live</td>
+                            <td>2024-12-31</td>
+                            <td>Let's Encrypt</td>
+                            <td><span class="delete-icon" onclick="deleteRow(this)">🗑️</span></td>
+                        </tr>
+                        <tr>
+                            <td>mywebsite.net</td>
+                            <td>Down</td>
+                            <td>2024-11-30</td>
+                            <td>GoDaddy</td>
+                            <td><span class="delete-icon" onclick="deleteRow(this)">🗑️</span></td>
+                        </tr>
+                        <tr>
+                            <td>testdomain.org</td>
+                            <td>Live</td>
+                            <td>2025-01-15</td>
+                            <td>Cloudflare</td>
+                            <td><span class="delete-icon" onclick="deleteRow(this)">🗑️</span></td>
+                        </tr>
+                    </tbody>
+                    
+                </table>
             </div>
         </main>
     </div>
@@ -46,5 +157,86 @@
     <footer>
         <p>MoniTin System Dashboard © 2024</p>
     </footer>
+
+    <!-- Modal Pop-up -->
+    <div id="addDomainModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                Add a New Domain
+            </div>
+            <form id="addDomainForm">
+                <label for="domainName">Domain Name:</label>
+                <input type="text" id="domainName" name="domainName" placeholder="Enter domain name (e.g., example.com)">
+
+                <label for="domainFile">Or upload a file with multiple domains:</label>
+                <input type="file" id="domainFile" name="domainFile" accept=".txt,.csv">
+
+                <div class="modal-footer">
+                    <button type="button" class="close-btn" id="closeModalBtn">Cancel</button>
+                    <button type="submit" class="submit-btn">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to handle modal pop-up
+        const addDomainBtn = document.getElementById('addDomainBtn');
+        const modal = document.getElementById('addDomainModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const addDomainForm = document.getElementById('addDomainForm');
+        const domainTable = document.getElementById('domainTable').getElementsByTagName('tbody')[0];
+
+        // Open the modal when "Add Domain" is clicked
+        addDomainBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+
+        // Close the modal when "Cancel" is clicked
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Close the modal if the user clicks outside of it
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Handle form submission
+        addDomainForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent form from refreshing the page
+            const domainName = document.getElementById('domainName').value;
+
+            if (domainName) {
+                // Add the new domain to the table
+                const newRow = domainTable.insertRow();
+                newRow.innerHTML = `
+                    <td>${domainName}</td>
+                    <td>Pending</td>
+                    <td>--</td>
+                    <td>--</td>
+                `;
+                alert(`Domain Name added: ${domainName}`);
+            } else {
+                alert('Please enter a domain name.');
+            }
+
+            // Close modal after submission
+            modal.style.display = 'none';
+
+            // Reset the form
+            addDomainForm.reset();
+
+            // Function to delete a row
+            function deleteRow(deleteButton) {
+                const row = deleteButton.parentElement.parentElement; // Get the row to delete
+                row.remove(); // Remove the row
+                alert('Row deleted successfully!'); // Show confirmation
+            }
+
+        });
+    </script>
 </body>
 </html>
