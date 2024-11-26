@@ -3,34 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Domain Monitor Login</title>
-    <link rel="stylesheet" href="static/domain.css">
+    <title>Register</title>
+    <link rel="stylesheet" href="static/register.css">
 </head>
 <body>
-    <div class="login-container">
+    <div class="register-container">
         <div class="brand-header">
             <img src="static/images/logo.png" alt="Domain Monitor Logo" class="logo">
             <h1>Domain Monitor System</h1>
         </div>
-        <form id="register" class="login-form">
+        <form class="register-form">
             <h2>Register</h2>
             <div class="input-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                <label for="new-username">Username</label>
+                <input type="text" id="new-username" name="username" placeholder="Choose a username" required>
             </div>
             <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <label for="new-password">Password</label>
+                <input type="password" id="new-password" name="password" placeholder="Enter a password" required>
             </div>
-            <button type="submit" class="login-btn">Login</button>
+            <button type="submit" class="register-btn">Register</button>
         </form>
         <footer>
             <p>&copy; 2024 MoniTin. All Rights Reserved.</p>
         </footer>
     </div>
-
     <script src="static/RegisterService.js"></script>
     <script src="static/registerPage.js"></script>
-
 </body>
 </html>

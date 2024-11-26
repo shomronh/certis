@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - MoniTin System</title>
+    <link rel="stylesheet" href="/static/dashboard.css">
+</head>
+<body>
+    <header>
+        <h1>Settings - MoniTin System</h1>
+        <a href="#" class="logout">LOGOUT</a>
+    </header>
+
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li> <!-- Link Back to Dashboard -->
+                <li><a href="#">Add Domain</a></li>
+                <li><a href="#">Upload Domains</a></li>
+            </ul>
+        </aside>
+
+        <!-- Settings Content -->
+        <main class="dashboard-content">
+            <div class="settings">
+                <h3>Settings</h3>
+                <div class="setting-options">
+                    <label><input type="radio" name="interval" value="hour"> Hourly</label>
+                    <input type="text" placeholder="">
+
+                    <label><input type="radio" name="interval" value="hour-day"> Daily</label>
+                    <input type="text" placeholder="">
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>MoniTin System Dashboard © 2024</p>
+    </footer>
+</body>
+</html>

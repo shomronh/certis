@@ -3,65 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Domain Monitoring System</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 0;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        input, button {
-            display: block;
-            width: 100%;
-            margin: 10px 0;
-            padding: 10px;
-            font-size: 16px;
-        }
-        button {
-            cursor: pointer;
-        }
-        #message {
-            margin-top: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-        }
-    </style>
+    <title>MoniTin System Dashboard</title>
+    <link rel="stylesheet" href="/static/dashboard.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Domain Monitoring System</h1>
+    <header>
+        <h1>MoniTin System Dashboard</h1>
+        <a href="#" class="logout">LOGOUT</a>
+    </header>
 
-        <!-- Add Single Domain -->
-        <section>
-            <h2>Add Domain</h2>
-            <form id="add-domain-form">
-                <input type="text" id="user-id" placeholder="User ID" required>
-                <input type="text" id="domain" placeholder="Domain" required>
-                <button type="submit">Add Domain</button>
-            </form>
-            <div id="add-domain-message"></div>
-        </section>
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <ul>
+                <li><a href="#">Upload Domains</a></li>
+                <li><a href="#">Add Domain</a></li>
+                <li><a href="setting">Settings</a></li> <!-- Link to Settings Page -->
+            </ul>
+        </aside>
 
-        <!-- Bulk Upload -->
-        <section>
-            <h2>Bulk Upload</h2>
-            <form id="bulk-upload-form" enctype="multipart/form-data">
-                <input type="text" id="bulk-user-id" placeholder="User ID" required>
-                <input type="file" id="bulk-file" accept=".txt" required>
-                <button type="submit">Upload</button>
-            </form>
-            <div id="bulk-upload-message"></div>
-        </section>
+        <!-- Main Dashboard Content -->
+        <main class="dashboard-content">
+            <div class="container">
+                <div class="card">
+                    <h3>Liveness Status</h3>
+                    <div class="chart">Chart Placeholder</div>
+                </div>
+
+                <div class="card">
+                    <h3>SSL Expiration Date</h3>
+                    <div class="chart">Chart Placeholder</div>
+                </div>
+
+                <div class="card">
+                    <h3>SSL Issuer</h3>
+                    <div class="chart">Chart Placeholder</div>
+                </div>
+            </div>
+        </main>
     </div>
 
+    <footer>
+        <p>MoniTin System Dashboard © 2024</p>
+    </footer>
     <script src="static/DomainsService.js"></script>
     <script src="static/dashboardPage.js"></script>
 </body>
