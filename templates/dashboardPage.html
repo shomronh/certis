@@ -62,36 +62,7 @@
         </section>
     </div>
 
-    <script>
-        const backendUrl = "http://127.0.0.1:5000";
-
-        // Add Domain
-        document.getElementById("add-domain-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const userId = document.getElementById("user-id").value;
-            const domain = document.getElementById("domain").value;
-            const messageBox = document.getElementById("add-domain-message");
-
-            try {
-                const response = await fetch(`${backendUrl}/add_domain`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ user_id: userId, domain }),
-                });
-
-                const data = await response.json();
-                messageBox.textContent = data.message || data.error;
-                messageBox.style.color = response.ok ? "green" : "red";
-            } catch (error) {
-                messageBox.textContent = "An error occurred while adding the domain.";
-                messageBox.style.color = "red";
-            }
-        });
-
-       
-
-    </script>
+    <script src="static/DomainsService.js"></script>
+    <script src="static/dashboardPage.js"></script>
 </body>
 </html>
