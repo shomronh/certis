@@ -99,28 +99,14 @@ class UsersDomainsScannerJob:
 
 
     def re_schedule_job(self, user_id):
-
-        jobs = self.scheduler.get_jobs()
-
-        try:
-            self.scheduler.pause_job(user_id)
-        except Exception as e:
-            pass
-
-        # get user settings
-        settings = self.settings_repository.get_user_settings(user_id)
-        seconds = settings['scheduler']['seconds']
+        self.scheduler.remove_job(user_id)
 
         total_jobs = len(self.scheduler.get_jobs())
-        delta_t = self.delta_t_increment * (total_jobs + 1) + seconds
-
-        # re schedule the job
-        self.scheduler.reschedule_job(f"{user_id}", 'interval', trigger=IntervalTrigger(seconds=delta_t))
-        self.scheduler.resume_job(user_id)
+        self.__add_schedular_job(user_id, total_jobs)
 
     def add_new_job(self, user_id):
         total_jobs = len(self.scheduler.get_jobs())
-        self.__add_schedular_job(user_id, total_jobs + 1)
+        self.__add_schedular_job(user_id, total_jobs)
 
 
 
