@@ -27,6 +27,17 @@ class SettingsRepository:
 
         return "scheduler settings updated successfully", True
 
+    def get_user_settings(self, user_id):
+        file_path = self.__get_file_path(user_id)
+
+        if not os.path.exists(file_path):
+            data = {}
+        else:
+            with open(file_path, "r") as file:
+                data = json.load(file)
+
+        return data
+
     def __get_file_path(self, user_id):
         return os.path.join(self.directory, f"{user_id}_settings.json")
 

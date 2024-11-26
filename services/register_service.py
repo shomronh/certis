@@ -18,9 +18,10 @@ class RegisterService:
         if not password or ' ' in password or len(password) == 0 or len(password) <= 3:
             return 'Empty or Invalid password', False
 
-        result = self.usersRepository.register(username, password)
+        message, is_ok = self.usersRepository.register(username, password)
 
-        UsersDomainsScannerJob.get_instance().add_new_job(username)
+        if is_ok:
+            UsersDomainsScannerJob.get_instance().add_new_job(username)
 
-        return result
+        return message, is_ok
 

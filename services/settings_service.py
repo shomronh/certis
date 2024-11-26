@@ -15,8 +15,9 @@ class SettingsService:
         if not settings or len(settings) == 0:
             return 'Empty or Invalid settings', False
 
-        results = self.settingsRepository.update_scheduler_settings(user_id, settings)
+        message, is_ok = self.settingsRepository.update_scheduler_settings(user_id, settings)
 
-        UsersDomainsScannerJob.get_instance().re_schedule_job(user_id)
+        if is_ok:
+            UsersDomainsScannerJob.get_instance().re_schedule_job(user_id)
 
-        return results
+        return message, is_ok

@@ -9,6 +9,7 @@ import socket
 import time
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 
 from jobs.domains_scanner.user_domains_scanner import UserDomainsScanner
 from repositories.domains_repository import DomainsRepository
@@ -50,17 +51,16 @@ class UsersDomainsScannerJob:
 
         self.is_started = True
 
-        self.users = self.usersRepository.get_users()
+        # self.users = self.usersRepository.get_users()
+        self.users = {"test1": {}}
 
-        threadPool = ThreadPoolExecutor(min(len(self.users), 5))
-        self.scheduler.add_executor(threadPool, alias='default')
+        thread_pool = ThreadPoolExecutor(min(len(self.users), 5))
+        self.scheduler.add_executor(thread_pool, alias='default')
 
-
-        delta_t = self.delta_t_increment
-
+        index = 0
         for user_id in self.users.keys():
-            delta_t += self.delta_t_increment
-            self.add_schedular_job(user_id, delta_t)
+            index += 1
+            self.__add_schedular_job(user_id, index)
 
         self.scheduler.start()
 
@@ -75,44 +75,52 @@ class UsersDomainsScannerJob:
         scanner = UserDomainsScanner()
         scanner.scan_user_domains(user_id)
 
-        # after completion remove the job
-        self.scheduler.remove_job(f"{user_id}")
+        self.re_schedule_job(user_id)
 
-        # then re-add a job
-        self.add_schedular_job(user_id, delta_t)
-
-    def __add_schedular_job(self, user_id, delta_t):
+    def __add_schedular_job(self, user_id, job_index):
 
         # get user settings
+        settings = self.settings_repository.get_user_settings(user_id)
+        seconds = settings['scheduler']['seconds']
+
+        # if len(settings.keys()) == 0:
 
         # create job based on these setting
+
+        delta_t = job_index * self.delta_t_increment + seconds
 
         self.scheduler.add_job(
             self.__start_user_domains_scanning,
             'interval',
-            # max_instances=1
+            max_instances=1,
             seconds=delta_t,
             id=f"{user_id}",
             args=[user_id, delta_t])
 
-        pass
 
     def re_schedule_job(self, user_id):
 
-        self.scheduler.pause_job(user_id)
+        jobs = self.scheduler.get_jobs()
+
+        try:
+            self.scheduler.pause_job(user_id)
+        except Exception as e:
+            pass
 
         # get user settings
+        settings = self.settings_repository.get_user_settings(user_id)
+        seconds = settings['scheduler']['seconds']
+
+        total_jobs = len(self.scheduler.get_jobs())
+        delta_t = self.delta_t_increment * (total_jobs + 1) + seconds
 
         # re schedule the job
-        self.scheduler.reschedule_job(f"{user_id}")
-
-        # then resume it
+        self.scheduler.reschedule_job(f"{user_id}", 'interval', trigger=IntervalTrigger(seconds=delta_t))
         self.scheduler.resume_job(user_id)
 
     def add_new_job(self, user_id):
         total_jobs = len(self.scheduler.get_jobs())
-        delta_t = self.delta_t_increment * total_jobs
-        self.__add_schedular_job(user_id, delta_t)
+        self.__add_schedular_job(user_id, total_jobs + 1)
 
 
 
