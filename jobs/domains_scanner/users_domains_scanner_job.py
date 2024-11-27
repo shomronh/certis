@@ -1,3 +1,5 @@
+import queue
+
 import requests
 import socket
 
@@ -39,6 +41,7 @@ class UsersDomainsScannerJob:
         self.__scheduler = BackgroundScheduler()
         self.__is_started = False
 
+        self.__users_queues_table: dict[str, queue.Queue] = {}
         self.__users = {}
 
         self.__delta_t_increment = 2
@@ -50,7 +53,7 @@ class UsersDomainsScannerJob:
 
         self.__is_started = True
 
-        is_testing = False
+        is_testing = True
 
         if is_testing:
             self.__users = {"test1": {}}
@@ -58,6 +61,10 @@ class UsersDomainsScannerJob:
         else:
             self.__users = self.__usersRepository.get_users()
             thread_pool = ThreadPoolExecutor(min(len(self.__users), 5))
+
+        # populate table of users queues
+        for user_id in self.__users.keys():
+            self.add_queue_for_user(user_id)
 
         self.__scheduler.add_executor(thread_pool, alias='default')
 
@@ -74,10 +81,14 @@ class UsersDomainsScannerJob:
         except (KeyboardInterrupt, SystemExit):
             self.__scheduler.shutdown()
 
-    def __start_user_domains_scanning(self, user_id, delta_t):
+    def add_queue_for_user(self, user_id: str):
+        self.__users_queues_table[user_id] = queue.Queue()
+
+    def __start_user_domains_scanning(self, user_id: str, user_queue: queue.Queue, delta_t: int):
         print(f"starting user_id={user_id} job \n")
+
         scanner = UserDomainsScanner()
-        scanner.scan_user_domains(user_id)
+        scanner.scan_user_domains(user_id, user_queue)
 
         # TODO: dispose scanner after completion
         # TODO: use pool of objects to avoid intensive objects creation
@@ -92,7 +103,9 @@ class UsersDomainsScannerJob:
         if "scheduler" in settings and "seconds" in settings['scheduler']:
             seconds = settings['scheduler']['seconds']
         else:
-            seconds = 10
+            seconds = 5
+
+        user_queue = self.__users_queues_table[user_id]
 
         delta_t = job_index * self.__delta_t_increment + seconds
 
@@ -102,7 +115,8 @@ class UsersDomainsScannerJob:
             # max_instances=1,
             seconds=delta_t,
             id=f"{user_id}",
-            args=[user_id, delta_t])
+            args=[user_id, user_queue, delta_t])
+
 
 
     def re_schedule_job(self, user_id):
@@ -118,6 +132,7 @@ class UsersDomainsScannerJob:
     def add_new_job(self, user_id):
         try:
             total_jobs = len(self.__scheduler.get_jobs())
+            self.add_queue_for_user(user_id)
             self.__add_schedular_job(user_id, total_jobs)
         except Exception as err:
             print(f"try to add new job but get error: {err}")

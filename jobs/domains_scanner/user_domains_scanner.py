@@ -1,4 +1,5 @@
 import concurrent.futures
+import queue
 
 import requests
 from datetime import datetime
@@ -14,29 +15,43 @@ class UserDomainsScanner:
     def __init__(self):
         self.domain_repository = DomainsRepository()
 
-    def scan_user_domains(self, user_id):
-        try:
-            domains_table = self.domain_repository.get_domains(user_id)
+    def get_next_domains(self, user_id, domains_queue: queue.Queue):
 
-            if not domains_table:
+        try:
+            if domains_queue.qsize() == 0:
+                domains_table = self.domain_repository.get_domains(user_id)
+
+                for value in domains_table.values():
+                    domains_queue.put(value)
+
+            return domains_queue
+
+        except Exception as e:
+            return queue.Queue()
+
+    def scan_user_domains(self, user_id: str, user_queue: queue.Queue):
+        try:
+            domains_queue = self.get_next_domains(user_id, user_queue)
+
+            if domains_queue.qsize() == 0:
                 print(f"No existing domains to scan for user={user_id}")
                 return
 
-            domains_keys = list(domains_table.keys())
+            total_domains = domains_queue.qsize()
 
             t0 = time.time()
 
-            for domain_key in domains_keys:
-                self.do_scans(user_id, domains_table, domain_key)
+            while not domains_queue.empty():
+                domain_obj = domains_queue.get(0)
+                self.do_scans(user_id, domain_obj)
 
             time_diff = time.time() - t0
-            print(f"complete scan of {len(domains_keys)} domains in {time_diff} seconds")
+            print(f"complete scan of {total_domains} domains in {time_diff} seconds")
 
         except Exception as e:
             print(str(e))
 
-    def do_scans(self, user_id, domains_dict, domain_key):
-        domain_obj: dict[str, any] = domains_dict[domain_key]
+    def do_scans(self, user_id, domain_obj: dict[str, any]):
 
         if not "domain" in domain_obj:
             raise Exception("domain property is missing")
