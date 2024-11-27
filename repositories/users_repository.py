@@ -41,6 +41,8 @@ class UsersRepository:
 
     def login(self,username,password):
         try:
+            self.__lock.acquire()
+
             # Open and read the JSON file
             with open(self.__get_file_path(), 'r') as file:
                 users = json.load(file)
@@ -58,14 +60,21 @@ class UsersRepository:
         except Exception as e:
             print(f"An error occurred: {e}")
             return f"An error occurred: {e}"
+        finally:
+            self.__lock.release()
 
     def get_users(self):
+        try:
+            self.__lock.acquire()
 
-        # Open and read the JSON file
-        with open(self.__get_file_path(), 'r') as file:
-            users = json.load(file)
+            # Open and read the JSON file
+            with open(self.__get_file_path(), 'r') as file:
+                users = json.load(file)
 
-        return users
+            return users
+
+        finally:
+            self.__lock.release()
 
     def __get_file_path(self):
         return os.path.join(self.__directory, "users.json")

@@ -25,6 +25,12 @@
         <!-- Main Dashboard Content -->
         <main class="dashboard-content">
             <div class="container">
+
+                <div id="table_header_bar">
+                    <span>Total Domains: <span id="total_domains">0</span></span>
+                    <span>Total verified Domains: <span id="total_verified_comains">0</span></span>
+                </div>
+
                 <table class="dashboard-table" id="domainsTable">
                     <thead>
                         <tr>
@@ -36,27 +42,13 @@
                         </tr>
                     </thead>
                     <tbody id="domainsTable_tbody">
-                        <tr>
+                        <!-- <tr>
                             <td>example.com</td>
                             <td>Live</td>
                             <td>2024-12-31</td>
                             <td>Let's Encrypt</td>
                             <td><span class="delete-icon" onclick="deleteRow(this)">🗑️</span></td>
-                        </tr>
-                        <tr>
-                            <td>mywebsite.net</td>
-                            <td>Down</td>
-                            <td>2024-11-30</td>
-                            <td>GoDaddy</td>
-                            <td><span class="delete-icon" onclick="deleteRow(this)">🗑️</span></td>
-                        </tr>
-                        <tr>
-                            <td>testdomain.org</td>
-                            <td>Live</td>
-                            <td>2025-01-15</td>
-                            <td>Cloudflare</td>
-                            <td><span class="delete-icon" onclick="deleteRow(this)">🗑️</span></td>
-                        </tr>
+                        </tr> -->
                     </tbody>
                     
                 </table>

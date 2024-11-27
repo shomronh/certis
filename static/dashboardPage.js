@@ -2,6 +2,9 @@
 function populateDomainsTable(domains) {
   const tableBody = document.getElementById('domainsTable').querySelector('tbody');
 
+  const total_domains = domains.length
+  let total_verified_comains = 0
+
   // Loop through the data array and create a row for each item
   for (let i = 0; i < domains.length; i++) {
     const item = domains[i];
@@ -14,10 +17,17 @@ function populateDomainsTable(domains) {
         item.ssl_issuer[1][0] &&
         item.ssl_issuer[1][0][1] ? item.ssl_issuer[1][0][1] : "N/A";
 
+    if(issuer !== 'N/A') {
+      total_verified_comains++
+    }
+
     const row = createTableRow(item.domain, item.status, sslExpiration, issuer);
 
     tableBody.appendChild(row);
   }
+
+  document.getElementById('total_domains').innerHTML = `${total_domains}`
+  document.getElementById('total_verified_comains').innerHTML = `${total_verified_comains}`
 }
 
 // Function to create and append rows to the table

@@ -54,33 +54,48 @@ class DomainsRepository:
         finally:
             self.__lock.release()
 
-    def get_domains(self, user_id: str):
-        file_path = self.__get_file_path(user_id)
+    def get_domains(self, user_id: str, useLock = False):
+        try:
+            if useLock:
+                self.__lock.acquire()
 
-        if not os.path.exists(file_path):
-            domains = {}
-        else:
-            with open(file_path, "r") as file:
-                domains = json.load(file)
+            file_path = self.__get_file_path(user_id)
 
-        return domains
+            if not os.path.exists(file_path):
+                domains = {}
+            else:
+                with open(file_path, "r") as file:
+                    domains = json.load(file)
+
+            return domains
+        finally:
+            if useLock:
+                self.__lock.release()
 
     def get_domains_list(self, user_id: str):
-        file_path = self.__get_file_path(user_id)
+        try:
+            self.__lock.acquire()
 
-        if not os.path.exists(file_path):
-            domains = {}
-        else:
-            with open(file_path, "r") as file:
-                domains = json.load(file)
+            file_path = self.__get_file_path(user_id)
 
-        items = []
-        for key, value in domains.items():
-            if "deleted" in value and value["deleted"] == "true":
-                continue
-            items.append(value)
+            if not os.path.exists(file_path):
+                domains = {}
+            else:
+                with open(file_path, "r") as file:
+                    domains = json.load(file)
 
-        return items
+            items = []
+            for key, value in domains.items():
+                if "deleted" in value and value["deleted"] == "true":
+                    continue
+                items.append(value)
+
+            return items
+        except Exception as e:
+            print(e)
+
+        finally:
+            self.__lock.release()
 
     def __save_domains(self, user_id: str, domains_table: dict[str, any]):
 
@@ -99,7 +114,7 @@ class DomainsRepository:
         try:
             self.__lock.acquire()
 
-            domains_table = self.get_domains(user_id)
+            domains_table = self.get_domains(user_id, False)
             domain = domain_dict["domain"]
 
             if domain in domains_table:

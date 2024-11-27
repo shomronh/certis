@@ -34,15 +34,21 @@ class SettingsRepository:
             self.__lock.release()
 
     def get_user_settings(self, user_id):
-        file_path = self.__get_file_path(user_id)
+        try:
+            self.__lock.acquire()
 
-        if not os.path.exists(file_path):
-            data = {}
-        else:
-            with open(file_path, "r") as file:
-                data = json.load(file)
+            file_path = self.__get_file_path(user_id)
 
-        return data
+            if not os.path.exists(file_path):
+                data = {}
+            else:
+                with open(file_path, "r") as file:
+                    data = json.load(file)
+
+            return data
+        finally:
+            self.__lock.release()
+
 
     def __get_file_path(self, user_id):
         return os.path.join(self.__directory, f"{user_id}_settings.json")

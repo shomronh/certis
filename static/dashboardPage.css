@@ -238,3 +238,7 @@ footer {
   color: #f44336;
   font-size: 18px;
 }
+
+#table_header_bar {
+  font-size: 1.3em !important;
+}
