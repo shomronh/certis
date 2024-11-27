@@ -165,4 +165,8 @@ cython_debug/
 .idea/*.xml
 
 local_files_data
+
 domains.txt
+domains_short_list.txt
+
+default_test1_domains.json

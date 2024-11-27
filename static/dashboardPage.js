@@ -68,7 +68,7 @@ async function populateTable() {
   populateDomainsTable(domains);
 }
 
-populateTable();
+
 
 function handleAddDomainPopup() {
   const addDomainBtn = document.getElementById('addDomainBtn');
@@ -137,33 +137,16 @@ function handleAddDomainPopup() {
   })
 }
 
-// function handleAddDomainsByFile(){
-//   document.getElementById("bulk-upload-form").addEventListener("submit", async (e) => {
-//     e.preventDefault(); 
-
-//     const userId = LocalStorageService.getInstance().getItem('username')
-
-//     const file = document.getElementById("domainsFile").files[0];  
-
-//     const formData = new FormData();  // Create a new FormData object
-//     formData.append("user_id", userId);  // Append the user ID to the FormData
-//     formData.append("file", file);  // Append the file to the FormData
-
-//     const response = await DomainsService.getInstance().uploadDomainsFile(formData);  // Call the bulkUpload function
-
-//     // Display the response message
-//     messageBox.textContent = response.message || response.error;
-//     messageBox.style.color = response.ok ? "green" : "red";  // Change the message color based on success or error
-
-//     // Optionally, refresh the domains list after bulk upload
-//     try {
-//         const updatedDomains = await getDomains(userId);  // Fetch the updated domains
-//         displayDomains(updatedDomains);  // Display the updated list of domains
-//     } catch (error) {
-//         console.error("Error fetching updated domains:", error);
-//     }
-// });
-// }
-
 handleAddDomainPopup()
-// handleAddDomainsByFile()
+
+
+function fetchForDomainsPeriodically(){
+  populateTable();
+
+  setInterval(async () => {
+    print(`fetchForDomainsPeriodically: start populateTable()`)
+    await populateTable();
+  }, 5000)
+}
+
+fetchForDomainsPeriodically()
