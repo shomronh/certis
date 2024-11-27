@@ -72,7 +72,6 @@ class CertisApp:
         self._thread.daemon = True  # Daemon thread will exit when the main program exits
         self._thread.start()
 
-        #
         UsersDomainsScannerJob.get_instance().start()
 
     def __setup_session(self):

@@ -30,7 +30,7 @@ class DomainsRepository:
         try:
             self.__lock.acquire()
 
-            domains_table = self.get_domains(user_id)
+            domains_table = self.get_domains(user_id, False)
 
             if domain in domains_table and domains_table[domain]["deleted"] == "false":
                 return f"Domain {domain} already exists.", False
@@ -54,7 +54,7 @@ class DomainsRepository:
         try:
             self.__lock.acquire()
 
-            domains_table = self.get_domains(user_id)
+            domains_table = self.get_domains(user_id, False)
 
             if not domain in domains_table:
                 return f"Domain {domain} doesnt exists.", False
@@ -68,6 +68,7 @@ class DomainsRepository:
         finally:
             self.__lock.release()
 
+    # when called from within the class set useLock to False
     def get_domains(self, user_id: str, useLock = True):
         try:
             if useLock:
