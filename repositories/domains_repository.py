@@ -6,15 +6,17 @@ class DomainsRepository:
 
     # static variables
     _instance: 'DomainsRepository' = None
+    _lock = threading.Lock()
 
     # other variables
 
     # TODO: ensure the singleton is thread safe
     @staticmethod
     def get_instance():
-        if not DomainsRepository._instance:
-            DomainsRepository._instance = DomainsRepository()
-        return DomainsRepository._instance
+        with DomainsRepository._lock:
+            if not DomainsRepository._instance:
+                DomainsRepository._instance = DomainsRepository()
+            return DomainsRepository._instance
 
     def __init__(self, directory="local_files_data"):
         self.__directory = directory

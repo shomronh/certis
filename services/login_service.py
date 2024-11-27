@@ -1,5 +1,5 @@
 from flask import jsonify, Request
-
+import threading
 from repositories.users_repository import UsersRepository
 
 
@@ -7,15 +7,17 @@ class LoginService:
 
     # static variables
     _instance: 'LoginService' = None
+    _lock = threading.Lock()
 
     # other variables
 
     # TODO: ensure the singleton is thread safe
     @staticmethod
     def get_instance():
-        if not LoginService._instance:
-            LoginService._instance = LoginService()
-        return LoginService._instance
+        with LoginService._lock:
+            if not LoginService._instance:
+                LoginService._instance = LoginService()
+            return LoginService._instance
 
     def __init__(self):
         self.usersRepository = UsersRepository.get_instance()

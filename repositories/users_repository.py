@@ -1,21 +1,24 @@
 import os
 import json
 import threading
+
 from flask import jsonify
 
 
 class UsersRepository:
     # static variables
     _instance: 'UsersRepository' = None
+    _lock = threading.Lock()
 
     # other variables
 
     # TODO: ensure the singleton is thread safe
     @staticmethod
     def get_instance():
-        if not UsersRepository._instance:
-            UsersRepository._instance = UsersRepository()
-        return UsersRepository._instance
+        with UsersRepository._lock:
+            if not UsersRepository._instance:
+                UsersRepository._instance = UsersRepository()
+            return UsersRepository._instance
 
     def __init__(self, directory="local_files_data"):
         self.__directory = directory

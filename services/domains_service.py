@@ -1,23 +1,27 @@
+import threading
+
 import requests
 import socket
 import re
 from datetime import datetime
-
+import threading
 from repositories.domains_repository import DomainsRepository
 
 
 class DomainsService:
     # static variables
-    _instance: 'DomainsService' = None
+    _instance = None
+    _lock = threading.Lock()
 
     # other variables
 
     # TODO: ensure the singleton is thread safe
     @staticmethod
     def get_instance():
-        if not DomainsService._instance:
-            DomainsService._instance = DomainsService()
-        return DomainsService._instance
+        with DomainsService._lock:
+            if not DomainsService._instance:
+                DomainsService._instance = DomainsService()
+            return DomainsService._instance
 
     def __init__(self):
         self.domain_repository = DomainsRepository.get_instance()

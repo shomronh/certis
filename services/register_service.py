@@ -1,5 +1,5 @@
 from flask import jsonify, Request
-
+import threading
 from jobs.domains_scanner.users_domains_scanner_job import UsersDomainsScannerJob
 from repositories.users_repository import UsersRepository
 
@@ -8,15 +8,17 @@ class RegisterService:
 
     # static variables
     _instance: 'RegisterService' = None
+    _lock = threading.Lock()
 
     # other variables
 
     # TODO: ensure the singleton is thread safe
     @staticmethod
     def get_instance():
-        if not RegisterService._instance:
-            RegisterService._instance = RegisterService()
-        return RegisterService._instance
+        with RegisterService._lock:
+            if not RegisterService._instance:
+                RegisterService._instance = RegisterService()
+            return RegisterService._instance
 
     def __init__(self):
         self.usersRepository = UsersRepository.get_instance()

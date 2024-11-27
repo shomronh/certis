@@ -1,7 +1,7 @@
 import os
 import threading
 from datetime import timedelta
-
+import threading
 from flask import Flask
 
 from controllers.domains_api import DomainsApi
@@ -16,16 +16,18 @@ class CertisApp:
 
     # static variables
     _instance: 'CertisApp'  = None
+    _lock = threading.Lock()
 
     # other variables
 
     # TODO: ensure the singleton is thread safe
     @staticmethod
     def get_instance():
-        if not CertisApp._instance:
-            CertisApp._instance = CertisApp()
-            CertisApp._instance.__start()
-        return CertisApp._instance
+        with CertisApp._lock:
+            if not CertisApp._instance:
+                CertisApp._instance = CertisApp()
+                CertisApp._instance.__start()
+            return CertisApp._instance
 
     # private method
     def __start(self):
@@ -110,5 +112,5 @@ class CertisApp:
 
 
 if __name__ == '__main__':
-    app = CertisApp().get_instance()
+    app = CertisApp.get_instance()
     app.join()

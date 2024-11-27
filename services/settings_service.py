@@ -1,20 +1,23 @@
 from jobs.domains_scanner.users_domains_scanner_job import UsersDomainsScannerJob
 from repositories.settings_repository import SettingsRepository
+import threading
 
 
 class SettingsService:
 
     # static variables
     _instance: 'SettingsService' = None
+    _lock = threading.Lock()
 
     # other variables
 
     # TODO: ensure the singleton is thread safe
     @staticmethod
     def get_instance():
-        if not SettingsService._instance:
-            SettingsService._instance = SettingsService()
-        return SettingsService._instance
+        with SettingsService._lock:
+            if not SettingsService._instance:
+                SettingsService._instance = SettingsService()
+            return SettingsService._instance
 
     def __init__(self):
         self.settingsRepository = SettingsRepository.get_instance()

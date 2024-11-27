@@ -1,19 +1,21 @@
 
-
+import threading
 
 class SessionManagerService:
 
     # static variables
     _instance: 'SessionManagerService' = None
+    _lock = threading.Lock()
 
     # other variables
 
     # TODO: ensure the singleton is thread safe
     @staticmethod
     def get_instance():
-        if not SessionManagerService._instance:
-            SessionManagerService._instance = SessionManagerService()
-        return SessionManagerService._instance
+        with SessionManagerService._lock:
+            if not SessionManagerService._instance:
+                SessionManagerService._instance = SessionManagerService()
+            return SessionManagerService._instance
 
     def __init__(self):
         pass

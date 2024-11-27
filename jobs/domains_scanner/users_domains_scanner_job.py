@@ -2,6 +2,7 @@ import queue
 
 import requests
 import socket
+import threading
 
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 from apscheduler.executors.pool import ThreadPoolExecutor
@@ -23,15 +24,17 @@ class UsersDomainsScannerJob:
 
     # static variables
     _instance: 'UsersDomainsScannerJob' = None
+    _lock = threading.Lock()
 
     # other variables
 
     # TODO: ensure the singleton is thread safe
     @staticmethod
     def get_instance():
-        if not UsersDomainsScannerJob._instance:
-            UsersDomainsScannerJob._instance = UsersDomainsScannerJob()
-        return UsersDomainsScannerJob._instance
+        with UsersDomainsScannerJob._lock:
+            if not UsersDomainsScannerJob._instance:
+                UsersDomainsScannerJob._instance = UsersDomainsScannerJob()
+            return UsersDomainsScannerJob._instance
 
     def __init__(self):
         self.__usersRepository = UsersRepository()
