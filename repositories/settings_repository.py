@@ -4,6 +4,18 @@ import os
 import threading
 
 class SettingsRepository:
+    # static variables
+    _instance: 'SettingsRepository' = None
+
+    # other variables
+
+    # TODO: ensure the singleton is thread safe
+    @staticmethod
+    def get_instance():
+        if not SettingsRepository._instance:
+            SettingsRepository._instance = SettingsRepository()
+        return SettingsRepository._instance
+
     def __init__(self, directory="local_files_data"):
         self.__directory = directory
         self.__lock = threading.Lock()

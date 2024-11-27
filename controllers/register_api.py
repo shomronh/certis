@@ -8,7 +8,7 @@ from services.register_service import RegisterService
 class RegisterApi:
 
     def __init__(self):
-        self._registerService = RegisterService()
+        self._registerService = RegisterService.get_instance()
 
     def initRoutes(self, app: Flask):
 

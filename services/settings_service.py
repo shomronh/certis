@@ -4,8 +4,20 @@ from repositories.settings_repository import SettingsRepository
 
 class SettingsService:
 
+    # static variables
+    _instance: 'SettingsService' = None
+
+    # other variables
+
+    # TODO: ensure the singleton is thread safe
+    @staticmethod
+    def get_instance():
+        if not SettingsService._instance:
+            SettingsService._instance = SettingsService()
+        return SettingsService._instance
+
     def __init__(self):
-        self.settingsRepository = SettingsRepository()
+        self.settingsRepository = SettingsRepository.get_instance()
 
     def update_scheduler_settings(self, user_id, settings):
 

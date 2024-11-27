@@ -7,8 +7,20 @@ from repositories.domains_repository import DomainsRepository
 
 
 class DomainsService:
+    # static variables
+    _instance: 'DomainsService' = None
+
+    # other variables
+
+    # TODO: ensure the singleton is thread safe
+    @staticmethod
+    def get_instance():
+        if not DomainsService._instance:
+            DomainsService._instance = DomainsService()
+        return DomainsService._instance
+
     def __init__(self):
-        self.domain_repository = DomainsRepository()
+        self.domain_repository = DomainsRepository.get_instance()
 
     def add_domain(self, user_id, domain):
 

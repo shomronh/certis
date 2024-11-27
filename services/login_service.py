@@ -5,8 +5,20 @@ from repositories.users_repository import UsersRepository
 
 class LoginService:
 
+    # static variables
+    _instance: 'LoginService' = None
+
+    # other variables
+
+    # TODO: ensure the singleton is thread safe
+    @staticmethod
+    def get_instance():
+        if not LoginService._instance:
+            LoginService._instance = LoginService()
+        return LoginService._instance
+
     def __init__(self):
-        self.usersRepository = UsersRepository()
+        self.usersRepository = UsersRepository.get_instance()
 
     def login(self, username, password):
 

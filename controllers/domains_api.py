@@ -12,7 +12,7 @@ class DomainsApi:
     def initRoutes(self, app: Flask):
 
         # Initialize repository and service
-        service = DomainsService()
+        service = DomainsService.get_instance()
 
         @app.route("/domains/add", methods=["POST"])
         def add_domain():

@@ -8,7 +8,7 @@ from services.settings_service import SettingsService
 class SettingsApi:
 
     def __init__(self):
-        self.settingsService = SettingsService()
+        self.settingsService = SettingsService.get_instance()
 
     def initRoutes(self, app: Flask):
 

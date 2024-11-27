@@ -7,7 +7,7 @@ from services.login_service import LoginService
 class LoginApi:
 
     def __init__(self):
-        self._loginService = LoginService()
+        self._loginService = LoginService.get_instance()
 
     def initRoutes(self, app: Flask):
 

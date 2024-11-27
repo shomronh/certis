@@ -6,8 +6,20 @@ from repositories.users_repository import UsersRepository
 
 class RegisterService:
 
+    # static variables
+    _instance: 'RegisterService' = None
+
+    # other variables
+
+    # TODO: ensure the singleton is thread safe
+    @staticmethod
+    def get_instance():
+        if not RegisterService._instance:
+            RegisterService._instance = RegisterService()
+        return RegisterService._instance
+
     def __init__(self):
-        self.usersRepository = UsersRepository()
+        self.usersRepository = UsersRepository.get_instance()
 
     def register(self, username, password):
 
