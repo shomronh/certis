@@ -23,7 +23,7 @@ class DomainsService {
             const response = await fetch(`${this.#backendUrl}/domains/add`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",  
+                    "Content-Type": "application/json",
                 },
                 // Sends cookies from the current session
                 credentials: 'include',
@@ -33,37 +33,46 @@ class DomainsService {
             // Parse the response from the backend
             const responseData = await response.json();
 
-            if(response.ok) {
-                return {isOk: true, message: responseData}
+            if (response.ok) {
+                return { isOk: true, message: responseData }
             }
-            return {isOk: false, message: responseData}
+            return { isOk: false, message: responseData }
 
         } catch (error) {
             // Handle any errors and show a message in the messageBox
             // messageBox.textContent = "An error occurred while adding the domain.";
             // messageBox.style.color = "red";
             console.error(error)
-            return { isOk: false, message: "An error occurred" };
+            return { isOk: false, message: `An error occurred: ${error.message}` };
         }
     }
 
     // Function to handle bulk upload (e.g., uploading a file)
-    async bulkUpload(formData, messageBox) {
+    async uploadDomainsFile(formData, messageBox) {
         try {
             // Send a POST request with the form data (including the file) for bulk upload
-            const response = await fetch(`${this.#backendUrl}/bulk_upload`, {
+            const response = await fetch(`${this.#backendUrl}/domains/add/file`, {
                 method: "POST",
                 body: formData,  // Include the file and other data in the formData
             });
 
             // Parse the response from the backend
             const responseData = await response.json();
-            return responseData;  // Return the response to be handled by the frontend
+            // return responseData;  // Return the response to be handled by the frontend
+
+            if (response.ok) {
+                return { isOk: true, message: responseData }
+            }
+            return { isOk: false, message: responseData }
+
         } catch (error) {
             // Handle any errors and show a message in the messageBox
-            messageBox.textContent = "An error occurred during the bulk upload.";
-            messageBox.style.color = "red";
-            return { message: "An error occurred", error: true, ok: false };
+            // messageBox.textContent = "An error occurred during the bulk upload.";
+            // messageBox.style.color = "red";
+            // return { message: "An error occurred", error: true, ok: false };
+
+            console.error(error)
+            return { isOk: false, message: `An error occurred: ${error.message}` };
         }
     }
 

@@ -96,15 +96,30 @@ function handleAddDomainPopup() {
 
   // Handle form submission
   addDomainForm.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent form from refreshing the page
+    event.preventDefault(); 
+
     const domainName = document.getElementById('domainName').value;
+    const file = document.getElementById("domainsFile").files[0]; 
 
-    if (domainName) {
+    const userId = LocalStorageService.getInstance().getItem('username')
+    
+    if(file) {
+      const file = document.getElementById("domainsFile").files[0];  
+      
+      const formData = new FormData();  // Create a new FormData object
+      formData.append("user_id", userId);  // Append the user ID to the FormData
+      formData.append("file", file);  // Append the file to the FormData
 
-      const results = await DomainsService.getInstance().addDomain(domainName);
+      const results = await DomainsService.getInstance().uploadDomainsFile(formData);
       results.isOk && populateTable();
-    } else {
-      alert('Please enter a domain name.');
+    }
+    else {
+      if (domainName) {
+        const results = await DomainsService.getInstance().addDomain(domainName);
+        results.isOk && populateTable();
+      } else {
+        alert('Please enter a domain name.');
+      }
     }
 
     // Close modal after submission
@@ -122,4 +137,33 @@ function handleAddDomainPopup() {
   })
 }
 
+// function handleAddDomainsByFile(){
+//   document.getElementById("bulk-upload-form").addEventListener("submit", async (e) => {
+//     e.preventDefault(); 
+
+//     const userId = LocalStorageService.getInstance().getItem('username')
+
+//     const file = document.getElementById("domainsFile").files[0];  
+
+//     const formData = new FormData();  // Create a new FormData object
+//     formData.append("user_id", userId);  // Append the user ID to the FormData
+//     formData.append("file", file);  // Append the file to the FormData
+
+//     const response = await DomainsService.getInstance().uploadDomainsFile(formData);  // Call the bulkUpload function
+
+//     // Display the response message
+//     messageBox.textContent = response.message || response.error;
+//     messageBox.style.color = response.ok ? "green" : "red";  // Change the message color based on success or error
+
+//     // Optionally, refresh the domains list after bulk upload
+//     try {
+//         const updatedDomains = await getDomains(userId);  // Fetch the updated domains
+//         displayDomains(updatedDomains);  // Display the updated list of domains
+//     } catch (error) {
+//         console.error("Error fetching updated domains:", error);
+//     }
+// });
+// }
+
 handleAddDomainPopup()
+// handleAddDomainsByFile()

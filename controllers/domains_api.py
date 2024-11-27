@@ -62,26 +62,21 @@ class DomainsApi:
             except Exception as e:
                 return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR
 
-        @app.route("/domains/bulk", methods=["POST"])
+        @app.route("/domains/add/file", methods=["POST"])
         def bulk_upload():
 
             try:
                 if "username" not in session:
                     return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
 
-                data = request.get_json()
-
-                if not data:
+                if not request.files or not request.form:
                     return jsonify({"message": "User ID and file are required"}), HTTPStatus.UNAUTHORIZED
 
-                user_id = data.get("user_id")
+                user_id = request.form['user_id']
                 file = request.files.get("file")
 
-                if not user_id or not file:
-                    return jsonify({"message": "User id and file are required"}), HTTPStatus.BAD_REQUEST
-
                 if not allowed_file(file.filename):
-                    return jsonify({"message": "invalid file format or content"}), HTTPStatus.BAD_REQUEST
+                    return jsonify({"message": "invalid file format or content"}), HTTPStatus.UNAUTHORIZED
 
                 if file:
                     # Read the content of the uploaded file directly into memory
