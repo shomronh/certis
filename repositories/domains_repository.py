@@ -68,7 +68,7 @@ class DomainsRepository:
         finally:
             self.__lock.release()
 
-    def get_domains(self, user_id: str, useLock = False):
+    def get_domains(self, user_id: str, useLock = True):
         try:
             if useLock:
                 self.__lock.acquire()

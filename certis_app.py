@@ -88,9 +88,9 @@ class CertisApp:
             self._app.config['SESSION_PERMANENT'] = True  # Set sessions as permanent in production.
             self._app.permanent_session_lifetime = timedelta(minutes=30)
 
-            self._app.config['SESSION_TYPE'] = 'redis'  # Store session data in Redis (ideal for production).
+            # self._app.config['SESSION_TYPE'] = 'redis'  # Store session data in Redis (ideal for production).
             # self._app.config['SESSION_REDIS'] = Redis(host='localhost', port=6379)  # Connect to Redis server for session storage.
-
+            
             self._app.config['SESSION_COOKIE_PATH'] = '/'  # Session cookies will be sent for all paths in the domain.
 
         else:
