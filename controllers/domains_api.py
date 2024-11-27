@@ -44,28 +44,21 @@ class DomainsApi:
                 return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-        @app.route("/domains", methods=["GET"])
-        def get_domains():
+        @app.route("/domains/user/<id>", methods=["GET"])
+        def get_domains(id):
 
             try:
                 # TODO: ensure that username from the session is the same as the user_id, otherwise return HTTPStatus.UNAUTHORIZED
                 if "username" not in session:
                     return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
 
-                data = request.get_json()
+                if not id or ' ' in id or len(id) == 0:
+                    return jsonify({"message": "Empty or Invalid id'"}), HTTPStatus.UNAUTHORIZED
 
-                if not data:
-                    return jsonify({"message": "User ID and domain are required"}), HTTPStatus.UNAUTHORIZED
+                results = service.get_domains(id)
 
-                user_id = data.get("user_id")
+                return jsonify(results), HTTPStatus.OK
 
-                message, is_ok = service.get_domains(user_id)
-
-                if is_ok:
-                    return jsonify({"message": message}), HTTPStatus.OK
-                else:
-                    return jsonify({"message": message}), HTTPStatus.BAD_REQUEST
-                
             except Exception as e:
                 return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR
 

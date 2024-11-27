@@ -30,9 +30,9 @@ class DomainsService:
         if not user_id or ' ' in user_id or len(user_id) == 0 or len(user_id) <= 3:
             return 'Empty or Invalid username', False
 
-        result = self.domain_repository.get_domains(user_id)
+        results = self.domain_repository.get_domains(user_id)
 
-        return result
+        return results
 
 
     def is_valid_domain(self, domain):

@@ -30,6 +30,7 @@ class CertisApp:
     # private method
     def __start(self):
         self._app = Flask(__name__)
+        self._app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB
 
         self._app.secret_key = os.urandom(24)  # secured random key
 
@@ -70,7 +71,7 @@ class CertisApp:
         self._thread.start()
 
         #
-        UsersDomainsScannerJob.get_instance().start()
+        # UsersDomainsScannerJob.get_instance().start()
 
     def __setup_session(self):
         is_prod = False

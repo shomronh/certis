@@ -1,6 +1,5 @@
 const loginForm = document.getElementById('login-form');
 
-
 loginForm.addEventListener('submit', async function(event) {
     event.preventDefault(); // Prevent the default form submission
 
@@ -8,10 +7,10 @@ loginForm.addEventListener('submit', async function(event) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    await Login(username, password);
+    await handleLogin(username, password);
 });
 
-async function Login(username, password) {
+async function handleLogin(username, password) {
     try {
         // Make the POST request to the Flask backend
         const response = await fetch('/login', {
@@ -30,6 +29,9 @@ async function Login(username, password) {
         if (response.ok) {
             alert(data.message); // Successful login
             window.location.href = "/dashboardPage";
+
+            LocalStorageService.getInstance().setItem('username', username)
+
         } else if (response.status === 404) {
             alert(data.message); // Missing users.json or registration required
         } else if (response.status === 401) {

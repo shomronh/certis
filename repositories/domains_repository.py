@@ -24,12 +24,19 @@ class DomainsRepository:
 
         return f"Domain {domain} added successfully", True
 
-    def get_domains(self, user_id: str) -> dict[str, any]:
+    def get_domains(self, user_id: str):
         file_path = self.__get_file_path(user_id)
+
         if not os.path.exists(file_path):
-            return {}
+            domains = {}
         with open(file_path, "r") as file:
-            return json.load(file)
+            domains = json.load(file)
+
+        items = []
+        for key, value in domains.items():
+            items.append(value)
+
+        return items
 
     def __save_domains(self, user_id: str, domains_table: dict[str, any]):
         file_path = self.__get_file_path(user_id)
