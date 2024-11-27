@@ -37,3 +37,6 @@ class SettingsApi:
             except Exception as e:
                 return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR
 
+        @app.route('/settingsPage')
+        def settingsPage():
+            return render_template('settingsPage.html')

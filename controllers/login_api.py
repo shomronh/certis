@@ -35,6 +35,11 @@ class LoginApi:
             except Exception as e:
                 return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR
 
+        @app.route('/logout')
+        def logout():
+            session.clear()
+            return redirect(url_for("loginPage"))
+
         # Visual Routes
         @app.route('/dashboardPage')
         def dashboard():
@@ -47,3 +52,6 @@ class LoginApi:
         @app.route('/loginPage')
         def loginPage():
             return render_template('loginPage.html')
+
+
+
