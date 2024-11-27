@@ -1,5 +1,5 @@
 
-const form = document.getElementById('login-form');
+const form = document.getElementById('register-form');
 const status = document.getElementById('status');
 
 form.addEventListener('submit', function(event) {
