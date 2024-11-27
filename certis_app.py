@@ -71,7 +71,7 @@ class CertisApp:
         self._thread.start()
 
         #
-        # UsersDomainsScannerJob.get_instance().start()
+        UsersDomainsScannerJob.get_instance().start()
 
     def __setup_session(self):
         is_prod = False

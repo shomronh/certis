@@ -1,45 +1,46 @@
 import os
 import json
+import threading
 from flask import jsonify
 
 
 class UsersRepository:
 
     def __init__(self, directory="local_files_data"):
-        self.directory = directory
+        self.__directory = directory
+        self.__lock = threading.Lock()
 
-    def create_file_datasource_if_not_exist(self):
-        # Check if users.json exists, create it if not, create it
-        if not os.path.isfile(self.__get_file_path()):
-            with open(self.__get_file_path(), "w") as file:
-                json.dump({}, file, indent=4)
+        if not os.path.exists(self.__directory):
+            os.makedirs(self.__directory)
 
     def register(self, username, password):
 
-        self.create_file_datasource_if_not_exist()
+        try:
+            self.__lock.acquire()
 
-        with open(self.__get_file_path(), "r") as file:
-            users = json.load(file)
+            with open(self.__get_file_path(), "r") as file:
+                users = json.load(file)
 
-        # Check if the username already exists
-        if username in users:
-            return "Username is taken", False
-        else:
-            print("Username is available. You can add it.")
+            # Check if the username already exists
+            if username in users:
+                return "Username is taken", False
+            else:
+                print("Username is available. You can add it.")
 
-            # Add the new user
-            users[username] = {"username": username, "password": password}
+                # Add the new user
+                users[username] = {"username": username, "password": password}
 
-            # Save the updated data back to the JSON file
-            with open(self.__get_file_path(), "w") as file:
-                json.dump(users, file, indent=4)
+                # Save the updated data back to the JSON file
+                with open(self.__get_file_path(), "w") as file:
+                    json.dump(users, file, indent=4)
 
-        return "User registered successfully", True
+            return "User registered successfully", True
+
+        finally:
+            self.__lock.release()
 
     def login(self,username,password):
         try:
-            self.create_file_datasource_if_not_exist()
-
             # Open and read the JSON file
             with open(self.__get_file_path(), 'r') as file:
                 users = json.load(file)
@@ -59,7 +60,6 @@ class UsersRepository:
             return f"An error occurred: {e}"
 
     def get_users(self):
-        self.create_file_datasource_if_not_exist()
 
         # Open and read the JSON file
         with open(self.__get_file_path(), 'r') as file:
@@ -68,6 +68,6 @@ class UsersRepository:
         return users
 
     def __get_file_path(self):
-        return os.path.join(self.directory, "users.json")
+        return os.path.join(self.__directory, "users.json")
 
 

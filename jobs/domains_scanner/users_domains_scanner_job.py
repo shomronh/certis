@@ -32,68 +32,71 @@ class UsersDomainsScannerJob:
         return UsersDomainsScannerJob._instance
 
     def __init__(self):
-        self.usersRepository = UsersRepository()
-        self.domain_repository = DomainsRepository()
-        self.settings_repository = SettingsRepository()
+        self.__usersRepository = UsersRepository()
+        self.__domain_repository = DomainsRepository()
+        self.__settings_repository = SettingsRepository()
 
-        # Initialize BackgroundScheduler with the executor configuration
+        self.__scheduler = BackgroundScheduler()
+        self.__is_started = False
 
-        self.scheduler = BackgroundScheduler()
+        self.__users = {}
 
-        self.is_started = False
-
-        self.delta_t_increment = 2
+        self.__delta_t_increment = 2
 
     def start(self):
 
-        if self.is_started:
+        if self.__is_started:
             return
 
-        self.is_started = True
+        self.__is_started = True
 
-        self.users = self.usersRepository.get_users()
-        # self.users = {"test1": {}}
+        is_testing = False
 
-        thread_pool = ThreadPoolExecutor(min(len(self.users), 5))
-        self.scheduler.add_executor(thread_pool, alias='default')
+        if is_testing:
+            self.__users = {"test1": {}}
+            thread_pool = ThreadPoolExecutor(min(len(self.__users), 1))
+        else:
+            self.__users = self.__usersRepository.get_users()
+            thread_pool = ThreadPoolExecutor(min(len(self.__users), 5))
+
+        self.__scheduler.add_executor(thread_pool, alias='default')
 
         index = 0
-        for user_id in self.users.keys():
-            # index += 1
+        for user_id in self.__users.keys():
             self.__add_schedular_job(user_id, index)
 
-        self.scheduler.start()
+        self.__scheduler.start()
 
         try:
+            # avoid blocking the main thread
             while True:
                 time.sleep(1)
         except (KeyboardInterrupt, SystemExit):
-            self.scheduler.shutdown()
+            self.__scheduler.shutdown()
 
     def __start_user_domains_scanning(self, user_id, delta_t):
         print(f"starting user_id={user_id} job \n")
         scanner = UserDomainsScanner()
         scanner.scan_user_domains(user_id)
 
+        # TODO: dispose scanner after completion
+        # TODO: use pool of objects to avoid intensive objects creation
+
         self.re_schedule_job(user_id)
 
     def __add_schedular_job(self, user_id, job_index):
 
         # get user settings
-        settings = self.settings_repository.get_user_settings(user_id)
+        settings = self.__settings_repository.get_user_settings(user_id)
 
         if "scheduler" in settings and "seconds" in settings['scheduler']:
             seconds = settings['scheduler']['seconds']
         else:
-            seconds = 1
+            seconds = 10
 
-        # if len(settings.keys()) == 0:
+        delta_t = job_index * self.__delta_t_increment + seconds
 
-        # create job based on these setting
-
-        delta_t = job_index * self.delta_t_increment + seconds
-
-        self.scheduler.add_job(
+        self.__scheduler.add_job(
             self.__start_user_domains_scanning,
             'interval',
             # max_instances=1,
@@ -103,14 +106,22 @@ class UsersDomainsScannerJob:
 
 
     def re_schedule_job(self, user_id):
-        self.scheduler.remove_job(user_id)
+        try:
+            self.__scheduler.remove_job(user_id)
 
-        total_jobs = len(self.scheduler.get_jobs())
-        self.__add_schedular_job(user_id, total_jobs)
+            total_jobs = len(self.__scheduler.get_jobs())
+            self.__add_schedular_job(user_id, total_jobs)
+
+        except Exception as err:
+            print(f"try to reschedule job but get error: {err}")
 
     def add_new_job(self, user_id):
-        total_jobs = len(self.scheduler.get_jobs())
-        self.__add_schedular_job(user_id, total_jobs)
+        try:
+            total_jobs = len(self.__scheduler.get_jobs())
+            self.__add_schedular_job(user_id, total_jobs)
+        except Exception as err:
+            print(f"try to add new job but get error: {err}")
+
 
 
 

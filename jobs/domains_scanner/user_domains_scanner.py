@@ -1,40 +1,53 @@
+import concurrent.futures
+
 import requests
 from datetime import datetime
 import ssl
 import socket
+import time
 
 from repositories.domains_repository import DomainsRepository
 
 
 class UserDomainsScanner:
 
-
     def __init__(self):
         self.domain_repository = DomainsRepository()
 
     def scan_user_domains(self, user_id):
         try:
-            domains_dict = self.domain_repository.get_domains(user_id)
+            domains_table = self.domain_repository.get_domains(user_id)
 
-            if not domains_dict:
-                # return {"error": "No domains to scan for this user."}
+            if not domains_table:
+                print(f"No existing domains to scan for user={user_id}")
                 return
 
-            domainsKeys = list(domains_dict.keys())
+            domains_keys = list(domains_table.keys())
 
-            # test one case for now
-            domain_obj: dict[str, any] = domains_dict[domainsKeys[0]]
+            t0 = time.time()
 
-            if not "domain" in domain_obj:
-                raise Exception("domain property is missing")
+            for domain_key in domains_keys:
+                self.do_scans(user_id, domains_table, domain_key)
 
-            self.scan_domain(domain_obj)
-            self.get_ssl_properties(domain_obj)
-
-            self.domain_repository.update_domain_status(user_id, domain_obj)
+            time_diff = time.time() - t0
+            print(f"complete scan of {len(domains_keys)} domains in {time_diff} seconds")
 
         except Exception as e:
             print(str(e))
+
+    def do_scans(self, user_id, domains_dict, domain_key):
+        domain_obj: dict[str, any] = domains_dict[domain_key]
+
+        if not "domain" in domain_obj:
+            raise Exception("domain property is missing")
+
+        domain = domain_obj["domain"]
+        print(f"start monitoring of domain={domain}")
+
+        self.scan_domain(domain_obj)
+        self.get_ssl_properties(domain_obj)
+
+        self.domain_repository.update_domain_status(user_id, domain_obj)
 
     def scan_domain(self, domain_obj: dict[str, any]):
         try:

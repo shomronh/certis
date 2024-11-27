@@ -144,7 +144,7 @@ function fetchForDomainsPeriodically(){
   populateTable();
 
   setInterval(async () => {
-    print(`fetchForDomainsPeriodically: start populateTable()`)
+    console.log(`fetchForDomainsPeriodically: start populateTable()`)
     await populateTable();
   }, 5000)
 }
