@@ -4,101 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoniTin System Dashboard</title>
-    <link rel="stylesheet" href="/static/dashboard.css">
-    <style>
-        .dashboard-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .dashboard-table th, .dashboard-table td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .dashboard-table th {
-            background-color: #f4f4f4;
-            font-weight: bold;
-        }
-
-        .dashboard-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .dashboard-table tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        /* Modal styling */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            border-radius: 8px;
-            width: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .modal-footer {
-            margin-top: 20px;
-            text-align: right;
-        }
-
-        .modal-footer button {
-            padding: 10px 15px;
-            margin-left: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .modal-footer .close-btn {
-            background-color: #f44336;
-            color: white;
-        }
-
-        .modal-footer .submit-btn {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .modal input, .modal label {
-            display: block;
-            margin: 10px 0;
-            width: 100%;
-        }
-
-        .delete-icon {
-            cursor: pointer;
-            color: #f44336;
-            font-size: 18px;
-        }
-
-    </style>
+    <link rel="stylesheet" href="/static/dashboardPage.css">
 </head>
 <body>
     <header>
-        <h1>MoniTin System Dashboard</h1>
+        <h1>Dashboard</h1>
         <a href="logout" class="logout">LOGOUT</a>
     </header>
 
