@@ -57,7 +57,7 @@ class UserDomainsScanner:
             raise Exception("domain property is missing")
 
         domain = domain_obj["domain"]
-        print(f"start monitoring of domain={domain}")
+        print(f"start monitoring user_id={user_id} domain={domain}")
 
         self.scan_domain(domain_obj)
         self.get_ssl_properties(domain_obj)

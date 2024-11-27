@@ -53,7 +53,7 @@ class UsersDomainsScannerJob:
 
         self.__is_started = True
 
-        is_testing = True
+        is_testing = False
 
         if is_testing:
             self.__users = {"test1": {}}
@@ -131,6 +131,7 @@ class UsersDomainsScannerJob:
 
     def add_new_job(self, user_id):
         try:
+            print(f"add new job for {user_id}")
             total_jobs = len(self.__scheduler.get_jobs())
             self.add_queue_for_user(user_id)
             self.__add_schedular_job(user_id, total_jobs)
