@@ -32,6 +32,16 @@ class DomainsRepository:
         with open(file_path, "r") as file:
             domains = json.load(file)
 
+        return domains
+
+    def get_domains_list(self, user_id: str):
+        file_path = self.__get_file_path(user_id)
+
+        if not os.path.exists(file_path):
+            domains = {}
+        with open(file_path, "r") as file:
+            domains = json.load(file)
+
         items = []
         for key, value in domains.items():
             items.append(value)

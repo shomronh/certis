@@ -1,25 +1,22 @@
 
 function populateDomainsTable(domains) {
-  // Assuming there is a <table> with id="myTable"
-  const table = document.getElementById("domainsTable");
+  const tableBody = document.getElementById('domainsTable').querySelector('tbody');
 
   // Loop through the data array and create a row for each item
   for (let i = 0; i < domains.length; i++) {
     const item = domains[i];
 
-    const issuer = 
-      item.ssl_issuer && 
-      item.ssl_issuer[1] && 
-      item.ssl_issuer[1][0] &&
-      item.ssl_issuer[1][0][1] ? item.ssl_issuer[1][0][1] : "N/A"
+    const sslExpiration = item.ssl_expiration ? item.ssl_expiration : "N/A";
 
-    const row = createTableRow(
-      item.domain,
-      item.status,
-      item.ssl_expiration ? item.ssl_expiration : "N/A",
-      issuer
-    );
-    table.appendChild(row); // Append the row to the table
+    const issuer =
+      item.ssl_issuer &&
+        item.ssl_issuer[1] &&
+        item.ssl_issuer[1][0] &&
+        item.ssl_issuer[1][0][1] ? item.ssl_issuer[1][0][1] : "N/A";
+
+    const row = createTableRow(item.domain, item.status, sslExpiration, issuer);
+
+    tableBody.appendChild(row);
   }
 }
 
@@ -72,3 +69,57 @@ async function populateTable() {
 }
 
 populateTable();
+
+function handleAddDomainPopup() {
+  const addDomainBtn = document.getElementById('addDomainBtn');
+  const modal = document.getElementById('addDomainModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const addDomainForm = document.getElementById('addDomainForm');
+  const domainTable = document.getElementById('domainsTable').getElementsByTagName('tbody')[0];
+
+  // Open the modal when "Add Domain" is clicked
+  addDomainBtn.addEventListener('click', () => {
+    modal.style.display = 'block';
+  });
+
+  // Close the modal when "Cancel" is clicked
+  closeModalBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  // Close the modal if the user clicks outside of it
+  window.addEventListener('click', (event) => {
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  // Handle form submission
+  addDomainForm.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Prevent form from refreshing the page
+    const domainName = document.getElementById('domainName').value;
+
+    if (domainName) {
+
+      const results = await DomainsService.getInstance().addDomain(domainName);
+      results.isOk && populateTable();
+    } else {
+      alert('Please enter a domain name.');
+    }
+
+    // Close modal after submission
+    // modal.style.display = 'none';
+
+    // Reset the form
+    // addDomainForm.reset();
+
+    // Function to delete a row
+    function deleteRow(deleteButton) {
+      const row = deleteButton.parentElement.parentElement; // Get the row to delete
+      row.remove(); // Remove the row
+      alert('Row deleted successfully!'); // Show confirmation
+    }
+  })
+}
+
+handleAddDomainPopup()

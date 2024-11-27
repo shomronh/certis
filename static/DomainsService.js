@@ -14,25 +14,36 @@ class DomainsService {
     }
 
     // Function to add a domain to the backend
-    async addDomain(data, messageBox) {
+    async addDomain(domain, messageBox) {
         try {
+
+            const username = LocalStorageService.getInstance().getItem("username")
+
             // Send a POST request to the backend to add a domain
-            const response = await fetch(`${this.#backendUrl}/add_domain`, {
+            const response = await fetch(`${this.#backendUrl}/domains/add`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",  // Set the content type as JSON
+                    "Content-Type": "application/json",  
                 },
-                body: JSON.stringify(data),  // Send the data as JSON in the request body
+                // Sends cookies from the current session
+                credentials: 'include',
+                body: JSON.stringify({ user_id: username, domain })
             });
 
             // Parse the response from the backend
             const responseData = await response.json();
-            return responseData;  // Return the response to be handled by the frontend
+
+            if(response.ok) {
+                return {isOk: true, message: responseData}
+            }
+            return {isOk: false, message: responseData}
+
         } catch (error) {
             // Handle any errors and show a message in the messageBox
-            messageBox.textContent = "An error occurred while adding the domain.";
-            messageBox.style.color = "red";
-            return { message: "An error occurred", error: true, ok: false };
+            // messageBox.textContent = "An error occurred while adding the domain.";
+            // messageBox.style.color = "red";
+            console.error(error)
+            return { isOk: false, message: "An error occurred" };
         }
     }
 
