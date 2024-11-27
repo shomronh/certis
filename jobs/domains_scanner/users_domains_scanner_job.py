@@ -37,9 +37,9 @@ class UsersDomainsScannerJob:
             return UsersDomainsScannerJob._instance
 
     def __init__(self):
-        self.__usersRepository = UsersRepository()
-        self.__domain_repository = DomainsRepository()
-        self.__settings_repository = SettingsRepository()
+        self.__usersRepository = UsersRepository.get_instance()
+        self.__domain_repository = DomainsRepository.get_instance()
+        self.__settings_repository = SettingsRepository.get_instance()
 
         self.__scheduler = BackgroundScheduler()
         self.__is_started = False

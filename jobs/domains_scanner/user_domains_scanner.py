@@ -13,7 +13,7 @@ from repositories.domains_repository import DomainsRepository
 class UserDomainsScanner:
 
     def __init__(self):
-        self.domain_repository = DomainsRepository()
+        self.domain_repository = DomainsRepository.get_instance()
 
     def get_next_domains(self, user_id, domains_queue: queue.Queue):
 
