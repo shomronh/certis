@@ -39,12 +39,24 @@ function createTableRow(domain, status, expiry, certificate) {
   tdCertificate.textContent = certificate;
 
   const tdDelete = document.createElement('td');
+
   const deleteIcon = document.createElement('span');
   deleteIcon.classList.add('delete-icon');
+  deleteIcon.setAttribute("data-domain", domain);
   deleteIcon.textContent = '🗑️';
-  deleteIcon.onclick = function () {
-    deleteRow(deleteIcon); // Calls the deleteRow function when clicked
+  deleteIcon.onclick = async function () {
+    await deleteRow(deleteIcon); // Calls the deleteRow function when clicked
   };
+
+  async function deleteRow(deleteButton) {
+
+    const domain = deleteIcon.getAttribute("data-domain")
+    await DomainsService.getInstance().deleteDomain(domain);
+
+    // const row = deleteButton.parentElement.parentElement;
+    // row.remove();
+  }
+
   tdDelete.appendChild(deleteIcon);
 
 
@@ -123,17 +135,10 @@ function handleAddDomainPopup() {
     }
 
     // Close modal after submission
-    // modal.style.display = 'none';
+    modal.style.display = 'none';
 
     // Reset the form
-    // addDomainForm.reset();
-
-    // Function to delete a row
-    function deleteRow(deleteButton) {
-      const row = deleteButton.parentElement.parentElement; // Get the row to delete
-      row.remove(); // Remove the row
-      alert('Row deleted successfully!'); // Show confirmation
-    }
+    addDomainForm.reset();
   })
 }
 

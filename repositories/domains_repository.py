@@ -21,7 +21,13 @@ class DomainsRepository:
             if domain in domains_table:
                 return f"Domain {domain} already exists.", False
 
-            domains_table[domain] = {"domain": domain, "status": "Pending", "last_check": "N/A", "status_error": "N/A"}
+            domains_table[domain] = {
+                "domain": domain,
+                "status": "Pending",
+                "last_check": "N/A",
+                "status_error": "N/A",
+                "deleted": "false"
+            }
 
             self.__save_domains(user_id, domains_table)
 
@@ -29,6 +35,24 @@ class DomainsRepository:
         finally:
             self.__lock.release()
 
+    def delete_domain(self, user_id: str, domain: str):
+
+        try:
+            self.__lock.acquire()
+
+            domains_table = self.get_domains(user_id)
+
+            if not domain in domains_table:
+                return f"Domain {domain} doesnt exists.", False
+
+            exiting_domain = domains_table[domain]
+            exiting_domain["deleted"] = "true"
+
+            self.__save_domains(user_id, domains_table)
+
+            return f"Domain {domain} added successfully", True
+        finally:
+            self.__lock.release()
 
     def get_domains(self, user_id: str):
         file_path = self.__get_file_path(user_id)
@@ -52,6 +76,8 @@ class DomainsRepository:
 
         items = []
         for key, value in domains.items():
+            if "deleted" in value and value["deleted"] == "true":
+                continue
             items.append(value)
 
         return items
@@ -62,6 +88,7 @@ class DomainsRepository:
             # self.__lock.acquire()
 
             file_path = self.__get_file_path(user_id)
+
             with open(file_path, "w") as file:
                 json.dump(domains_table, file, indent=4)
 

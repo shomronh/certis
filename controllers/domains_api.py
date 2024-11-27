@@ -43,6 +43,33 @@ class DomainsApi:
             except Exception as e:
                 return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR
 
+        @app.route("/domains/delete", methods=["POST"])
+        def delete_domain():
+
+            try:
+                # TODO: ensure that username from the session is the same as the user_id, otherwise return HTTPStatus.UNAUTHORIZED
+
+                if "username" not in session:
+                    return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
+
+                data = request.get_json()
+
+                if not data:
+                    return jsonify({"message": "User ID and domain are required"}), HTTPStatus.UNAUTHORIZED
+
+                user_id = data.get("user_id")
+                domain = data.get("domain")
+
+                message, is_ok = service.delete_domain(user_id, domain)
+
+                if is_ok:
+                    return jsonify({"message": message}), HTTPStatus.OK
+                else:
+                    # No Content = 208 meaning everything is ok but nothing was done
+                    # for example the domain already exists
+                    return jsonify({"message": message}), HTTPStatus.ALREADY_REPORTED
+            except Exception as e:
+                return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR
 
         @app.route("/domains/user/<id>", methods=["GET"])
         def get_domains(id):

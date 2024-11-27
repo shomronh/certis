@@ -23,7 +23,20 @@ class DomainsService:
         result = self.domain_repository.add_domain(user_id, cleanedDomain)
 
         return result
-    
+
+    def delete_domain(self, user_id, domain):
+
+        if not user_id or ' ' in user_id or len(user_id) == 0 or len(user_id) <= 3:
+            return 'Empty or Invalid username', False
+
+        if not self.is_valid_domain(domain):
+            return "Invalid domain format", False
+
+        cleanedDomain = self.clean_domain(domain)
+        result = self.domain_repository.delete_domain(user_id, cleanedDomain)
+
+        return result
+
     def get_domains(self, user_id):
 
         # Validations

@@ -13,7 +13,6 @@ class DomainsService {
         return DomainsService.#_instance
     }
 
-    // Function to add a domain to the backend
     async addDomain(domain, messageBox) {
         try {
 
@@ -47,7 +46,39 @@ class DomainsService {
         }
     }
 
-    // Function to handle bulk upload (e.g., uploading a file)
+    async deleteDomain(domain, messageBox) {
+        try {
+
+            const username = LocalStorageService.getInstance().getItem("username")
+
+            // Send a POST request to the backend to add a domain
+            const response = await fetch(`${this.#backendUrl}/domains/delete`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                // Sends cookies from the current session
+                credentials: 'include',
+                body: JSON.stringify({ user_id: username, domain })
+            });
+
+            // Parse the response from the backend
+            const responseData = await response.json();
+
+            if (response.ok) {
+                return { isOk: true, message: responseData }
+            }
+            return { isOk: false, message: responseData }
+
+        } catch (error) {
+            // Handle any errors and show a message in the messageBox
+            // messageBox.textContent = "An error occurred while adding the domain.";
+            // messageBox.style.color = "red";
+            console.error(error)
+            return { isOk: false, message: `An error occurred: ${error.message}` };
+        }
+    }
+
     async uploadDomainsFile(formData, messageBox) {
         try {
             // Send a POST request with the form data (including the file) for bulk upload
