@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 
+from services.session_manager_service import SessionManagerService
 from services.settings_service import SettingsService
 
 
@@ -16,9 +17,6 @@ class SettingsApi:
         def setting_scheduler():
 
             try:
-                if "username" not in session:
-                    return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
-
                 data = request.get_json()
 
                 if not data:
@@ -26,6 +24,9 @@ class SettingsApi:
 
                 user_id = data.get("user_id")
                 settings = data.get("settings")
+
+                if not SessionManagerService.get_instance().validate_session(session, user_id):
+                    return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
 
                 message, is_ok = self.settingsService.update_scheduler_settings(user_id, settings)
 

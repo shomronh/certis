@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 import re
 from werkzeug.utils import secure_filename
 from services.domains_service import DomainsService
+from services.session_manager_service import SessionManagerService
 
 
 class DomainsApi:
@@ -18,12 +19,6 @@ class DomainsApi:
         def add_domain():
 
             try:
-
-                # TODO: ensure that username from the session is the same as the user_id, otherwise return HTTPStatus.UNAUTHORIZED
-
-                if "username" not in session:
-                    return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
-
                 data = request.get_json()
 
                 if not data:
@@ -31,6 +26,9 @@ class DomainsApi:
 
                 user_id = data.get("user_id")
                 domain = data.get("domain")
+
+                if not SessionManagerService.get_instance().validate_session(session, user_id):
+                    return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
 
                 message, is_ok = service.add_domain(user_id, domain)
 
@@ -47,11 +45,6 @@ class DomainsApi:
         def delete_domain():
 
             try:
-                # TODO: ensure that username from the session is the same as the user_id, otherwise return HTTPStatus.UNAUTHORIZED
-
-                if "username" not in session:
-                    return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
-
                 data = request.get_json()
 
                 if not data:
@@ -59,6 +52,9 @@ class DomainsApi:
 
                 user_id = data.get("user_id")
                 domain = data.get("domain")
+
+                if not SessionManagerService.get_instance().validate_session(session, user_id):
+                    return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
 
                 message, is_ok = service.delete_domain(user_id, domain)
 
@@ -75,12 +71,8 @@ class DomainsApi:
         def get_domains(id):
 
             try:
-                # TODO: ensure that username from the session is the same as the user_id, otherwise return HTTPStatus.UNAUTHORIZED
-                if "username" not in session:
+                if not SessionManagerService.get_instance().validate_session(session, id):
                     return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
-
-                if not id or ' ' in id or len(id) == 0:
-                    return jsonify({"message": "Empty or Invalid id'"}), HTTPStatus.UNAUTHORIZED
 
                 results = service.get_domains(id)
 
@@ -93,14 +85,14 @@ class DomainsApi:
         def bulk_upload():
 
             try:
-                if "username" not in session:
-                    return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
-
                 if not request.files or not request.form:
                     return jsonify({"message": "User ID and file are required"}), HTTPStatus.UNAUTHORIZED
 
                 user_id = request.form['user_id']
                 file = request.files.get("file")
+
+                if not SessionManagerService.get_instance().validate_session(session, user_id):
+                    return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
 
                 if not allowed_file(file.filename):
                     return jsonify({"message": "invalid file format or content"}), HTTPStatus.UNAUTHORIZED
