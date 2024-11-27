@@ -32,7 +32,7 @@ class DomainsRepository:
 
             domains_table = self.get_domains(user_id)
 
-            if domain in domains_table:
+            if domain in domains_table and domains_table[domain]["deleted"] == "false":
                 return f"Domain {domain} already exists.", False
 
             domains_table[domain] = {
@@ -80,6 +80,13 @@ class DomainsRepository:
             else:
                 with open(file_path, "r") as file:
                     domains = json.load(file)
+
+            # filter
+            res = {}
+            for key, value in domains.items():
+                if "deleted" in value and value["deleted"] == "true":
+                    continue
+                res[key]=value
 
             return domains
         finally:
@@ -141,3 +148,4 @@ class DomainsRepository:
 
     def __get_file_path(self, user_id: str):
         return os.path.join(self.__directory, f"{user_id}_domains.json")
+        

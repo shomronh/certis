@@ -27,6 +27,8 @@ class UsersRepository:
         if not os.path.exists(self.__directory):
             os.makedirs(self.__directory)
 
+        self.create_file_datasource_if_not_exist()
+
     def register(self, username, password):
 
         try:
@@ -92,5 +94,10 @@ class UsersRepository:
 
     def __get_file_path(self):
         return os.path.join(self.__directory, "users.json")
+    
+    def create_file_datasource_if_not_exist(self):
+        if not os.path.isfile(self.__get_file_path()):
+            with open(self.__get_file_path(), "w") as file:
+                json.dump({}, file, indent=4)
 
 

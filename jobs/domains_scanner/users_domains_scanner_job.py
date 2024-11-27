@@ -63,6 +63,11 @@ class UsersDomainsScannerJob:
             thread_pool = ThreadPoolExecutor(min(len(self.__users), 1))
         else:
             self.__users = self.__usersRepository.get_users()
+
+            if len(self.__users) == 0:
+                self.__is_started = False
+                return
+
             thread_pool = ThreadPoolExecutor(min(len(self.__users), 5))
 
         # populate table of users queues
@@ -134,6 +139,10 @@ class UsersDomainsScannerJob:
 
     def add_new_job(self, user_id):
         try:
+            if not self.__is_started:
+                self.start()
+                self.__is_started = True
+
             print(f"add new job for {user_id}")
             total_jobs = len(self.__scheduler.get_jobs())
             self.add_queue_for_user(user_id)
