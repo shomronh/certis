@@ -132,16 +132,26 @@ class DomainsRepository:
         # finally:
         #     self.__lock.release()
 
+    # accessed by user_domain_scanner
     def update_domain_status(self, user_id: str, domain_dict: dict[str, any]):
         try:
             self.__lock.acquire()
 
-            domains_table = self.get_domains(user_id, False)
+            domains_table_from_db = self.get_domains(user_id, False)
+
             domain = domain_dict["domain"]
 
-            if domain in domains_table:
-                domains_table[domain] = domain_dict
-                self.__save_domains(user_id, domains_table)
+            if domain in domains_table_from_db:
+                
+                # when the user domain scanner is upading data check if domain 
+                # ensure to keep the deleted property from the db before updating
+                # the record into the json file
+                is_deleted_from_db = domains_table_from_db[domain]["deleted"]
+                domain_dict["deleted"] = is_deleted_from_db
+
+                domains_table_from_db[domain] = domain_dict
+
+                self.__save_domains(user_id, domains_table_from_db)
             else:
                 raise ValueError(f"Domain '{domain}' not found for user '{user_id}'.")
         finally:
