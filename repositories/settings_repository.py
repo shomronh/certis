@@ -4,8 +4,9 @@ import os
 import threading
 
 class SettingsRepository:
+
     # static variables
-    _instance: 'SettingsRepository' = None
+    _instance = None
     _lock = threading.Lock()
 
     # other variables

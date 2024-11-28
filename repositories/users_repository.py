@@ -6,8 +6,9 @@ from flask import jsonify
 
 
 class UsersRepository:
+
     # static variables
-    _instance: 'UsersRepository' = None
+    _instance = None
     _lock = threading.Lock()
 
     # other variables

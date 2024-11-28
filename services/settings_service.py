@@ -6,7 +6,7 @@ import threading
 class SettingsService:
 
     # static variables
-    _instance: 'SettingsService' = None
+    _instance = None
     _lock = threading.Lock()
 
     # other variables

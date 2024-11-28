@@ -7,7 +7,7 @@ from repositories.users_repository import UsersRepository
 class RegisterService:
 
     # static variables
-    _instance: 'RegisterService' = None
+    _instance = None
     _lock = threading.Lock()
 
     # other variables

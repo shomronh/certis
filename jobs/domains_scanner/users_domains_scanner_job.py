@@ -23,7 +23,7 @@ from repositories.users_repository import UsersRepository
 class UsersDomainsScannerJob:
 
     # static variables
-    _instance: 'UsersDomainsScannerJob' = None
+    _instance = None
     _lock = threading.Lock()
 
     # other variables

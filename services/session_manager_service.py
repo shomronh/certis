@@ -4,7 +4,7 @@ import threading
 class SessionManagerService:
 
     # static variables
-    _instance: 'SessionManagerService' = None
+    _instance = None
     _lock = threading.Lock()
 
     # other variables

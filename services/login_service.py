@@ -6,7 +6,7 @@ from repositories.users_repository import UsersRepository
 class LoginService:
 
     # static variables
-    _instance: 'LoginService' = None
+    _instance = None
     _lock = threading.Lock()
 
     # other variables

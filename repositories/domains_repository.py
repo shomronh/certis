@@ -5,7 +5,7 @@ import threading
 class DomainsRepository:
 
     # static variables
-    _instance: 'DomainsRepository' = None
+    _instance = None
     _lock = threading.Lock()
 
     # other variables
