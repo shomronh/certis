@@ -56,6 +56,11 @@ class UserDomainsScanner:
         if not "domain" in domain_obj:
             raise Exception("domain property is missing")
 
+        deleted = domain_obj["deleted"]
+        if deleted == "true":
+            print(f"domain considered deleted, no need to monitor")
+            return
+
         domain = domain_obj["domain"]
         print(f"start monitoring user_id={user_id} domain={domain}")
 
