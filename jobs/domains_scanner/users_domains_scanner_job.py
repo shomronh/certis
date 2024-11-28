@@ -28,15 +28,20 @@ class UsersDomainsScannerJob:
 
     # other variables
 
-    # TODO: ensure the singleton is thread safe
-    @staticmethod
-    def get_instance():
-        with UsersDomainsScannerJob._lock:
-            if not UsersDomainsScannerJob._instance:
-                UsersDomainsScannerJob._instance = UsersDomainsScannerJob()
-            return UsersDomainsScannerJob._instance
+    @classmethod
+    def get_instance(cls):
+        with cls._lock:
+            if not cls._instance:
+                cls._instance = cls.__new__(cls)
+                cls._instance.__init()
+            return cls._instance
 
+    # to avoid creation an object usually which will then call
+    # then __init__ method we can rais an RuntimeError
     def __init__(self):
+        raise RuntimeError('Call get_instance() instead')
+
+    def __init(self):
         self.__usersRepository = UsersRepository.get_instance()
         self.__domain_repository = DomainsRepository.get_instance()
         self.__settings_repository = SettingsRepository.get_instance()

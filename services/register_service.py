@@ -12,15 +12,20 @@ class RegisterService:
 
     # other variables
 
-    # TODO: ensure the singleton is thread safe
-    @staticmethod
-    def get_instance():
-        with RegisterService._lock:
-            if not RegisterService._instance:
-                RegisterService._instance = RegisterService()
-            return RegisterService._instance
+    @classmethod
+    def get_instance(cls):
+        with cls._lock:
+            if not cls._instance:
+                cls._instance = cls.__new__(cls)
+                cls._instance.__init()
+        return cls._instance
 
+    # to avoid creation an object usually which will then call
+    # then __init__ method we can rais an RuntimeError
     def __init__(self):
+        raise RuntimeError('Call get_instance() instead')
+
+    def __init(self):
         self.usersRepository = UsersRepository.get_instance()
 
     def register(self, username, password):
