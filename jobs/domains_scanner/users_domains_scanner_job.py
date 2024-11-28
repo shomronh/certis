@@ -34,7 +34,7 @@ class UsersDomainsScannerJob:
             if not cls._instance:
                 cls._instance = cls.__new__(cls)
                 cls._instance.__init()
-            return cls._instance
+        return cls._instance
 
     # to avoid creation an object usually which will then call
     # then __init__ method we can rais an RuntimeError
