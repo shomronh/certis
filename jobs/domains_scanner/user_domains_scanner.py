@@ -54,14 +54,20 @@ class UserDomainsScanner:
     def do_scans(self, user_id, domain_obj: dict[str, any]):
 
         if not "domain" in domain_obj:
-            raise Exception("domain property is missing")
+            print("domain property is missing, skipping")
+            return
 
-        deleted = domain_obj["deleted"]
-        if deleted == "true":
-            print(f"domain considered deleted, no need to monitor")
+        if not "deleted" in domain_obj:
+            print("deleted property is missing, skipping")
             return
 
         domain = domain_obj["domain"]
+        deleted = domain_obj["deleted"]
+
+        if deleted == "true":
+            print(f"domain={domain} considered deleted, no need to monitor")
+            return
+
         print(f"start monitoring user_id={user_id} domain={domain}")
 
         self.scan_domain(domain_obj)
