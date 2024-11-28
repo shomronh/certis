@@ -1,3 +1,4 @@
+import os
 import queue
 
 import requests
@@ -54,6 +55,11 @@ class UsersDomainsScannerJob:
 
         self.__delta_t_increment = 2
 
+        # thread_pool = ThreadPoolExecutor(min(len(self.__users), 5))
+        # thread_pool = ThreadPoolExecutor(max_workers=40)
+        logical_cores = os.cpu_count()
+        self.__thread_pool = ThreadPoolExecutor(max_workers=logical_cores)
+
     def start(self):
 
         if self.__is_started:
@@ -73,13 +79,11 @@ class UsersDomainsScannerJob:
                 self.__is_started = False
                 return
 
-            thread_pool = ThreadPoolExecutor(min(len(self.__users), 5))
-
         # populate table of users queues
         for user_id in self.__users.keys():
             self.add_queue_for_user(user_id)
 
-        self.__scheduler.add_executor(thread_pool, alias='default')
+        self.__scheduler.add_executor(self.__thread_pool, alias='default')
 
         index = 0
         for user_id in self.__users.keys():
