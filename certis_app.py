@@ -39,7 +39,7 @@ class CertisApp:
         self._app.secret_key = os.urandom(24)  # secured random key
 
         # Enable CORS for all routes and all origins
-        CORS(self._app)
+        CORS(self._app, origins='*')
 
         self.__setup_session()
 
