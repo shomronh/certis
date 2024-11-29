@@ -1,5 +1,7 @@
 const loginForm = document.getElementById('login-form');
 
+const backendUrl = "http://127.0.0.1:8080";
+
 loginForm.addEventListener('submit', async function(event) {
     event.preventDefault(); // Prevent the default form submission
 
@@ -13,7 +15,7 @@ loginForm.addEventListener('submit', async function(event) {
 async function handleLogin(username, password) {
     try {
         // Make the POST request to the Flask backend
-        const response = await fetch('/login', {
+        const response = await fetch(`${backendUrl}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

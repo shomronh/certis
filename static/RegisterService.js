@@ -1,8 +1,9 @@
 
+const backendUrl = "http://127.0.0.1:8080";
 
 async function dataInsert(username, password) {
     try {
-        const response = await fetch('/register', {
+        const response = await fetch(`${backendUrl}/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
