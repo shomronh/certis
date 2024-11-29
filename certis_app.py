@@ -3,6 +3,8 @@ import threading
 from datetime import timedelta
 import threading
 from flask import Flask
+import flask_cors
+from flask_cors import CORS
 
 from controllers.domains_api import DomainsApi
 from controllers.health_check_api import HealthCheckApi
@@ -35,6 +37,9 @@ class CertisApp:
         self._app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB
 
         self._app.secret_key = os.urandom(24)  # secured random key
+
+        # Enable CORS for all routes and all origins
+        CORS(self._app)
 
         self.__setup_session()
 
