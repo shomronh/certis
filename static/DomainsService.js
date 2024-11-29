@@ -1,7 +1,7 @@
 
 class DomainsService {
 
-    #backendUrl = "http://127.0.0.1:8080";
+    #backendUrl = EnvVariablesService.getInstance().backendUrl;
 
     // private fields start with #
     static #_instance

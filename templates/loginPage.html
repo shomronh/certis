@@ -32,7 +32,12 @@
         </footer>
     </div>
 
+    <script src="static/EnvVariablesService.js"></script>
     <script src="static/LocalStorageService.js"></script>
+    <script type="text/javascript">
+        EnvVariablesService.getInstance().backendUrl = '{{ BACKEND_URL }}'
+    </script>
+    
     <script src="static/loginPage.js"></script>
 </body>
 </html>

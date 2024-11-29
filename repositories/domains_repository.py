@@ -2,6 +2,10 @@ import json
 import os
 import threading
 
+# TODO:
+#  when stopping the app while we are writing the JSON file
+#  it can end with wrong json we need a way to handle to use case
+
 class DomainsRepository:
 
     # static variables

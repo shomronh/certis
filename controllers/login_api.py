@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from http import HTTPStatus
+
+from env_variable_service import EnvVariablesService
 from repositories.users_repository import UsersRepository
 from services.login_service import LoginService
 
@@ -45,13 +47,18 @@ class LoginApi:
         def dashboard():
             if "username" in session:
                 username = session["username"]
-                return render_template('dashboardPage.html', username=username)
+                return render_template(
+                    'dashboardPage.html',
+                    username=username,
+                    BACKEND_URL=EnvVariablesService.get_instance().get_backend_api())
             else:
                 return redirect(url_for("loginPage"))
 
         @app.route('/loginPage')
         def loginPage():
-            return render_template('loginPage.html')
+            return render_template(
+                'loginPage.html',
+                BACKEND_URL=EnvVariablesService.get_instance().get_backend_api())
 
 
 

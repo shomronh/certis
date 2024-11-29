@@ -1,5 +1,5 @@
 
-const backendUrl = "http://127.0.0.1:8080";
+const backendUrl = EnvVariablesService.getInstance().backendUrl;
 
 async function dataInsert(username, password) {
     try {

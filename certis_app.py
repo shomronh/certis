@@ -11,6 +11,7 @@ from controllers.health_check_api import HealthCheckApi
 from controllers.login_api import LoginApi
 from controllers.register_api import RegisterApi
 from controllers.settings_api import SettingsApi
+from env_variable_service import EnvVariablesService
 from jobs.domains_scanner.users_domains_scanner_job import UsersDomainsScannerJob
 
 
@@ -33,6 +34,9 @@ class CertisApp:
 
     # private method
     def __start(self):
+
+        EnvVariablesService.get_instance()
+
         self._app = Flask(__name__)
         self._app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB
 
@@ -112,8 +116,6 @@ class CertisApp:
 
     def join(self):
         self._thread.join()
-
-
 
 if __name__ == '__main__':
     app = CertisApp.get_instance()
