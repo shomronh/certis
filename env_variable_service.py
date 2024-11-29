@@ -27,7 +27,7 @@ class EnvVariablesService:
     def __init(self):
 
         # if not found default is dev
-        env = os.getenv('ENV', 'dev')
+        env = os.getenv('CERTIS_BACKEND_ENV', 'dev')
 
         if env == 'dev':
             load_dotenv('.env.dev')
