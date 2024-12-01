@@ -55,6 +55,7 @@ class UsersRepository:
                 # Save the updated data back to the JSON file
                 with open(self.__get_file_path(), "w") as file:
                     json.dump(users, file, indent=4)
+                    file.flush()
 
             return "User registered successfully", True
 
@@ -105,5 +106,6 @@ class UsersRepository:
         if not os.path.isfile(self.__get_file_path()):
             with open(self.__get_file_path(), "w") as file:
                 json.dump({}, file, indent=4)
+                file.flush()
 
 

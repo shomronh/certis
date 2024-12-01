@@ -141,6 +141,7 @@ class DomainsRepository:
 
             with open(file_path, "w") as file:
                 json.dump(domains_table, file, indent=4)
+                file.flush()
 
         # finally:
         #     self.__lock.release()

@@ -48,6 +48,7 @@ class SettingsRepository:
 
             with open(file_path, "w") as file:
                 json.dump(data, file, indent=4)
+                file.flush()
 
             return "scheduler settings updated successfully", True
         finally:
