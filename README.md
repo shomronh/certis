@@ -5,11 +5,9 @@ Certis
 
 ## instalation using git
 
-sudo -i
-
-cd /certis
-
-git pull
+sudo -i  
+cd /certis  
+git pull  
 
 
 ## Usage
