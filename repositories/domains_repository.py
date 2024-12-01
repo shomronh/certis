@@ -34,6 +34,8 @@ class DomainsRepository:
         if not os.path.exists(self.__directory):
             os.makedirs(self.__directory)
 
+    # if domain exists in domains file AND deleted == "false" => return already exists
+    # if domain [exists and deleted is "true"] or not => 
     def add_domain(self, user_id: str, domain: str):
 
         try:
@@ -44,6 +46,8 @@ class DomainsRepository:
             if domain in domains_table and domains_table[domain]["deleted"] == "false":
                 return f"Domain {domain} already exists.", False
 
+            # exists AND deleted == "true" OR not exists
+        
             domains_table[domain] = {
                 "domain": domain,
                 "status": "Pending",
