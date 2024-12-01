@@ -3,7 +3,7 @@
 
 Certis
 
-## instalation using git
+## update changes
 
 sudo -i  
 cd /certis  
