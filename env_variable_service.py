@@ -9,7 +9,7 @@ class EnvVariablesService:
     _lock = threading.Lock()
 
     # other variables
-    BACKEND_URL = "BACKEND_URL"
+    __BACKEND_URL = "BACKEND_URL"
 
     @classmethod
     def get_instance(cls):
@@ -31,12 +31,14 @@ class EnvVariablesService:
 
         if env == 'dev':
             load_dotenv('.env.dev')
+            print(f".env.dev loaded")
         elif env == 'prod':
             load_dotenv('.env.prod')
+            print(f".env.prod loaded")
         else:
             raise ValueError("Unknown environment")
 
-        print(f"BACKEND_URL={os.getenv(self.BACKEND_URL)}")
+        print(f"BACKEND_URL={os.getenv(self.__BACKEND_URL)}")
 
     def get_backend_url(self):
-        return os.getenv(self.BACKEND_URL)
+        return os.getenv(self.__BACKEND_URL)
