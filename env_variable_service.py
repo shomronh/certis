@@ -31,9 +31,9 @@ class EnvVariablesService:
 
         if env == 'dev':
             load_dotenv('.env.dev')
-            print(f".env.dev loaded")
+            print(f".env.dev loaded", verbose=True)
         elif env == 'prod':
-            load_dotenv('.env.prod')
+            load_dotenv('.env.prod', verbose=True)
             print(f".env.prod loaded")
         else:
             raise ValueError("Unknown environment")
