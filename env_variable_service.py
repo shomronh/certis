@@ -29,7 +29,9 @@ class EnvVariablesService:
 
         # if not found default is dev
         env = os.getenv('CERTIS_BACKEND_ENV', 'dev')
-        project_directory = os.getenv('CERTIS_PROJECT_DIRECTORY', '')
+
+        # project_directory = os.getenv('CERTIS_PROJECT_DIRECTORY', '')
+        project_directory = os.getcwd()
 
         print(f"env=${env} project_directory={project_directory}")
 
