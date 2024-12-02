@@ -3,7 +3,7 @@ Description=Certis Service
 After=network.target
 
 [Service]
-#ExecStart=/bin/bash -c 'source ./certis/certis_app.sh && ./certis/env_vars_prod.sh'
+WorkingDirectory=/certis
 #ExecStart=/certis/certis_app.sh
 ExecStart=/usr/local/bin/certis_app.sh 
 ExecStop=/bin/kill $MAINPID
