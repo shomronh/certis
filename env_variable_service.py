@@ -32,11 +32,11 @@ class EnvVariablesService:
         if env == 'dev':
             full_path = os.path.abspath(".env.dev")
             load_dotenv(full_path, verbose=True)
-            print(f".env.dev loaded")
+            print(f"full_path=${full_path} loaded")
         elif env == 'prod':
             full_path = os.path.abspath(".env.prod")
             load_dotenv(full_path, verbose=True)
-            print(f".env.prod loaded")
+            print(f"full_path=${full_path} loaded")
         else:
             raise ValueError("Unknown environment")
 
