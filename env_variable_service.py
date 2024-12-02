@@ -32,14 +32,16 @@ class EnvVariablesService:
 
         if env == 'dev':
             load_dotenv(find_dotenv('.env.dev', usecwd=True))
+            print(f"dotenv_values={dotenv_values('.env.dev')}")
             print(f".env.dev loaded")
         elif env == 'prod':
             load_dotenv(find_dotenv('.env.prod',usecwd=True))
+            print(f"dotenv_values={dotenv_values('.env.prod')}")
             print(f".env.prod loaded")
         else:
             raise ValueError("Unknown environment")
         
-        print(f"dotenv_values={dotenv_values()}")
+
 
         print(f"BACKEND_URL={os.getenv(self.__BACKEND_URL)}")
 
