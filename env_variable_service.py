@@ -36,7 +36,7 @@ class EnvVariablesService:
         else:
             raise ValueError("Unknown environment")
 
-        print(f"BACKEND_API={os.getenv(self.BACKEND_URL)}")
+        print(f"BACKEND_URL={os.getenv(self.BACKEND_URL)}")
 
     def get_backend_url(self):
         return os.getenv(self.BACKEND_URL)
