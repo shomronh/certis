@@ -50,7 +50,7 @@ class LoginApi:
                 return render_template(
                     'dashboardPage.html',
                     username=username,
-                    BACKEND_URL=EnvVariablesService.get_instance().get_backend_api())
+                    BACKEND_URL=EnvVariablesService.get_instance().get_backend_url())
             else:
                 return redirect(url_for("loginPage"))
 
@@ -58,7 +58,7 @@ class LoginApi:
         def loginPage():
             return render_template(
                 'loginPage.html',
-                BACKEND_URL=EnvVariablesService.get_instance().get_backend_api())
+                BACKEND_URL=EnvVariablesService.get_instance().get_backend_url())
 
 
 

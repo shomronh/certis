@@ -44,4 +44,4 @@ class RegisterApi:
         def RegisterPage():
             return render_template(
                 'registerPage.html',
-                BACKEND_URL=EnvVariablesService.get_instance().get_backend_api())
+                BACKEND_URL=EnvVariablesService.get_instance().get_backend_url())

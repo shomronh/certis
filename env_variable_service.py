@@ -38,5 +38,5 @@ class EnvVariablesService:
 
         print(f"BACKEND_API={os.getenv(self.BACKEND_URL)}")
 
-    def get_backend_api(self):
+    def get_backend_url(self):
         return os.getenv(self.BACKEND_URL)
