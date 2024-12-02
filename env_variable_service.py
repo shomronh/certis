@@ -30,10 +30,12 @@ class EnvVariablesService:
         env = os.getenv('CERTIS_BACKEND_ENV', 'dev')
 
         if env == 'dev':
-            load_dotenv('.env.dev')
-            print(f".env.dev loaded", verbose=True)
+            full_path = os.path.abspath(".env.dev")
+            load_dotenv(full_path, verbose=True)
+            print(f".env.dev loaded")
         elif env == 'prod':
-            load_dotenv('.env.prod', verbose=True)
+            full_path = os.path.abspath(".env.prod")
+            load_dotenv(full_path, verbose=True)
             print(f".env.prod loaded")
         else:
             raise ValueError("Unknown environment")
