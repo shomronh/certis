@@ -29,16 +29,16 @@ class EnvVariablesService:
 
         # if not found default is dev
         env = os.getenv('CERTIS_BACKEND_ENV', 'dev')
+        project_directory = os.getenv('CERTIS_PROJECT_DIRECTORY', '')
 
-        current_directory = os.getcwd()
-        print(f"current_directory=${current_directory}")
+        print(f"env=${env} project_directory={project_directory}")
 
         if env == 'dev':
-            path = find_dotenv('.env.dev', usecwd=True)
+            path =  os.path.join(project_directory, '.env.dev')
             load_dotenv(path)
             print(f"path={path} loaded, dotenv_values={dotenv_values(path)}")
         elif env == 'prod':
-            path = find_dotenv('.env.prod',usecwd=True)
+            path = os.path.join(project_directory, '.env.prod')
             load_dotenv(path)
             print(f"path={path} loaded, dotenv_values={dotenv_values(path)}")
         else:
