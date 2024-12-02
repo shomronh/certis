@@ -2,7 +2,7 @@
 const form = document.getElementById('register-form');
 const status = document.getElementById('status');
 
-form.addEventListener('submit', function(event) {
+form.addEventListener('submit', async function(event) {
     event.preventDefault();
 
     const username = document.getElementById('username').value;
@@ -11,5 +11,6 @@ form.addEventListener('submit', function(event) {
     event.target.reset();
     
     console.log(`Username: ${username}, Password: ${password}`);
-    register(username, password);
+    
+    await RegisterService.getInstance().register(username, password);
 });
