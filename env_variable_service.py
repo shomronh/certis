@@ -30,6 +30,9 @@ class EnvVariablesService:
         # if not found default is dev
         env = os.getenv('CERTIS_BACKEND_ENV', 'dev')
 
+        current_directory = os.getcwd()
+        print(f"current_directory=${current_directory}")
+
         if env == 'dev':
             path = find_dotenv('.env.dev', usecwd=True)
             load_dotenv(path)
