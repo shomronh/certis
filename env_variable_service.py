@@ -31,13 +31,13 @@ class EnvVariablesService:
         env = os.getenv('CERTIS_BACKEND_ENV', 'dev')
 
         if env == 'dev':
-            load_dotenv(find_dotenv('.env.dev', usecwd=True))
-            print(f"dotenv_values={dotenv_values('.env.dev')}")
-            print(f".env.dev loaded")
+            path = find_dotenv('.env.dev', usecwd=True)
+            load_dotenv(path)
+            print(f"path={path} loaded, dotenv_values={dotenv_values(path)}")
         elif env == 'prod':
-            load_dotenv(find_dotenv('.env.prod',usecwd=True))
-            print(f"dotenv_values={dotenv_values('.env.prod')}")
-            print(f".env.prod loaded")
+            path = find_dotenv('.env.prod',usecwd=True)
+            load_dotenv(path)
+            print(f"path={path} loaded, dotenv_values={dotenv_values(path)}")
         else:
             raise ValueError("Unknown environment")
         
