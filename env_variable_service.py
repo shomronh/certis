@@ -1,7 +1,7 @@
 import os
 import threading
 
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv, find_dotenv, dotenv_values
 
 class EnvVariablesService:
 
@@ -38,6 +38,8 @@ class EnvVariablesService:
             print(f".env.prod loaded")
         else:
             raise ValueError("Unknown environment")
+        
+        print(f"dotenv_values={dotenv_values()}")
 
         print(f"BACKEND_URL={os.getenv(self.__BACKEND_URL)}")
 
