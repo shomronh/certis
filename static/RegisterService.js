@@ -1,7 +1,7 @@
 
 const backendUrl = EnvVariablesService.getInstance().backendUrl;
 
-async function dataInsert(username, password) {
+async function register(username, password) {
     try {
         const response = await fetch(`${backendUrl}/register`, {
             method: 'POST',
@@ -17,7 +17,7 @@ async function dataInsert(username, password) {
 
         if (data.message === "User registered successfully") {
             alert("User registered successfully");
-            window.location.href = "/loginPage";
+            window.location.href = `${backendUrl}/loginPage`;
         }else if (data.message === "Username is taken") {
             alert("Username is already taken. Please choose a different one.");
         }else if (data.message === "Username should not contain spaces"||data.message ==="password should not contain spaces") {

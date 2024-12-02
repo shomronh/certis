@@ -11,5 +11,5 @@ form.addEventListener('submit', function(event) {
     event.target.reset();
     
     console.log(`Username: ${username}, Password: ${password}`);
-    dataInsert(username, password);
+    register(username, password);
 });
