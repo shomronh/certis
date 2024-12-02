@@ -1,11 +1,10 @@
-import concurrent.futures
 import queue
+import socket
+import ssl
+import time
+from datetime import datetime
 
 import requests
-from datetime import datetime
-import ssl
-import socket
-import time
 
 from repositories.domains_repository import DomainsRepository
 

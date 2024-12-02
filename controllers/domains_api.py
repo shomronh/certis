@@ -1,9 +1,7 @@
-import os
 from http import HTTPStatus
 
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-import re
-from werkzeug.utils import secure_filename
+from flask import Flask, request, jsonify, session
+
 from services.domains_service import DomainsService
 from services.session_manager_service import SessionManagerService
 

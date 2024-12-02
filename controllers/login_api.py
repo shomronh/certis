@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from http import HTTPStatus
 
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+
 from env_variable_service import EnvVariablesService
-from repositories.users_repository import UsersRepository
 from services.login_service import LoginService
 
 

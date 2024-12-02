@@ -1,6 +1,7 @@
+import threading
+
 from jobs.domains_scanner.users_domains_scanner_job import UsersDomainsScannerJob
 from repositories.settings_repository import SettingsRepository
-import threading
 
 
 class SettingsService:

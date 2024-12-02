@@ -1,19 +1,10 @@
 import os
 import queue
-
-import requests
-import socket
 import threading
-
-from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
-from apscheduler.executors.pool import ThreadPoolExecutor
-from datetime import datetime
-import ssl
-import socket
 import time
 
+from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.interval import IntervalTrigger
 
 from jobs.domains_scanner.user_domains_scanner import UserDomainsScanner
 from repositories.domains_repository import DomainsRepository

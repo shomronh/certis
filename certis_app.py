@@ -1,9 +1,8 @@
 import os
 import threading
 from datetime import timedelta
-import threading
+
 from flask import Flask
-import flask_cors
 from flask_cors import CORS
 
 from controllers.domains_api import DomainsApi

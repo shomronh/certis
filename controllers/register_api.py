@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify
 
 from env_variable_service import EnvVariablesService
 from services.register_service import RegisterService

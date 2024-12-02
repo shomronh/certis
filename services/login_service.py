@@ -1,5 +1,5 @@
-from flask import jsonify, Request
 import threading
+
 from repositories.users_repository import UsersRepository
 
 

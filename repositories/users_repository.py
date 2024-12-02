@@ -1,8 +1,6 @@
-import os
 import json
+import os
 import threading
-
-from flask import jsonify
 
 
 class UsersRepository:

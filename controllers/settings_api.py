@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session
 
 from services.session_manager_service import SessionManagerService
 from services.settings_service import SettingsService

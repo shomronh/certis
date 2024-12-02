@@ -1,10 +1,6 @@
+import re
 import threading
 
-import requests
-import socket
-import re
-from datetime import datetime
-import threading
 from repositories.domains_repository import DomainsRepository
 
 
