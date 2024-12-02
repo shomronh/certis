@@ -30,11 +30,11 @@ class EnvVariablesService:
         env = os.getenv('CERTIS_BACKEND_ENV', 'dev')
 
         if env == 'dev':
-            full_path = os.path.abspath(".env.dev")
+            full_path = os.path.join(os.getcwd(), ".env.dev")
             load_dotenv(full_path, verbose=True)
             print(f"full_path=${full_path} loaded")
         elif env == 'prod':
-            full_path = os.path.abspath(".env.prod")
+            full_path = os.path.join(os.getcwd(), ".env.prod")
             load_dotenv(full_path, verbose=True)
             print(f"full_path=${full_path} loaded")
         else:
