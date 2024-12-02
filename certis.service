@@ -1,0 +1,21 @@
+[Unit]
+Description=Certis Service
+After=network.target
+
+[Service]
+#ExecStart=/bin/bash -c 'source ./certis/certis_app.sh && ./certis/env_vars_prod.sh'
+#ExecStart=/certis/certis_app.sh
+ExecStart=/usr/local/bin/certis_app.sh 
+ExecStop=/bin/kill $MAINPID
+Restart=on-failure
+Type=simple
+User=root
+StandardOutput=journal
+StandardError=journal
+
+# Uncomment the lines below to redirect output to log files
+StandardOutput=file:/var/log/certis_logs.log
+StandardError=file:/var/log/certis_logs_errors.log
+
+[Install]
+WantedBy=multi-user.target
