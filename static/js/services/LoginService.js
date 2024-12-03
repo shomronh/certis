@@ -17,7 +17,6 @@ class LoginService {
     async login(username, password) {
         try {
             // Make the POST request to the Flask backend
-            const t =''
             const response = await fetch(`${this.#backendUrl}/login`, {
                 method: 'POST',
                 headers: {
@@ -50,5 +49,4 @@ class LoginService {
             alert("An error occurred while trying to log in. Please try again later.");
         }
     }
-    
 }
