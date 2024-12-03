@@ -82,6 +82,7 @@ class CertisApp:
 
         UsersDomainsScannerJob.get_instance().start()
 
+    # https://blog.miguelgrinberg.com/post/cookie-security-for-flask-applications
     def __setup_session(self):
         is_prod = False
 
@@ -89,6 +90,7 @@ class CertisApp:
 
             # Session Settings for Production:
             self._app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript from accessing cookies.
+            self._app.config['REMEMBER_COOKIE_HTTPONLY'] = True
             self._app.config['SESSION_COOKIE_SECURE'] = True  # Only send cookies over HTTPS in production.
             self._app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'  # Strong CSRF protection: Cookies are only sent in first-party requests.
 
@@ -102,13 +104,11 @@ class CertisApp:
 
         else:
             self._app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript from accessing cookies (basic protection).
+            self._app.config['REMEMBER_COOKIE_HTTPONLY'] = True
             self._app.config['SESSION_COOKIE_SECURE'] = False  # Do not enforce HTTPS in development (HTTPS may not be set up in local dev).
             self._app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Prevent cookies from being sent in cross-site requests (basic CSRF protection).
             self._app.config['SESSION_PERMANENT'] = False  # Sessions are not permanent by default in development.
             self._app.config['SESSION_TYPE'] = 'filesystem'  # Store session data in the file system for easy debugging.
-
-        # to persist user data across browser sessions
-        # session.permanent = True
 
     def get_app(self):
         return self._app
