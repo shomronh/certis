@@ -13,23 +13,24 @@ from controllers.settings_api import SettingsApi
 from env_variable_service import EnvVariablesService
 from jobs.domains_scanner.users_domains_scanner_job import UsersDomainsScannerJob
 
-
 class CertisApp:
 
     # static variables
-    _instance: 'CertisApp'  = None
+    _instance = None
     _lock = threading.Lock()
 
     # other variables
 
-    # TODO: ensure the singleton is thread safe
-    @staticmethod
-    def get_instance():
-        with CertisApp._lock:
-            if not CertisApp._instance:
-                CertisApp._instance = CertisApp()
-                CertisApp._instance.__start()
-            return CertisApp._instance
+    @classmethod
+    def get_instance(cls):
+        with cls._lock:
+            if not cls._instance:
+                cls._instance = super().__new__(cls)
+                cls._instance.__start()
+        return cls._instance
+    
+    def __init__(self):
+        raise RuntimeError('Call get_instance() instead')
 
     # private method
     def __start(self):
