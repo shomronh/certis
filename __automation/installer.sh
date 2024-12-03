@@ -15,12 +15,12 @@ echo "clone https://github.com/shomronh/certis.git completed"
 
 cd /certis
 
+git checkout dev
+echo "switched to dev branch completed"
+
 BACKEND_URL_VALUE=$(curl -s http://checkip.amazonaws.com)
 sed -i "s/^BACKEND_URL=.*/BACKEND_URL=$BACKEND_URL_VALUE/" .env.prod
 echo "update BACKEND_URL env value for .env.prod file"
-
-git checkout dev
-echo "switched to dev branch completed"
 
 cp /certis/__automation/certis_app.sh /usr/local/bin/certis_app.sh 
 cp /certis/__automation/certis.service /lib/systemd/system/certis.service
