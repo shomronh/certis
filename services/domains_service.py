@@ -20,8 +20,6 @@ class DomainsService:
                 cls._instance.__init()
         return cls._instance
 
-    # to avoid creation an object usually which will then call
-    # then __init__ method we can rais an RuntimeError
     def __init__(self):
         raise RuntimeError('Call get_instance() instead')
 
