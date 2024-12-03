@@ -3,14 +3,7 @@
 
 Certis
 
-## update changes
+## Instalation
 
-sudo -i  
-cd /certis  
-git pull  
-pip3 install -r requirements.txt --break-system-packages  
-
-
-## Usage
-
-export CERTIS_BACKEND_ENV=prod && python3 certis_app.py
+ssh into your Linux Server then run:
+curl https://raw.githubusercontent.com/shomronh/certis/refs/heads/dev/__automation/installer.sh | bash  
