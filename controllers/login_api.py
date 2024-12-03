@@ -54,7 +54,7 @@ class LoginApi:
             else:
                 return redirect(url_for("loginPage"))
 
-        @app.route('/loginPage')
+        @app.route('/')
         def loginPage():
             return render_template(
                 'loginPage.html',
