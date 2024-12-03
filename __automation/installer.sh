@@ -23,8 +23,8 @@ echo "switched to dev branch completed"
 chmod +x /certis/__automation/certis_app.sh
 
 BACKEND_URL_VALUE=$(curl -s http://checkip.amazonaws.com)
-# sed -i "s/^BACKEND_URL=.*/BACKEND_URL=https://$BACKEND_URL_VALUE:8080/" .env.prod
-sed -i "s|^BACKEND_URL=.*|BACKEND_URL=https://$BACKEND_URL_VALUE:8080|" .env.prod
+# sed -i "s/^BACKEND_URL=.*/BACKEND_URL=http://$BACKEND_URL_VALUE:8080/" .env.prod
+sed -i "s|^BACKEND_URL=.*|BACKEND_URL=http://$BACKEND_URL_VALUE:8080|" .env.prod
 echo "update BACKEND_URL env value for .env.prod file"
 
 cp -f /certis/__automation/certis_app.sh /usr/local/bin/certis_app.sh 
