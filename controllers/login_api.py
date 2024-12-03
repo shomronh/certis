@@ -40,7 +40,9 @@ class LoginApi:
         @app.route('/logout')
         def logout():
             session.clear()
-            return redirect(url_for("/"))
+            return render_template(
+                'loginPage.html',
+                BACKEND_URL=EnvVariablesService.get_instance().get_backend_url())
 
         # Visual Routes
         @app.route('/dashboardPage')
