@@ -29,7 +29,7 @@ class RegisterService {
 
             if (data.message === "User registered successfully") {
                 alert("User registered successfully");
-                window.location.href = `${this.#backendUrl}/loginPage`;
+                window.location.href = `${this.#backendUrl}/`;
             } else if (data.message === "Username is taken") {
                 alert("Username is already taken. Please choose a different one.");
             } else if (data.message === "Username should not contain spaces" || data.message === "password should not contain spaces") {
