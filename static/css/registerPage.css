@@ -1,98 +1,98 @@
-/* General styles */
+/* General Reset */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9fbfd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-/* Registration container */
-.register-container {
-    background-color: #ffffff;
-    width: 400px;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
+/* Login Container */
+.login-container {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
 }
 
-/* Logo and header */
-.register-container .brand-header {
-    margin-bottom: 20px;
+/* Brand Header */
+.brand-header {
+  margin-bottom: 1.5rem;
 }
 
-.register-container .logo {
-    max-width: 100px;
-    margin-bottom: 10px;
+.brand-header .logo {
+  max-width: 80px;
+  margin-bottom: 0.5rem;
 }
 
-.register-container h1 {
-    font-size: 1.5rem;
-    color: #333333;
-    margin-bottom: 10px;
+.brand-header h1 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
 }
 
-/* Form header */
-.register-container h2 {
-    font-size: 1.2rem;
-    color: #444444;
-    margin-bottom: 20px;
+/* Login Form */
+.login-form h2 {
+  font-size: 18px;
+  margin-bottom: 1rem;
+  color: #444;
 }
 
-/* Input fields */
-.register-container .input-group {
-    margin-bottom: 15px;
-    text-align: left;
+.input-group {
+  margin-bottom: 1rem;
+  text-align: left;
 }
 
-.register-container label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555555;
+.input-group label {
+  display: block;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 0.5rem;
 }
 
-.register-container input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-    font-size: 14px;
-    background-color: #f9f9f9;
-    outline: none;
-    transition: border-color 0.3s;
+.input-group input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
 }
 
-.register-container input:focus {
-    border-color: #007bff;
+.input-group input:focus {
+  outline: none;
+  border-color: #0078d7;
+  box-shadow: 0 0 5px rgba(0, 120, 215, 0.4);
 }
 
-/* Register button */
-.register-container .register-btn {
-    background-color: #007bff;
-    color: #ffffff;
-    padding: 10px 15px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 10px;
-    transition: background-color 0.3s;
+/* Login Button */
+.login-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #0078d7;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
 }
 
-.register-container .register-btn:hover {
-    background-color: #0056b3;
+.login-btn:hover {
+  background-color: #005fa3;
 }
 
 /* Footer */
-.register-container footer {
-    margin-top: 20px;
-    font-size: 12px;
-    color: #777777;
+footer {
+  margin-top: 1rem;
+  font-size: 12px;
+  color: #888;
 }
+
+/* */
+
+

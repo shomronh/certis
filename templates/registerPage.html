@@ -5,32 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="static/css/registerPage.css">
+    <link rel="stylesheet" href="static/css/socialComponent.css">
 </head>
 <body>
-    <div class="register-container">
-        <div class="brand-header">
-            <img src="static/images/logo.png" alt="Domain Monitor Logo" class="logo">
-            <h1>Domain Monitor System</h1>
-        </div>
-        <form id="register-form">
-            <h2>Register</h2>
-            <div class="input-group">
-                <label for="new-username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Choose a username" required>
+
+    <div id="login_options_container">
+        <div class="login-container">
+            <div class="brand-header">
+                <img src="static/images/logo.png" alt="Domain Monitor Logo" class="logo">
+                <h1>Domain Monitor System</h1>
             </div>
-            <div class="input-group">
-                <label for="new-password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter a password" required>
+            <form id="login-form">
+                <h2>Register</h2>
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="login-btn">Register</button>
+            </form>
+            <div class="login-prompt">
+                <p>Already Registered ? <a href="/">Login Here</a></p>
             </div>
-            <button type="submit" class="register-btn">Register</button>
-        </form>
-        <div class="login-prompt">
-            <p>Already Registered ? <a href="/">Login Here</a></p>
+            <footer>
+                <p>&copy; 2024 MoniTin. All Rights Reserved.</p>
+            </footer>
         </div>
-        <footer>
-            <p>&copy; 2024 MoniTin. All Rights Reserved.</p>
-        </footer>
+    
+        <div id="socials_buttons_container">
+            <img class="gmail-btn" src="static/images/gmail_icon.png" alt="Gmail Logo">
+        </div>
     </div>
+
+    <!--
+    <div id="login_options_container">
+        <div class="register-container">
+            <div class="brand-header">
+                <img src="static/images/logo.png" alt="Domain Monitor Logo" class="logo">
+                <h1>Domain Monitor System</h1>
+            </div>
+            <form id="register-form">
+                <h2>Register</h2>
+                <div class="input-group">
+                    <label for="new-username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                </div>
+                <div class="input-group">
+                    <label for="new-password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter a password" required>
+                </div>
+                <button type="submit" class="register-btn">Register</button>
+            </form>
+            <div class="login-prompt">
+                <p>Already Registered ? <a href="/">Login Here</a></p>
+            </div>
+            <footer>
+                <p>&copy; 2024 MoniTin. All Rights Reserved.</p>
+            </footer>
+        </div>
+
+        <div id="socials_buttons_container">
+            <img class="gmail-btn" src="static/images/gmail_icon.png" alt="Gmail Logo">
+        </div>
+    </div>
+    -->
+
+    
 
     <script src="static/js/services/EnvVariablesService.js"></script>
     <script src="static/js/services/LocalStorageService.js"></script>
