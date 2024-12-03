@@ -33,7 +33,7 @@ class LoginService {
     
             if (response.ok) {
                 alert(data.message); // Successful login
-                window.location.href = "/dashboardPage";
+                window.location.href = `${this.#backendUrl}/dashboardPage`;
     
                 LocalStorageService.getInstance().setItem('username', username)
     
