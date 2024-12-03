@@ -37,7 +37,7 @@ class CertisApp:
         EnvVariablesService.get_instance()
 
         self._app = Flask(__name__)
-        self._app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB
+        self._app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1 MB
 
         self._app.secret_key = os.urandom(24)  # secured random key
 
