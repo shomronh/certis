@@ -13,6 +13,7 @@ cd /
 git clone https://github.com/shomronh/certis.git
 echo "clone https://github.com/shomronh/certis.git completed"
 
+cd /certis
 
 BACKEND_URL_VALUE=$(curl -s http://checkip.amazonaws.com)
 sed -i "s/^BACKEND_URL=.*/BACKEND_URL=$BACKEND_URL_VALUE/" .env.prod
