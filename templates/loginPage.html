@@ -7,29 +7,35 @@
     <link rel="stylesheet" href="static/css/loginPage.css">
 </head>
 <body>
-    <div class="login-container">
-        <div class="brand-header">
-            <img src="static/images/logo.png" alt="Domain Monitor Logo" class="logo">
-            <h1>Domain Monitor System</h1>
-        </div>
-        <form id="login-form">
-            <h2>Login</h2>
-            <div class="input-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+    <div id="login_options_container">
+        <div class="login-container">
+            <div class="brand-header">
+                <img src="static/images/logo.png" alt="Domain Monitor Logo" class="logo">
+                <h1>Domain Monitor System</h1>
             </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <form id="login-form">
+                <h2>Login</h2>
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+            <div class="register-prompt">
+                <p>Don't have an account? <a href="registerPage">Register here</a></p>
             </div>
-            <button type="submit" class="login-btn">Login</button>
-        </form>
-        <div class="register-prompt">
-            <p>Don't have an account? <a href="registerPage">Register here</a></p>
+            <footer>
+                <p>&copy; 2024 MoniTin. All Rights Reserved.</p>
+            </footer>
         </div>
-        <footer>
-            <p>&copy; 2024 MoniTin. All Rights Reserved.</p>
-        </footer>
+    
+        <div id="socials_container">
+            <img class="gmail-btn" src="static/images/gmail_icon.png" alt="Gmail Logo">
+        </div>
     </div>
 
     <script src="static/js/services/EnvVariablesService.js"></script>
