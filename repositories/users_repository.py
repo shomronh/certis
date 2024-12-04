@@ -2,8 +2,10 @@ import json
 import os
 import threading
 
+from repositories.abstract_repository import AbstractRepository
 
-class UsersRepository:
+
+class UsersRepository(AbstractRepository):
 
     # static variables
     _instance = None
@@ -23,21 +25,15 @@ class UsersRepository:
         raise RuntimeError('Call get_instance() instead')
 
     def __init(self, directory):
-        self.__directory = directory
-        self.__lock = threading.Lock()
-
-        if not os.path.exists(self.__directory):
-            os.makedirs(self.__directory)
-
-        self.create_file_datasource_if_not_exist()
+        super()._init(directory, "users.json")
+        self._create_file_datasource_if_not_exist()
 
     def register(self, username, password):
 
         try:
-            self.__lock.acquire()
+            self._lock.acquire()
 
-            with open(self.__get_file_path(), "r") as file:
-                users = json.load(file)
+            users = self._read_file()
 
             # Check if the username already exists
             if username in users:
@@ -48,23 +44,19 @@ class UsersRepository:
                 # Add the new user
                 users[username] = {"username": username, "password": password}
 
-                # Save the updated data back to the JSON file
-                with open(self.__get_file_path(), "w") as file:
-                    json.dump(users, file, indent=4)
-                    file.flush()
+                self._write_file(users)
 
             return "User registered successfully", True
 
         finally:
-            self.__lock.release()
+            self._lock.release()
 
     def login(self,username,password):
         try:
-            self.__lock.acquire()
+            self._lock.acquire()
 
             # Open and read the JSON file
-            with open(self.__get_file_path(), 'r') as file:
-                users = json.load(file)
+            users = self._read_file()
 
             # Check credentials
             if username in users and users[username]["password"] == password:
@@ -80,28 +72,18 @@ class UsersRepository:
             print(f"An error occurred: {e}")
             return f"An error occurred: {e}"
         finally:
-            self.__lock.release()
+            self._lock.release()
 
     def get_users(self):
         try:
-            self.__lock.acquire()
+            self._lock.acquire()
 
-            # Open and read the JSON file
-            with open(self.__get_file_path(), 'r') as file:
-                users = json.load(file)
+            users = self._read_file()
 
             return users
 
         finally:
-            self.__lock.release()
+            self._lock.release()
 
-    def __get_file_path(self):
-        return os.path.join(self.__directory, "users.json")
-    
-    def create_file_datasource_if_not_exist(self):
-        if not os.path.isfile(self.__get_file_path()):
-            with open(self.__get_file_path(), "w") as file:
-                json.dump({}, file, indent=4)
-                file.flush()
 
 
