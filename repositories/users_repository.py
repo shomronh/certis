@@ -9,7 +9,6 @@ class UsersRepository(AbstractRepository):
 
     # static variables
     _instance = None
-    _lock = threading.Lock()
 
     # other variables
 
