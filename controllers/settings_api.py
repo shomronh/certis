@@ -1,3 +1,4 @@
+import threading
 from http import HTTPStatus
 
 from flask import Flask, render_template, request, jsonify, session
@@ -8,10 +9,26 @@ from services.settings_service import SettingsService
 
 class SettingsApi:
 
+    # static variables
+    _instance = None
+    _lock = threading.Lock()
+
+    # other variables
+
+    @classmethod
+    def get_instance(cls, app: Flask):
+        with cls._lock:
+            if not cls._instance:
+                cls._instance = super().__new__(cls)
+                cls._instance.initRoutes(app)
+        return cls._instance
+
     def __init__(self):
-        self.settingsService = SettingsService.get_instance()
+        raise RuntimeError('Call get_instance() instead')
 
     def initRoutes(self, app: Flask):
+
+        self.settingsService = SettingsService.get_instance()
 
         @app.route('/user/settings/scheduler', methods=['POST'])
         def setting_scheduler():

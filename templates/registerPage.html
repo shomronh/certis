@@ -36,16 +36,25 @@
         </div>
     
         <div id="socials_buttons_container">
-            <img class="gmail-btn" src="static/images/gmail_icon.png" alt="Gmail Logo">
+            <div id="google_login_button"></div>
         </div>
     </div>
 
-    <script src="static/js/services/EnvVariablesService.js"></script>
-    <script src="static/js/services/LocalStorageService.js"></script>
-    <script type="text/javascript">
-        EnvVariablesService.getInstance().backendUrl = '{{ BACKEND_URL }}'
+    <script src="https://apis.google.com/js/api.js" defer></script>
+    <script src="https://accounts.google.com/gsi/client" defer></script>
+
+    <script src="static/js/services/EnvVariablesService.js" defer></script>
+    <script src="static/js/services/LocalStorageService.js" defer></script>
+    <script src="static/js/services/LoginService.js" defer></script>
+    <script src="static/js/socialComponent.js" defer></script>
+    <script src="static/js/services/RegisterService.js" defer></script>
+    <script src="static/js/registerPage.js" defer></script>
+
+    <script type="text/javascript" defer>
+        window.onload = function() {
+            const BACKEND_URL = '{{ BACKEND_URL }}'
+            EnvVariablesService.getInstance().backendUrl = BACKEND_URL
+         }
     </script>
-    <script src="static/js/services/RegisterService.js"></script>
-    <script src="static/js/registerPage.js"></script>
 </body>
 </html>

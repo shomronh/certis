@@ -1,3 +1,4 @@
+import threading
 from http import HTTPStatus
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
@@ -8,10 +9,26 @@ from services.login_service import LoginService
 
 class LoginApi:
 
-    def __init__(self):
-        self._loginService = LoginService.get_instance()
+    # static variables
+    _instance = None
+    _lock = threading.Lock()
 
-    def initRoutes(self, app: Flask):
+    # other variables
+
+    @classmethod
+    def get_instance(cls, app: Flask):
+        with cls._lock:
+            if not cls._instance:
+                cls._instance = super().__new__(cls)
+                cls._instance.__init(app)
+        return cls._instance
+
+    def __init__(self):
+        raise RuntimeError('Call get_instance() instead')
+
+    def __init(self, app: Flask):
+
+        self._loginService = LoginService.get_instance()
 
         # rest apis
         @app.route('/login', methods=['POST'])
@@ -32,7 +49,7 @@ class LoginApi:
                     return jsonify({"message": message}), HTTPStatus.UNAUTHORIZED
 
                 session['username'] = username
-                return jsonify({"message": message}), HTTPStatus.OK
+                return jsonify({"message": message, "username": username}), HTTPStatus.OK
 
             except Exception as e:
                 return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR

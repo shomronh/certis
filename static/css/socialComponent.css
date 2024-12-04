@@ -17,11 +17,34 @@
   right: -45px;
 
   background: #ffffff;
-    padding: 0.5rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 0rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 #login_options_container > #socials_buttons_container img {
   margin: 0px;
+}
+
+#google_login_button div {
+  border: none !important; /* Remove border */
+  outline: none !important; /* Remove outline (focus effect) */
+}
+
+
+#google_login_button, #google_login_button div {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+}
+
+#google_login_button svg {
+  transform: scale(0.6); 
+  width: auto; 
+  height: 40px; 
+
+  /* for google button*/
+  margin-top: 5px;
 }

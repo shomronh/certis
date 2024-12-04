@@ -170,3 +170,5 @@ domains.txt
 domains_short_list.txt
 
 default_test1_domains.json
+
+google_client_secret.json

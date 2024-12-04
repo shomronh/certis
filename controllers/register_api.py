@@ -1,3 +1,4 @@
+import threading
 from http import HTTPStatus
 
 from flask import Flask, render_template, request, jsonify
@@ -8,10 +9,26 @@ from services.register_service import RegisterService
 
 class RegisterApi:
 
+    # static variables
+    _instance = None
+    _lock = threading.Lock()
+
+    # other variables
+
+    @classmethod
+    def get_instance(cls, app: Flask):
+        with cls._lock:
+            if not cls._instance:
+                cls._instance = super().__new__(cls)
+                cls._instance.initRoutes(app)
+        return cls._instance
+
     def __init__(self):
-        self._registerService = RegisterService.get_instance()
+        raise RuntimeError('Call get_instance() instead')
 
     def initRoutes(self, app: Flask):
+
+        self._registerService = RegisterService.get_instance()
 
         @app.route('/register', methods=['POST'])
         def data_insert():
