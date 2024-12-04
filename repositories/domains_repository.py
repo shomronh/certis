@@ -1,16 +1,17 @@
 import json
 import os
-import threading
+
+from repositories.abstract_repository import AbstractRepository
+
 
 # TODO:
 #  when stopping the app while we are writing the JSON file
 #  it can end with wrong json we need a way to handle to use case
 
-class DomainsRepository:
+class DomainsRepository(AbstractRepository):
 
     # static variables
     _instance = None
-    _lock = threading.Lock()
 
     # other variables
 
@@ -22,22 +23,19 @@ class DomainsRepository:
                 cls._instance.__init(directory)
         return cls._instance
 
-    def __init__(self, directory="local_files_data"):
+    def __init__(self):
         raise RuntimeError('Call get_instance() instead')
 
     def __init(self, directory):
-        self.__directory = directory
-        self.__lock = threading.Lock()
-
-        if not os.path.exists(self.__directory):
-            os.makedirs(self.__directory)
+        super()._init(directory, "", "domains.json")
+        self._create_folder()
 
     # if domain exists in domains file AND deleted == "false" => return already exists
     # if domain [exists and deleted is "true"] or not => 
     def add_domain(self, user_id: str, domain: str):
 
         try:
-            self.__lock.acquire()
+            self._lock.acquire()
 
             domains_table = self.get_domains(user_id, False)
 
@@ -54,16 +52,16 @@ class DomainsRepository:
                 "deleted": "false"
             }
 
-            self.__save_domains(user_id, domains_table)
+            self._write_file_per_user(user_id, domains_table)
 
             return f"Domain {domain} added successfully", True
         finally:
-            self.__lock.release()
+            self._lock.release()
 
     def delete_domain(self, user_id: str, domain: str):
 
         try:
-            self.__lock.acquire()
+            self._lock.acquire()
 
             domains_table = self.get_domains(user_id, False)
 
@@ -73,25 +71,24 @@ class DomainsRepository:
             exiting_domain = domains_table[domain]
             exiting_domain["deleted"] = "true"
 
-            self.__save_domains(user_id, domains_table)
+            self._write_file_per_user(user_id, domains_table)
 
             return f"Domain {domain} added successfully", True
         finally:
-            self.__lock.release()
+            self._lock.release()
 
     # when called from within the class set useLock to False
     def get_domains(self, user_id: str, useLock = True):
         try:
             if useLock:
-                self.__lock.acquire()
+                self._lock.acquire()
 
-            file_path = self.__get_file_path(user_id)
+            file_path = self._get_file_path_per_user(user_id)
 
-            if not os.path.exists(file_path):
+            if not self.is_path_exists(file_path):
                 domains = {}
             else:
-                with open(file_path, "r") as file:
-                    domains = json.load(file)
+                domains = self._read_file_per_user(user_id)
 
             # filter
             res = {}
@@ -103,19 +100,18 @@ class DomainsRepository:
             return domains
         finally:
             if useLock:
-                self.__lock.release()
+                self._lock.release()
 
     def get_domains_list(self, user_id: str):
         try:
-            self.__lock.acquire()
+            self._lock.acquire()
 
-            file_path = self.__get_file_path(user_id)
+            file_path = self._get_file_path_per_user(user_id)
 
-            if not os.path.exists(file_path):
+            if not self.is_path_exists(file_path):
                 domains = {}
             else:
-                with open(file_path, "r") as file:
-                    domains = json.load(file)
+                domains = self._read_file_per_user(user_id)
 
             items = []
             for key, value in domains.items():
@@ -128,26 +124,12 @@ class DomainsRepository:
             print(e)
 
         finally:
-            self.__lock.release()
-
-    def __save_domains(self, user_id: str, domains_table: dict[str, any]):
-
-        # try:
-            # self.__lock.acquire()
-
-            file_path = self.__get_file_path(user_id)
-
-            with open(file_path, "w") as file:
-                json.dump(domains_table, file, indent=4)
-                file.flush()
-
-        # finally:
-        #     self.__lock.release()
+            self._lock.release()
 
     # accessed by user_domain_scanner
     def update_domain_status(self, user_id: str, domain_dict: dict[str, any]):
         try:
-            self.__lock.acquire()
+            self._lock.acquire()
 
             domains_table_from_db = self.get_domains(user_id, False)
 
@@ -163,12 +145,10 @@ class DomainsRepository:
 
                 domains_table_from_db[domain] = domain_dict
 
-                self.__save_domains(user_id, domains_table_from_db)
+                self._write_file_per_user(user_id, domains_table_from_db)
             else:
                 raise ValueError(f"Domain '{domain}' not found for user '{user_id}'.")
         finally:
-            self.__lock.release()
+            self._lock.release()
 
-    def __get_file_path(self, user_id: str):
-        return os.path.join(self.__directory, f"{user_id}_domains.json")
         

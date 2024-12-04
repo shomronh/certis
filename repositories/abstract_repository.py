@@ -79,3 +79,17 @@ class AbstractRepository(ABC):
         finally:
             if use_lock:
                 self._lock.release()
+
+    def _write_file_per_user(self, user_id: str, data: any, use_lock = False):
+        try:
+            if use_lock:
+                self._lock.acquire()
+            with open(self._get_file_path_per_user(user_id), "w") as file:
+                json.dump(data, file, indent=4)
+                file.flush()
+        finally:
+            if use_lock:
+                self._lock.release()
+
+    def is_path_exists(self, path):
+        return os.path.exists(path)
