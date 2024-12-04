@@ -1,13 +1,14 @@
 
 import json
 import os
-import threading
 
-class SettingsRepository:
+from repositories.abstract_repository import AbstractRepository
+
+
+class SettingsRepository(AbstractRepository):
 
     # static variables
     _instance = None
-    _lock = threading.Lock()
 
     # other variables
 
@@ -23,52 +24,41 @@ class SettingsRepository:
         raise RuntimeError('Call get_instance() instead')
 
     def __init(self, directory):
-        self.__directory = directory
-        self.__lock = threading.Lock()
-
-        if not os.path.exists(self.__directory):
-            os.makedirs(self.__directory)
+        super()._init(directory, "", "settings.json")
+        self._create_folder()
 
     def update_scheduler_settings(self, user_id, settings):
 
         try:
-            self.__lock.acquire()
+            self._lock.acquire()
 
-            file_path = self.__get_file_path(user_id)
+            file_path = self._get_file_path_per_user(user_id)
 
-            if not os.path.exists(file_path):
+            if not self.is_path_exists(file_path):
                 data = {}
             else:
-                with open(file_path, "r") as file:
-                    data = json.load(file)
+                data = self._read_file_per_user(user_id)
 
             data["scheduler"] = settings
 
-            with open(file_path, "w") as file:
-                json.dump(data, file, indent=4)
-                file.flush()
+            self._write_file_per_user(user_id, data)
 
             return "scheduler settings updated successfully", True
         finally:
-            self.__lock.release()
+            self._lock.release()
 
     def get_user_settings(self, user_id):
         try:
-            self.__lock.acquire()
+            self._lock.acquire()
 
-            file_path = self.__get_file_path(user_id)
+            file_path = self._get_file_path_per_user(user_id)
 
-            if not os.path.exists(file_path):
+            if not self.is_path_exists(file_path):
                 data = {}
             else:
-                with open(file_path, "r") as file:
-                    data = json.load(file)
+                data = self._read_file_per_user(user_id)
 
             return data
         finally:
-            self.__lock.release()
-
-
-    def __get_file_path(self, user_id):
-        return os.path.join(self.__directory, f"{user_id}_settings.json")
+            self._lock.release()
 

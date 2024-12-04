@@ -62,9 +62,11 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
+
             with open(self._get_file_path(), "w") as file:
                 json.dump(data, file, indent=4)
                 file.flush()
+
         finally:
             if use_lock:
                 self._lock.release()
