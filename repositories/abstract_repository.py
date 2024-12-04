@@ -12,7 +12,7 @@ class AbstractRepository(ABC):
     __file_name: str
     __file_name_postfix: str
 
-    def _init(self, directory, file_name = "", file_name_postfix = ""):
+    def _init(self, directory, file_name: str, file_name_postfix: str):
         self.__directory = directory
         self.__file_name = file_name
         self.__file_name_postfix = file_name_postfix

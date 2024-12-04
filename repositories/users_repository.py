@@ -25,7 +25,7 @@ class UsersRepository(AbstractRepository):
         raise RuntimeError('Call get_instance() instead')
 
     def __init(self, directory):
-        super()._init(directory, "users.json")
+        super()._init(directory, "users.json", "")
         self._create_file_datasource_if_not_exist()
 
     def register(self, username, password):
