@@ -2,7 +2,7 @@
 
 class SettingsService {
 
-    #backendUrl = EnvVariablesService.getInstance().backendUrl;
+    #backendUrl = EnvVariablesHandler.getInstance().backendUrl;
 
     // private fields start with #
     static #_instance

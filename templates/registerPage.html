@@ -43,7 +43,7 @@
     <script src="https://apis.google.com/js/api.js" defer></script>
     <script src="https://accounts.google.com/gsi/client" defer></script>
 
-    <script src="static/js/services/EnvVariablesService.js" defer></script>
+    <script src="static/js/globals/EnvVariablesHandler.js" defer></script>
     <script src="static/js/services/LocalStorageService.js" defer></script>
     <script src="static/js/services/LoginService.js" defer></script>
     <script src="static/js/socialComponent.js" defer></script>
@@ -53,7 +53,7 @@
     <script type="text/javascript" defer>
         window.onload = function() {
             const BACKEND_URL = '{{ BACKEND_URL }}'
-            EnvVariablesService.getInstance().backendUrl = BACKEND_URL
+            EnvVariablesHandler.getInstance().backendUrl = BACKEND_URL
          }
     </script>
 </body>

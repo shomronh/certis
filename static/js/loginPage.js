@@ -2,7 +2,7 @@
 
 const loginForm = document.getElementById('login-form');
 
-    const backendUrl = EnvVariablesService.getInstance().backendUrl;
+    const backendUrl = EnvVariablesHandler.getInstance().backendUrl;
 
     loginForm.addEventListener('submit', async function (event) {
         event.preventDefault(); // Prevent the default form submission

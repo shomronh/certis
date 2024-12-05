@@ -1,14 +1,14 @@
 
-class EnvVariablesService {
+class EnvVariablesHandler {
 
     // private fields start with #
     static #_instance
 
     static getInstance() {
-        if (!EnvVariablesService.#_instance) {
-            EnvVariablesService.#_instance = new EnvVariablesService()
+        if (!EnvVariablesHandler.#_instance) {
+            EnvVariablesHandler.#_instance = new EnvVariablesHandler()
         }
-        return EnvVariablesService.#_instance
+        return EnvVariablesHandler.#_instance
     }
 
     get backendUrl(){
