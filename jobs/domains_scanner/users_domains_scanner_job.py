@@ -58,11 +58,11 @@ class UsersDomainsScannerJob:
 
         self.__is_started = True
 
-        is_testing = True
+        is_testing = False
 
         if is_testing:
             self.__users = {"test1": {}}
-            thread_pool = ThreadPoolExecutor(min(len(self.__users), 1))
+            self.__thread_pool = ThreadPoolExecutor(min(len(self.__users), 1))
         else:
             self.__users = self.__usersRepository.get_users()
 
