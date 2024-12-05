@@ -1,5 +1,5 @@
 from services.logs_service import LogsService
-from utils.files_utils import FilesUtils
+from files.files_utils import FilesUtils
 
 
 class FilesCorruptionsHandler:

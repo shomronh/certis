@@ -2,8 +2,8 @@ import threading
 from abc import ABC
 
 from services.logs_service import LogsService
-from utils.files_corruptions_handler import FilesCorruptionsHandler
-from utils.files_utils import FilesUtils
+from files.files_corruptions_handler import FilesCorruptionsHandler
+from files.files_utils import FilesUtils
 
 
 class AbstractRepository(ABC):
