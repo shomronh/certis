@@ -11,7 +11,7 @@ from controllers.health_check_api import HealthCheckApi
 from controllers.login_api import LoginApi
 from controllers.register_api import RegisterApi
 from controllers.settings_api import SettingsApi
-from env_variable_service import EnvVariablesService
+from globals.env_variables_handler import EnvVariablesHandler
 from jobs.domains_scanner.users_domains_scanner_job import UsersDomainsScannerJob
 from services.logs_service import LogsService
 
@@ -121,14 +121,13 @@ class CertisApp:
 
         # manual injections
 
-        envVariablesService = EnvVariablesService.get_instance()
+        envVariablesHandler = EnvVariablesHandler.get_instance()
         logsService = LogsService.get_instance()
 
-        envVariablesService.init(logsService)
-        logsService.init(envVariablesService)
-        logsService.init(envVariablesService)
+        envVariablesHandler.init(logsService)
+        logsService.init(envVariablesHandler)
 
-        envVariablesService.start()
+        envVariablesHandler.start()
         logsService.start()
 
     def join(self):

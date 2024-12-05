@@ -1,9 +1,8 @@
-import importlib
 import logging
 import threading
 import coloredlogs  # Use coloredlogs instead of colorlog
 
-from env_variable_service import EnvVariablesService
+from globals.env_variables_handler import EnvVariablesHandler
 
 
 class LogsService:
@@ -24,13 +23,13 @@ class LogsService:
     def __init__(self):
         raise RuntimeError('Call get_instance() instead')  # Ensure singleton pattern
 
-    def init(self, envVariablesService: 'EnvVariablesService', name="certis_logger"):
+    def init(self, EnvVariablesHandler: 'EnvVariablesHandler', name="certis_logger"):
         with self._lock:
             if self.__already_initialized:
                 return
             self.__already_initialized = True
 
-            self.__env_variables_service = envVariablesService
+            self.__env_variables_service = EnvVariablesHandler
             self.__logger = logging.getLogger(name)
 
     def start(self):

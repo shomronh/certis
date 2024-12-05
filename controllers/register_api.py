@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from flask import Flask, render_template, request, jsonify
 
-from env_variable_service import EnvVariablesService
+from globals.env_variables_handler import EnvVariablesHandler
 from services.logs_service import LogsService
 from services.register_service import RegisterService
 
@@ -64,4 +64,4 @@ class RegisterApi:
         def RegisterPage():
             return render_template(
                 'registerPage.html',
-                BACKEND_URL=EnvVariablesService.get_instance().get_backend_url())
+                BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())

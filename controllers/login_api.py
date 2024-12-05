@@ -1,9 +1,9 @@
 import threading
 from http import HTTPStatus
 
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session
 
-from env_variable_service import EnvVariablesService
+from globals.env_variables_handler import EnvVariablesHandler
 from services.login_service import LoginService
 
 
@@ -59,7 +59,7 @@ class LoginApi:
             session.clear()
             return render_template(
                 'loginPage.html',
-                BACKEND_URL=EnvVariablesService.get_instance().get_backend_url())
+                BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())
 
         # Visual Routes
         @app.route('/dashboardPage')
@@ -69,7 +69,7 @@ class LoginApi:
                 return render_template(
                     'dashboardPage.html',
                     username=username,
-                    BACKEND_URL=EnvVariablesService.get_instance().get_backend_url())
+                    BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())
             else:
                 return loginPage()
 
@@ -77,7 +77,7 @@ class LoginApi:
         def loginPage():
             return render_template(
                 'loginPage.html',
-                BACKEND_URL=EnvVariablesService.get_instance().get_backend_url())
+                BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())
 
 
 

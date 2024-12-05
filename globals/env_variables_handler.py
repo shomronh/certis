@@ -1,10 +1,10 @@
 import os
 import threading
 
-from dotenv import load_dotenv, find_dotenv, dotenv_values
+from dotenv import load_dotenv, dotenv_values
 
 
-class EnvVariablesService:
+class EnvVariablesHandler:
     # static variables
     _instance = None
     _lock = threading.Lock()
@@ -45,6 +45,9 @@ class EnvVariablesService:
 
             # if not found default is dev
             env = os.getenv('CERTIS_BACKEND_ENV', 'dev')
+
+            # testing
+            # env = "prod"
 
             if env == 'dev':
                 self.__is_dev_mode = True
