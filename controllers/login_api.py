@@ -71,7 +71,7 @@ class LoginApi:
                     username=username,
                     BACKEND_URL=EnvVariablesService.get_instance().get_backend_url())
             else:
-                return redirect(url_for("/"))
+                return loginPage()
 
         @app.route('/')
         def loginPage():

@@ -39,6 +39,8 @@ class CertisApp:
     # private method
     def __start(self):
 
+        self.create_dependencies()
+
         LogsService.get_instance().critical("start")
         LogsService.get_instance().critical("start")
         LogsService.get_instance().critical("start")
@@ -57,7 +59,7 @@ class CertisApp:
         self.__setup_session()
 
         # Services bootstrap
-        UsersDomainsScannerJob.get_instance()
+        # UsersDomainsScannerJob.get_instance().start()
 
         # APIs creations
         @self.__app.route('/<filename>')
@@ -75,7 +77,7 @@ class CertisApp:
 
         # after calling the run() method, this will block the access
         # to other methods (ex: running testing after the run() call)
-        # self._app.run(host='0.0.0.0', port=8080)
+        # self.__app.run(host='0.0.0.0', port=8080)
 
         # solution:
         # run flask in another thread
@@ -87,9 +89,9 @@ class CertisApp:
         # TODO: if in production mode use instead:
         # flask_config = {'host': '0.0.0.0', 'port': 8080, 'debug': False}
 
-        self._thread = threading.Thread(target=self.__app.run, kwargs=flask_config)
-        self._thread.daemon = True  # Daemon thread will exit when the main program exits
-        self._thread.start()
+        self.__thread = threading.Thread(target=self.__app.run, kwargs=flask_config)
+        self.__thread.daemon = True  # Daemon thread will exit when the main program exits
+        self.__thread.start()
 
         UsersDomainsScannerJob.get_instance().start()
 
@@ -121,11 +123,23 @@ class CertisApp:
             self.__app.config['SESSION_PERMANENT'] = False  # Sessions are not permanent by default in development.
             self.__app.config['SESSION_TYPE'] = 'filesystem'  # Store session data in the file system for easy debugging.
 
-    def get_app(self):
-        return self._app
+
+    def create_dependencies(self):
+
+        # manual injections
+
+        envVariablesService = EnvVariablesService.get_instance()
+        logsService = LogsService.get_instance()
+
+        envVariablesService.init(logsService)
+        logsService.init(envVariablesService)
+        logsService.init(envVariablesService)
+
+        envVariablesService.start()
+        logsService.start()
 
     def join(self):
-        self._thread.join()
+        self.__thread.join()
 
 if __name__ == '__main__':
     app = CertisApp.get_instance()
