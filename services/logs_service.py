@@ -1,41 +1,64 @@
-
 import logging
 import threading
-
+import coloredlogs  # Use coloredlogs instead of colorlog
 
 class LogsService:
-
-    # static variables
+    # Static variables
     _instance = None
     _lock = threading.Lock()
-
-    # other variables
 
     @classmethod
     def get_instance(cls):
         with cls._lock:
             if not cls._instance:
                 cls._instance = super().__new__(cls)
-                cls._instance.__init()
+                cls._instance.__init_logger()  # Initialize the logger only once
         return cls._instance
 
     def __init__(self):
-        raise RuntimeError('Call get_instance() instead')
-    
-    def __init(self):
-        
-        logging.basicConfig(
-            level=logging.DEBUG,  
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.StreamHandler() # Logs to console
-            ])
+        raise RuntimeError('Call get_instance() instead')  # Ensure singleton pattern
 
-    def log(level, msg, *args, **kwargs):
-        logging.log(msg, args, kwargs)
+    def __init_logger(self, name="certis_logger"):
+        # Create logger instance
+        self.logger = logging.getLogger(name)
 
-    def exception(msg, *args, exc_info=True, **kwargs):
-        logging.exception(msg, args, exc_info, kwargs)
+        # Use coloredlogs to handle the console output
+        coloredlogs.install(level='DEBUG', logger=self.logger)
 
-    def error(msg, *args, **kwargs):
-        logging.error(msg, args, kwargs)
+        # Create file handler for logging to file
+        file_handler = logging.FileHandler('logfile.log')
+        file_handler.setLevel(logging.DEBUG)
+
+        # Set up a simple formatter for file output (no color)
+        file_formatter = logging.Formatter(
+            '%(asctime)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d',
+            datefmt="%Y-%m-%d %H:%M:%S"  # Optional custom date format
+        )
+        file_handler.setFormatter(file_formatter)
+
+        # Add file handler to the logger
+        self.logger.addHandler(file_handler)
+
+        # Set the logging level to DEBUG
+        self.logger.setLevel(logging.DEBUG)
+
+    # Logging methods for different log levels
+    def debug(self, msg, *args, **kwargs):
+        """Log debug messages with stacklevel=2."""
+        self.logger.debug(msg, *args, **kwargs, stacklevel=2)
+
+    def warn(self, msg, *args, **kwargs):
+        """Log warning messages with stacklevel=2."""
+        self.logger.warning(msg, *args, **kwargs, stacklevel=2)
+
+    def info(self, msg, *args, **kwargs):
+        """Log info messages with stacklevel=2."""
+        self.logger.info(msg, *args, **kwargs, stacklevel=2)
+
+    def exception(self, msg, *args, exc_info=True, **kwargs):
+        """Log exception messages with stacklevel=2."""
+        self.logger.exception(msg, *args, exc_info=exc_info, **kwargs, stacklevel=2)
+
+    def error(self, msg, *args, **kwargs):
+        """Log error messages with stacklevel=2."""
+        self.logger.error(msg, *args, **kwargs, stacklevel=2)
