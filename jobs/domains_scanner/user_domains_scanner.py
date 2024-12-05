@@ -69,7 +69,7 @@ class UserDomainsScanner:
             self.__logger.log(f"domain={domain} considered deleted, no need to monitor")
             return
 
-        self.logger.debug(f"start monitoring user_id={user_id} domain={domain}")
+        self.__logger.debug(f"start monitoring user_id={user_id} domain={domain}")
 
         self.scan_domain(domain_obj)
         self.get_ssl_properties(domain_obj)
