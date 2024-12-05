@@ -4,6 +4,7 @@ from http import HTTPStatus
 from flask import Flask, render_template, request, jsonify
 
 from env_variable_service import EnvVariablesService
+from services.logs_service import LogsService
 from services.register_service import RegisterService
 
 
@@ -28,6 +29,8 @@ class RegisterApi:
 
     def initRoutes(self, app: Flask):
 
+        logger = LogsService.get_instance()
+
         self._registerService = RegisterService.get_instance()
 
         @app.route('/register', methods=['POST'])
@@ -38,7 +41,7 @@ class RegisterApi:
                 if not data:
                     return jsonify({"message": "Please enter credentials"}), HTTPStatus.UNAUTHORIZED
 
-                print(f"Received data: {data}")
+                logger.log(f"Received data: {data}")
 
                 if not data:
                     return jsonify({"message": "Invalid JSON data"}), 400

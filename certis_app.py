@@ -39,14 +39,7 @@ class CertisApp:
     # private method
     def __start(self):
 
-        self.create_dependencies()
-
-        LogsService.get_instance().critical("start")
-        LogsService.get_instance().critical("start")
-        LogsService.get_instance().critical("start")
-        LogsService.get_instance().critical("start")
-
-        EnvVariablesService.get_instance()
+        self.create_dependencies_injections()
 
         self.__app = Flask(__name__)
         self.__app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1 MB
@@ -124,7 +117,7 @@ class CertisApp:
             self.__app.config['SESSION_TYPE'] = 'filesystem'  # Store session data in the file system for easy debugging.
 
 
-    def create_dependencies(self):
+    def create_dependencies_injections(self):
 
         # manual injections
 

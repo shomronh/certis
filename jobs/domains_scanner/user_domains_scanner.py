@@ -14,7 +14,7 @@ class UserDomainsScanner:
 
     def __init__(self):
         self.domain_repository = DomainsRepository.get_instance()   
-        self.logger = LogsService.get_instance()
+        self.__logger = LogsService.get_instance()
 
     def get_next_domains(self, user_id, domains_queue: queue.Queue):
 
@@ -35,7 +35,7 @@ class UserDomainsScanner:
             domains_queue = self.get_next_domains(user_id, user_queue)
 
             if domains_queue.qsize() == 0:
-                print(f"No existing domains to scan for user={user_id}")
+                self.__logger.log(f"No existing domains to scan for user={user_id}")
                 return
 
             total_domains = domains_queue.qsize()
@@ -47,26 +47,26 @@ class UserDomainsScanner:
                 self.do_scans(user_id, domain_obj)
 
             time_diff = time.time() - t0
-            print(f"complete scan of {total_domains} domains in {time_diff} seconds")
+            self.__logger.log(f"complete scan of {total_domains} domains in {time_diff} seconds")
 
         except Exception as e:
-            print(str(e))
+            self.__logger.log(str(e))
 
     def do_scans(self, user_id, domain_obj: dict[str, any]):
 
         if not "domain" in domain_obj:
-            print("domain property is missing, skipping")
+            self.__logger.log("domain property is missing, skipping")
             return
 
         if not "deleted" in domain_obj:
-            print("deleted property is missing, skipping")
+            self.__logger.log("deleted property is missing, skipping")
             return
 
         domain = domain_obj["domain"]
         deleted = domain_obj["deleted"]
 
         if deleted == "true":
-            print(f"domain={domain} considered deleted, no need to monitor")
+            self.__logger.log(f"domain={domain} considered deleted, no need to monitor")
             return
 
         self.logger.debug(f"start monitoring user_id={user_id} domain={domain}")

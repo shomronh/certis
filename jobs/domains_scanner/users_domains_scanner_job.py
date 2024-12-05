@@ -10,6 +10,7 @@ from jobs.domains_scanner.user_domains_scanner import UserDomainsScanner
 from repositories.domains_repository import DomainsRepository
 from repositories.settings_repository import SettingsRepository
 from repositories.users_repository import UsersRepository
+from services.logs_service import LogsService
 
 
 class UsersDomainsScannerJob:
@@ -32,6 +33,7 @@ class UsersDomainsScannerJob:
         raise RuntimeError('Call get_instance() instead')
 
     def __init(self):
+        self.__logger = LogsService.get_instance()
         self.__usersRepository = UsersRepository.get_instance()
         self.__domain_repository = DomainsRepository.get_instance()
         self.__settings_repository = SettingsRepository.get_instance()
@@ -91,7 +93,7 @@ class UsersDomainsScannerJob:
         self.__users_queues_table[user_id] = queue.Queue()
 
     def __start_user_domains_scanning(self, user_id: str, user_queue: queue.Queue, delta_t: int):
-        print(f"starting user_id={user_id} job \n")
+        self.__logger.log(f"starting user_id={user_id} job \n")
 
         scanner = UserDomainsScanner()
         scanner.scan_user_domains(user_id, user_queue)
@@ -133,7 +135,7 @@ class UsersDomainsScannerJob:
             self.__add_schedular_job(user_id, total_jobs)
 
         except Exception as err:
-            print(f"try to reschedule job but get error: {err}")
+            self.__logger.log(f"try to reschedule job but get error: {err}")
 
     def add_new_job(self, user_id):
         try:
@@ -141,12 +143,12 @@ class UsersDomainsScannerJob:
                 self.start()
                 self.__is_started = True
 
-            print(f"add new job for {user_id}")
+            self.__logger.log(f"add new job for {user_id}")
             total_jobs = len(self.__scheduler.get_jobs())
             self.add_queue_for_user(user_id)
             self.__add_schedular_job(user_id, total_jobs)
         except Exception as err:
-            print(f"try to add new job but get error: {err}")
+            self.__logger.log(f"try to add new job but get error: {err}")
 
 
 

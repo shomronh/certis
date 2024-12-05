@@ -2,6 +2,7 @@ import json
 import os
 
 from repositories.abstract_repository import AbstractRepository
+from services.logs_service import LogsService
 
 
 # TODO:
@@ -28,6 +29,7 @@ class DomainsRepository(AbstractRepository):
 
     def __init(self, directory):
         super()._init(directory, "", "domains.json")
+        self.__logger = LogsService.get_instance()
         self._create_folder()
 
     # if domain exists in domains file AND deleted == "false" => return already exists
@@ -121,7 +123,7 @@ class DomainsRepository(AbstractRepository):
 
             return items
         except Exception as e:
-            print(e)
+            self.__logger.log(e)
 
         finally:
             self._lock.release()

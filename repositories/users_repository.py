@@ -3,6 +3,7 @@ import os
 import threading
 
 from repositories.abstract_repository import AbstractRepository
+from services.logs_service import LogsService
 
 
 class UsersRepository(AbstractRepository):
@@ -25,6 +26,7 @@ class UsersRepository(AbstractRepository):
 
     def __init(self, directory):
         super()._init(directory, "users.json", "")
+        self.__logger = LogsService.get_instance()
         self._create_file_datasource_if_not_exist()
 
     def register(self, username, password):
@@ -38,7 +40,7 @@ class UsersRepository(AbstractRepository):
             if username in users:
                 return "Username is taken", False
             else:
-                print("Username is available. You can add it.")
+                self.__logger.log("Username is available. You can add it.")
 
                 # Add the new user
                 users[username] = {"username": username, "password": password}
@@ -64,11 +66,11 @@ class UsersRepository(AbstractRepository):
             return "Invalid credentials, please try again", False
 
         except FileNotFoundError:
-            print("File not found error.")
+            self.__logger.log("File not found error.")
             return "Please register before trying to log in"
 
         except Exception as e:
-            print(f"An error occurred: {e}")
+            self.__logger.log(f"An error occurred: {e}")
             return f"An error occurred: {e}"
         finally:
             self._lock.release()
