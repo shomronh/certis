@@ -25,7 +25,7 @@ class UsersRepository(AbstractRepository):
         raise RuntimeError('Call get_instance() instead')
 
     def __init(self, directory):
-        super()._init(directory, "users.json", "")
+        super().__init__(directory, "users.json", "")
         self.__logger = LogsService.get_instance()
         self._create_file_if_not_exist()
 

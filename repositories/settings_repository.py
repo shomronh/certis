@@ -24,7 +24,7 @@ class SettingsRepository(AbstractRepository):
         raise RuntimeError('Call get_instance() instead')
 
     def __init(self, directory):
-        super()._init(directory, "", "settings.json")
+        super().__init__(directory, "", "settings.json")
         self._create_folder()
 
     def update_scheduler_settings(self, user_id, settings):

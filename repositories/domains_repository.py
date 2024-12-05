@@ -28,7 +28,7 @@ class DomainsRepository(AbstractRepository):
         raise RuntimeError('Call get_instance() instead')
 
     def __init(self, directory):
-        super()._init(directory, "", "domains.json")
+        super().__init__(directory, "", "domains.json")
         self.__logger = LogsService.get_instance()
         self._create_folder()
 

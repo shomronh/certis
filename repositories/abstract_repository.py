@@ -1,6 +1,8 @@
 import threading
 from abc import ABC
 
+from services.logs_service import LogsService
+from utils.files_corruptions_denial import FilesCorruptionsDenial
 from utils.files_utils import FilesUtils
 
 
@@ -8,14 +10,19 @@ class AbstractRepository(ABC):
 
     _lock = threading.Lock()
 
-    __directory: str
-    __file_name: str
-    __file_name_postfix: str
+    _directory: str
+    _file_name: str
+    _file_name_postfix: str
 
-    def _init(self, directory, file_name: str, file_name_postfix: str):
-        self.__directory = directory
-        self.__file_name = file_name
-        self.__file_name_postfix = file_name_postfix
+    _logger: LogsService
+
+    def __init__(self, directory, file_name: str, file_name_postfix: str):
+
+        self._logger = LogsService.get_instance()
+
+        self._directory = directory
+        self._file_name = file_name
+        self._file_name_postfix = file_name_postfix
         self._lock = threading.Lock()
 
         self._create_folder()
@@ -24,16 +31,21 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            FilesUtils.create_folder(self.__directory)
+            FilesUtils.create_folder(self._directory)
+        except Exception as e:
+            self._logger.exception(f"{e}")
         finally:
             if use_lock:
                 self._lock.release()
 
     def _get_file_path(self):
-        return FilesUtils.get_file_path(self.__directory, self.__file_name)
+        return FilesUtils.get_file_path(self._directory, self._file_name)
 
     def _get_file_path_per_user(self, user_id: str):
-        return FilesUtils.get_file_path(self.__directory, f"{user_id}_{self.__file_name_postfix}")
+        return FilesUtils.get_file_path(self._directory, self._get_file_name_per_user(user_id))
+
+    def _get_file_name_per_user(self, user_id: str):
+        return f"{user_id}_{self._file_name_postfix}"
 
     def _create_file_if_not_exist(self):
         try:
@@ -46,7 +58,7 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            data = FilesUtils.read_json_file(self._get_file_path())
+            data = FilesCorruptionsDenial.read_json_file(self._get_file_path())
             return data
         finally:
             if use_lock:
@@ -56,7 +68,10 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            FilesUtils.write_json_file(self._get_file_path(), data)
+            FilesCorruptionsDenial.write_json_file(
+                self._directory,
+                self._file_name,
+                data)
         finally:
             if use_lock:
                 self._lock.release()
@@ -65,7 +80,7 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            data = FilesUtils.read_json_file(self._get_file_path_per_user(user_id))
+            data = FilesCorruptionsDenial.read_json_file(self._get_file_path_per_user(user_id))
             return data
         finally:
             if use_lock:
@@ -75,7 +90,10 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            FilesUtils.write_json_file(self._get_file_path_per_user(user_id), data)
+            FilesCorruptionsDenial.write_json_file(
+                self._directory,
+                self._get_file_name_per_user(user_id),
+                data)
         finally:
             if use_lock:
                 self._lock.release()

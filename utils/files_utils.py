@@ -35,4 +35,13 @@ class FilesUtils:
     @staticmethod
     def get_file_path(directory: str, file_name: str):
         return os.path.join(directory, file_name)
-       
+    
+    @staticmethod
+    def rename_file(source_file_path: str, dest_file_ath: str):
+        os.replace(source_file_path, dest_file_ath)
+
+    def delete_file(file_path: str):
+        if os.path.exists(file_path):
+            # Change the file permission (read + write)
+            os.chmod(file_path, 0o777)
+            os.remove(file_path)

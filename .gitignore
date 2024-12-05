@@ -168,6 +168,7 @@ local_files_data
 
 domains.txt
 domains_short_list.txt
+domains_small_list.txt
 
 default_test1_domains.json
 
