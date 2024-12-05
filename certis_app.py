@@ -13,6 +13,8 @@ from controllers.register_api import RegisterApi
 from controllers.settings_api import SettingsApi
 from env_variable_service import EnvVariablesService
 from jobs.domains_scanner.users_domains_scanner_job import UsersDomainsScannerJob
+from services.logs_service import LogsService
+
 
 class CertisApp:
 
@@ -30,12 +32,17 @@ class CertisApp:
                 cls._instance = super().__new__(cls)
                 cls._instance.__start()
         return cls._instance
-    
+
     def __init__(self):
         raise RuntimeError('Call get_instance() instead')
 
     # private method
     def __start(self):
+
+        LogsService.get_instance().critical("start")
+        LogsService.get_instance().critical("start")
+        LogsService.get_instance().critical("start")
+        LogsService.get_instance().critical("start")
 
         EnvVariablesService.get_instance()
 
@@ -103,7 +110,7 @@ class CertisApp:
 
             # self.__app.config['SESSION_TYPE'] = 'redis'  # Store session data in Redis (ideal for production).
             # self.__app.config['SESSION_REDIS'] = Redis(host='localhost', port=6379)  # Connect to Redis server for session storage.
-            
+
             self.__app.config['SESSION_COOKIE_PATH'] = '/'  # Session cookies will be sent for all paths in the domain.
 
         else:

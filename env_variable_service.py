@@ -3,6 +3,8 @@ import threading
 
 from dotenv import load_dotenv, find_dotenv, dotenv_values
 
+import abstract_atom
+
 class EnvVariablesService:
 
     # static variables
@@ -11,6 +13,7 @@ class EnvVariablesService:
 
     # other variables
     __BACKEND_URL = "BACKEND_URL"
+    __is_dev_mode = True
 
     @classmethod
     def get_instance(cls):
@@ -31,9 +34,11 @@ class EnvVariablesService:
         env = os.getenv('CERTIS_BACKEND_ENV', 'dev')
 
         if env == 'dev':
+            self.__is_dev_mode = True
             load_dotenv('.env.dev')
             print(f".env.dev loaded")
         elif env == 'prod':
+            self.__is_dev_mode = False
             project_directory = os.getcwd()
             path = os.path.join(project_directory, '.env.prod')
             load_dotenv(path)
@@ -47,3 +52,6 @@ class EnvVariablesService:
 
     def get_backend_url(self):
         return os.getenv(self.__BACKEND_URL)
+
+    def is_dev_mode(self):
+        return self.__is_dev_mode

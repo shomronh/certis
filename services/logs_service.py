@@ -2,6 +2,9 @@ import logging
 import threading
 import coloredlogs  # Use coloredlogs instead of colorlog
 
+from abstract_atom import factory_get_env_variable_service
+
+
 class LogsService:
     # Static variables
     _instance = None
@@ -39,26 +42,41 @@ class LogsService:
         # Add file handler to the logger
         self.logger.addHandler(file_handler)
 
-        # Set the logging level to DEBUG
-        self.logger.setLevel(logging.DEBUG)
+        is_dev_mode =
+
+        if is_dev_mode:
+            # Capture DEBUG logs in development
+            self.logger.setLevel(logging.DEBUG)
+        else:
+            # Capture INFO and above in production
+            self.logger.setLevel(logging.INFO)
+
+    def log(self, msg, *args, **kwargs):
+        self.logger.log(logging.DEBUG, msg, *args, **kwargs, stacklevel=2)
 
     # Logging methods for different log levels
     def debug(self, msg, *args, **kwargs):
         """Log debug messages with stacklevel=2."""
         self.logger.debug(msg, *args, **kwargs, stacklevel=2)
 
+    def info(self, msg, *args, **kwargs):
+        """Log info messages with stacklevel=2."""
+        self.logger.info(msg, *args, **kwargs, stacklevel=2)
+
     def warn(self, msg, *args, **kwargs):
         """Log warning messages with stacklevel=2."""
         self.logger.warning(msg, *args, **kwargs, stacklevel=2)
 
-    def info(self, msg, *args, **kwargs):
-        """Log info messages with stacklevel=2."""
-        self.logger.info(msg, *args, **kwargs, stacklevel=2)
+    def error(self, msg, *args, **kwargs):
+        """Log error messages with stacklevel=2."""
+        self.logger.error(msg, *args, **kwargs, stacklevel=2)
+
+    def critical(self, msg, *args, exc_info=True, **kwargs):
+        """Log exception messages with stacklevel=2."""
+        self.logger.critical(msg, *args, exc_info=exc_info, **kwargs, stacklevel=2)
 
     def exception(self, msg, *args, exc_info=True, **kwargs):
         """Log exception messages with stacklevel=2."""
         self.logger.exception(msg, *args, exc_info=exc_info, **kwargs, stacklevel=2)
 
-    def error(self, msg, *args, **kwargs):
-        """Log error messages with stacklevel=2."""
-        self.logger.error(msg, *args, **kwargs, stacklevel=2)
+

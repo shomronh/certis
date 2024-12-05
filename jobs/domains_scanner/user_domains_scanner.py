@@ -7,12 +7,14 @@ from datetime import datetime
 import requests
 
 from repositories.domains_repository import DomainsRepository
+from services.logs_service import LogsService
 
 
 class UserDomainsScanner:
 
     def __init__(self):
-        self.domain_repository = DomainsRepository.get_instance()
+        self.domain_repository = DomainsRepository.get_instance()   
+        self.logger = LogsService.get_instance()
 
     def get_next_domains(self, user_id, domains_queue: queue.Queue):
 
@@ -67,7 +69,7 @@ class UserDomainsScanner:
             print(f"domain={domain} considered deleted, no need to monitor")
             return
 
-        print(f"start monitoring user_id={user_id} domain={domain}")
+        self.logger.debug(f"start monitoring user_id={user_id} domain={domain}")
 
         self.scan_domain(domain_obj)
         self.get_ssl_properties(domain_obj)
