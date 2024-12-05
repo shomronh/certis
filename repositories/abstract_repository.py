@@ -1,8 +1,8 @@
+import threading
 from abc import ABC
 
-import json
-import os
-import threading
+from utils.files_utils import FilesUtils
+
 
 class AbstractRepository(ABC):
 
@@ -24,25 +24,21 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            if not os.path.exists(self.__directory):
-                os.makedirs(self.__directory)
+            FilesUtils.create_folder(self.__directory)
         finally:
             if use_lock:
                 self._lock.release()
 
     def _get_file_path(self):
-        return os.path.join(self.__directory, self.__file_name)
+        return FilesUtils.get_file_path(self.__directory, self.__file_name)
 
     def _get_file_path_per_user(self, user_id: str):
-        return os.path.join(self.__directory, f"{user_id}_{self.__file_name_postfix}")
+        return FilesUtils.get_file_path(self.__directory, f"{user_id}_{self.__file_name_postfix}")
 
-    def _create_file_datasource_if_not_exist(self):
+    def _create_file_if_not_exist(self):
         try:
             self._lock.acquire()
-            if not os.path.isfile(self._get_file_path()):
-                with open(self._get_file_path(), "w") as file:
-                    json.dump({}, file, indent=4)
-                    file.flush()
+            FilesUtils.create_json_file_if_not_exist(self._get_file_path())
         finally:
             self._lock.release()
 
@@ -50,9 +46,7 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-
-            with open(self._get_file_path(), 'r') as file:
-                data = json.load(file)
+            data = FilesUtils.read_json_file(self._get_file_path())
             return data
         finally:
             if use_lock:
@@ -62,11 +56,7 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-
-            with open(self._get_file_path(), "w") as file:
-                json.dump(data, file, indent=4)
-                file.flush()
-
+            FilesUtils.write_json_file(self._get_file_path(), data)
         finally:
             if use_lock:
                 self._lock.release()
@@ -75,8 +65,7 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            with open(self._get_file_path_per_user(user_id), 'r') as file:
-                data = json.load(file)
+            data = FilesUtils.read_json_file(self._get_file_path_per_user(user_id))
             return data
         finally:
             if use_lock:
@@ -86,12 +75,10 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            with open(self._get_file_path_per_user(user_id), "w") as file:
-                json.dump(data, file, indent=4)
-                file.flush()
+            FilesUtils.write_json_file(self._get_file_path_per_user(user_id), data)
         finally:
             if use_lock:
                 self._lock.release()
 
     def is_path_exists(self, path):
-        return os.path.exists(path)
+        return FilesUtils.is_path_exists(path)

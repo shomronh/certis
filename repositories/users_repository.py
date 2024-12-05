@@ -27,7 +27,7 @@ class UsersRepository(AbstractRepository):
     def __init(self, directory):
         super()._init(directory, "users.json", "")
         self.__logger = LogsService.get_instance()
-        self._create_file_datasource_if_not_exist()
+        self._create_file_if_not_exist()
 
     def register(self, username, password):
 
