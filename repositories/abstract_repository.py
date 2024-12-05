@@ -2,7 +2,7 @@ import threading
 from abc import ABC
 
 from services.logs_service import LogsService
-from utils.files_corruptions_denial import FilesCorruptionsDenial
+from utils.files_corruptions_handler import FilesCorruptionsHandler
 from utils.files_utils import FilesUtils
 
 
@@ -58,7 +58,7 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            data = FilesCorruptionsDenial.read_json_file(self._get_file_path())
+            data = FilesCorruptionsHandler.read_json_file(self._get_file_path())
             return data
         finally:
             if use_lock:
@@ -68,7 +68,7 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            FilesCorruptionsDenial.write_json_file(
+            FilesCorruptionsHandler.write_json_file(
                 self._directory,
                 self._file_name,
                 data)
@@ -80,7 +80,7 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            data = FilesCorruptionsDenial.read_json_file(self._get_file_path_per_user(user_id))
+            data = FilesCorruptionsHandler.read_json_file(self._get_file_path_per_user(user_id))
             return data
         finally:
             if use_lock:
@@ -90,7 +90,7 @@ class AbstractRepository(ABC):
         try:
             if use_lock:
                 self._lock.acquire()
-            FilesCorruptionsDenial.write_json_file(
+            FilesCorruptionsHandler.write_json_file(
                 self._directory,
                 self._get_file_name_per_user(user_id),
                 data)

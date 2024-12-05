@@ -2,7 +2,7 @@ from services.logs_service import LogsService
 from utils.files_utils import FilesUtils
 
 
-class FilesCorruptionsDenial:
+class FilesCorruptionsHandler:
 
     @staticmethod
     def write_json_file(directory: str, file_name: str, data: any):
