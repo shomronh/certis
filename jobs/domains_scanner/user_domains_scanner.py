@@ -6,6 +6,7 @@ from datetime import datetime
 
 import requests
 
+from jobs.domains_scanner.domains_queues_distributer import GlobalDomainsQueueDistributer
 from repositories.domains_repository import DomainsRepository
 from services.logs_service import LogsService
 
@@ -16,38 +17,20 @@ class UserDomainsScanner:
         self.domain_repository = DomainsRepository.get_instance()   
         self.__logger = LogsService.get_instance()
 
-    def get_next_domains(self, user_id, domains_queue: queue.Queue):
-
+    def scan_user_domains(self, user_id: str, domainsDistributer: GlobalDomainsQueueDistributer):
         try:
-            if domains_queue.qsize() == 0:
-                domains_table = self.domain_repository.get_domains(user_id)
+            next_domain = domainsDistributer.get_next_domain()
 
-                for value in domains_table.values():
-                    domains_queue.put(value)
-
-            return domains_queue
-
-        except Exception as e:
-            return queue.Queue()
-
-    def scan_user_domains(self, user_id: str, user_queue: queue.Queue):
-        try:
-            domains_queue = self.get_next_domains(user_id, user_queue)
-
-            if domains_queue.qsize() == 0:
-                self.__logger.log(f"No existing domains to scan for user={user_id}")
+            if not next_domain:
+                self.__logger.log(f"No existing domains currently")
                 return
-
-            total_domains = domains_queue.qsize()
 
             t0 = time.time()
 
-            while not domains_queue.empty():
-                domain_obj = domains_queue.get(0)
-                self.do_scans(user_id, domain_obj)
-
+            self.do_scans(next_domain.user_id, next_domain.domain)
+            
             time_diff = time.time() - t0
-            self.__logger.log(f"complete scan of {total_domains} domains in {time_diff} seconds")
+            self.__logger.log(f"Scanning domain={next_domain.domain["domain"]} for userId={next_domain.user_id} took {time_diff} seconds")
 
         except Exception as e:
             self.__logger.log(str(e))
@@ -69,7 +52,7 @@ class UserDomainsScanner:
             self.__logger.log(f"domain={domain} considered deleted, no need to monitor")
             return
 
-        self.__logger.debug(f"start monitoring user_id={user_id} domain={domain}")
+        self.__logger.debug(f"start scan user_id={user_id} domain={domain}")
 
         self.scan_domain(domain_obj)
         self.get_ssl_properties(domain_obj)

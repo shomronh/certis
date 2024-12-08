@@ -6,6 +6,7 @@ import time
 from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.schedulers.background import BackgroundScheduler
 
+from jobs.domains_scanner.domains_queues_distributer import GlobalDomainsQueueDistributer
 from jobs.domains_scanner.user_domains_scanner import UserDomainsScanner
 from repositories.domains_repository import DomainsRepository
 from repositories.settings_repository import SettingsRepository
@@ -35,21 +36,20 @@ class UsersDomainsScannerJob:
     def __init(self):
         self.__logger = LogsService.get_instance()
         self.__usersRepository = UsersRepository.get_instance()
-        self.__domain_repository = DomainsRepository.get_instance()
         self.__settings_repository = SettingsRepository.get_instance()
+        self.__global_domains_queue_distributer = GlobalDomainsQueueDistributer.get_instance()
 
         self.__scheduler = BackgroundScheduler()
         self.__is_started = False
 
-        self.__users_queues_table: dict[str, queue.Queue] = {}
+        # TODO: ensure dict is thread safe as well
+        # self.__users_queues_table: dict[str, queue.Queue] = {}
         self.__users = {}
 
         self.__delta_t_increment = 2
 
-        # thread_pool = ThreadPoolExecutor(min(len(self.__users), 5))
-        # thread_pool = ThreadPoolExecutor(max_workers=40)
-        logical_cores = os.cpu_count()
-        self.__thread_pool = ThreadPoolExecutor(max_workers=logical_cores)
+        # logical_cores = os.cpu_count()
+        self.__thread_pool = ThreadPoolExecutor(max_workers=5)
 
     def start(self):
 
@@ -58,7 +58,7 @@ class UsersDomainsScannerJob:
 
         self.__is_started = True
 
-        is_testing = False
+        is_testing = True
 
         if is_testing:
             self.__users = {"test1": {}}
@@ -90,13 +90,13 @@ class UsersDomainsScannerJob:
             self.__scheduler.shutdown()
 
     def add_queue_for_user(self, user_id: str):
-        self.__users_queues_table[user_id] = queue.Queue()
+        self.__global_domains_queue_distributer.add_queue_for_user(user_id)
 
-    def __start_user_domains_scanning(self, user_id: str, user_queue: queue.Queue, delta_t: int):
+    def __start_user_domains_scanning(self, user_id: str, domainsDistributer: GlobalDomainsQueueDistributer, delta_t: int):
         self.__logger.log(f"starting user_id={user_id} job \n")
 
         scanner = UserDomainsScanner()
-        scanner.scan_user_domains(user_id, user_queue)
+        scanner.scan_user_domains(user_id, domainsDistributer)
 
         # TODO: dispose scanner after completion
         # TODO: use pool of objects to avoid intensive objects creation
@@ -113,8 +113,6 @@ class UsersDomainsScannerJob:
         else:
             seconds = 5
 
-        user_queue = self.__users_queues_table[user_id]
-
         delta_t = job_index * self.__delta_t_increment + seconds
 
         self.__scheduler.add_job(
@@ -123,7 +121,7 @@ class UsersDomainsScannerJob:
             # max_instances=1,
             seconds=delta_t,
             id=f"{user_id}",
-            args=[user_id, user_queue, delta_t])
+            args=[user_id, self.__global_domains_queue_distributer, delta_t])
 
 
 
