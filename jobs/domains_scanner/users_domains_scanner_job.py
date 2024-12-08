@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 
@@ -45,8 +46,8 @@ class UsersDomainsScannerJob:
 
         self.__delta_t_increment = 2
 
-        # logical_cores = os.cpu_count()
-        self.__thread_pool = ThreadPoolExecutor(max_workers=5)
+        logical_cores = os.cpu_count()
+        self.__thread_pool = ThreadPoolExecutor(max_workers=logical_cores)
 
     def start(self):
 
@@ -55,7 +56,7 @@ class UsersDomainsScannerJob:
 
         self.__is_started = True
 
-        is_testing = True
+        is_testing = False
 
         if is_testing:
             self.__users = self.__usersRepository.get_users()
