@@ -11,13 +11,13 @@ from repositories.domains_repository import DomainsRepository
 from services.logs_service import LogsService
 
 
-class UserDomainsScanner:
+class DomainsScanner:
 
     def __init__(self):
         self.domain_repository = DomainsRepository.get_instance()   
         self.__logger = LogsService.get_instance()
 
-    def scan_user_domains(self, user_id: str, domainsDistributer: GlobalDomainsQueueDistributer):
+    def scan_user_domains(self, domainsDistributer: GlobalDomainsQueueDistributer):
         try:
             next_domain = domainsDistributer.get_next_domain()
 

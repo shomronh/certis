@@ -7,8 +7,7 @@ from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from jobs.domains_scanner.domains_queues_distributer import GlobalDomainsQueueDistributer
-from jobs.domains_scanner.user_domains_scanner import UserDomainsScanner
-from repositories.domains_repository import DomainsRepository
+from jobs.domains_scanner.domains_scanner import DomainsScanner
 from repositories.settings_repository import SettingsRepository
 from repositories.users_repository import UsersRepository
 from services.logs_service import LogsService
@@ -61,7 +60,10 @@ class UsersDomainsScannerJob:
         is_testing = True
 
         if is_testing:
-            self.__users = {}
+            self.__users = self.__usersRepository.get_users()
+
+            if len(self.__users) > 1:
+                self.__users = [self.__users[0]]
 
             total_workers = min(len(self.__users), 1)
             if total_workers < 1:
@@ -97,11 +99,11 @@ class UsersDomainsScannerJob:
     def add_queue_for_user(self, user_id: str):
         self.__global_domains_queue_distributer.add_queue_for_user(user_id)
 
-    def __start_user_domains_scanning(self, user_id: str, domainsDistributer: GlobalDomainsQueueDistributer, delta_t: int):
-        self.__logger.log(f"starting user_id={user_id} job \n")
+    def __start_domains_scanning(self, user_id: str, domains_distributer: GlobalDomainsQueueDistributer, delta_t: int):
+        self.__logger.log(f"starting job triggered by user_id={user_id} \n")
 
-        scanner = UserDomainsScanner()
-        scanner.scan_user_domains(user_id, domainsDistributer)
+        scanner = DomainsScanner()
+        scanner.scan_user_domains(domains_distributer)
 
         # TODO: dispose scanner after completion
         # TODO: use pool of objects to avoid intensive objects creation
@@ -121,7 +123,7 @@ class UsersDomainsScannerJob:
         delta_t = job_index * self.__delta_t_increment + seconds
 
         self.__scheduler.add_job(
-            self.__start_user_domains_scanning,
+            self.__start_domains_scanning,
             'interval',
             # max_instances=1,
             seconds=delta_t,
