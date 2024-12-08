@@ -20,7 +20,7 @@ class UserDomainsIterator:
         self.__queue.put(domain)
 
     # TODO: use in memory cache to avoid inserting all domains again
-    def load_domains(self):
+    def __load_domains(self):
         domains = self.__domains_repository.get_domains(self.__user_id)
         
         for domainKey in domains:
@@ -30,11 +30,12 @@ class UserDomainsIterator:
     def get_next_domain(self): 
 
         if self.get_queue_size() == 0:
-            return None
+            self.__load_domains()
 
-        next_domain = self.__queue.get()
+        if self.get_queue_size() != 0:
+            return self.__queue.get()
 
-        return next_domain
+        return None
 
     def get_queue_size(self):
         return self.__queue.qsize()

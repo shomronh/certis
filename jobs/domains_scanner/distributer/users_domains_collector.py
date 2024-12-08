@@ -2,15 +2,14 @@
 import queue
 import threading
 
-from jobs.domains_scanner.user_domains_iterator import UserDomainsIterator
-from repositories.domains_repository import DomainsRepository
+from jobs.domains_scanner.distributer.user_domains_iterator import UserDomainsIterator
 from repositories.users_repository import UsersRepository
 
-class GlobalDomainsQueueItem:
+class UserDomainCollectedItem:
     user_id: str
     domain: any
 
-class GlobalDomainsQueueDistributer:
+class UsersDomainsCollector:
 
     # static variables
     _instance = None
@@ -18,7 +17,7 @@ class GlobalDomainsQueueDistributer:
 
     # other variables
     __users_queues_table: dict[str, UserDomainsIterator]
-    __global_domains_queue: queue.Queue[GlobalDomainsQueueItem]
+    __users_domains_collections_queue: queue.Queue[UserDomainCollectedItem]
 
     __users_repository: UsersRepository
 
@@ -35,7 +34,7 @@ class GlobalDomainsQueueDistributer:
     
     def __init(self):
         self.__users_queues_table = {}
-        self.__global_domains_queue = queue.Queue()
+        self.__users_domains_collections_queue = queue.Queue()
         self.__users_repository = UsersRepository.get_instance()
 
     def add_queue_for_user(self, user_id: str):
@@ -49,11 +48,11 @@ class GlobalDomainsQueueDistributer:
 
     def get_next_domain(self):
         try:
-            if self.__global_domains_queue.qsize() == 0:
+            if self.__users_domains_collections_queue.qsize() == 0:
                 self.__populate_global_queue_with_users_data()
 
-            if(self.__global_domains_queue.qsize() != 0):
-                return self.__global_domains_queue.get()
+            if(self.__users_domains_collections_queue.qsize() != 0):
+                return self.__users_domains_collections_queue.get()
 
             return None
         except Exception as e:
@@ -66,28 +65,16 @@ class GlobalDomainsQueueDistributer:
 
         # for each user load its domains and insert them into its queue
         for user in users:
-            self.add_queue_for_user(user)  
-            self.__users_queues_table[user].load_domains()
+            self.add_queue_for_user(user)
 
-        while True:
-
-            if not self.has_more_domains_to_add():
-                break
-
-            for user_id in self.__users_queues_table:
-
-                next_user_domain = self.__users_queues_table[user_id].get_next_domain()
-
-                if next_user_domain:
-                    item = GlobalDomainsQueueItem()
-                    item.user_id = user_id
-                    item.domain = next_user_domain
-                    self.__global_domains_queue.put(item)
-
-    def has_more_domains_to_add(self):
-        count = 0
         for user_id in self.__users_queues_table:
-            user_domains_iterator = self.__users_queues_table[user_id]
-            size = user_domains_iterator.get_queue_size()
-            count += size
-        return count != 0
+
+            next_user_domain = self.__users_queues_table[user_id].get_next_domain()
+
+            if next_user_domain:
+
+                item = UserDomainCollectedItem()
+                item.user_id = user_id
+                item.domain = next_user_domain
+
+                self.__users_domains_collections_queue.put(item)

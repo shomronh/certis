@@ -1,4 +1,3 @@
-import queue
 import socket
 import ssl
 import time
@@ -6,7 +5,7 @@ from datetime import datetime
 
 import requests
 
-from jobs.domains_scanner.domains_queues_distributer import GlobalDomainsQueueDistributer
+from jobs.domains_scanner.distributer.users_domains_collector import UsersDomainsCollector
 from repositories.domains_repository import DomainsRepository
 from services.logs_service import LogsService
 
@@ -17,9 +16,9 @@ class DomainsScanner:
         self.domain_repository = DomainsRepository.get_instance()   
         self.__logger = LogsService.get_instance()
 
-    def scan_user_domains(self, domainsDistributer: GlobalDomainsQueueDistributer):
+    def scan_user_domains(self, users_domains_collector: UsersDomainsCollector):
         try:
-            next_domain = domainsDistributer.get_next_domain()
+            next_domain = users_domains_collector.get_next_domain()
 
             if not next_domain:
                 self.__logger.log(f"No existing domains currently")

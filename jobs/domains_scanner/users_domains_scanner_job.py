@@ -1,13 +1,11 @@
-import os
-import queue
 import threading
 import time
 
 from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from jobs.domains_scanner.domains_queues_distributer import GlobalDomainsQueueDistributer
-from jobs.domains_scanner.domains_scanner import DomainsScanner
+from jobs.domains_scanner.distributer.users_domains_collector import UsersDomainsCollector
+from jobs.domains_scanner.scanner.domains_scanner import DomainsScanner
 from repositories.settings_repository import SettingsRepository
 from repositories.users_repository import UsersRepository
 from services.logs_service import LogsService
@@ -36,7 +34,7 @@ class UsersDomainsScannerJob:
         self.__logger = LogsService.get_instance()
         self.__usersRepository = UsersRepository.get_instance()
         self.__settings_repository = SettingsRepository.get_instance()
-        self.__global_domains_queue_distributer = GlobalDomainsQueueDistributer.get_instance()
+        self.__users_domains_collector = UsersDomainsCollector.get_instance()
 
         self.__scheduler = BackgroundScheduler()
         self.__is_started = False
@@ -97,13 +95,13 @@ class UsersDomainsScannerJob:
             self.__scheduler.shutdown()
 
     def add_queue_for_user(self, user_id: str):
-        self.__global_domains_queue_distributer.add_queue_for_user(user_id)
+        self.__users_domains_collector.add_queue_for_user(user_id)
 
-    def __start_domains_scanning(self, user_id: str, domains_distributer: GlobalDomainsQueueDistributer, delta_t: int):
+    def __start_domains_scanning(self, user_id: str, users_domains_collector: UsersDomainsCollector, delta_t: int):
         self.__logger.log(f"starting job triggered by user_id={user_id} \n")
 
         scanner = DomainsScanner()
-        scanner.scan_user_domains(domains_distributer)
+        scanner.scan_user_domains(users_domains_collector)
 
         # TODO: dispose scanner after completion
         # TODO: use pool of objects to avoid intensive objects creation
@@ -130,7 +128,7 @@ class UsersDomainsScannerJob:
             # max_instances=1,
             seconds=delta_t,
             id=f"{user_id}",
-            args=[user_id, self.__global_domains_queue_distributer, delta_t])
+            args=[user_id, self.__users_domains_collector, delta_t])
 
 
 
