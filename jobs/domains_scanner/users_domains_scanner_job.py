@@ -120,7 +120,9 @@ class UsersDomainsScannerJob:
         else:
             seconds = 5
 
-        delta_t = job_index * self.__delta_t_increment + seconds
+        delta_t = seconds
+        if delta_t < 5:
+            delta_t = 5
 
         self.__scheduler.add_job(
             self.__start_domains_scanning,
@@ -140,7 +142,7 @@ class UsersDomainsScannerJob:
             self.__add_schedular_job(user_id, total_jobs)
 
         except Exception as err:
-            self.__logger.log(f"try to reschedule job but get error: {err}")
+            self.__logger.exception(f"try to reschedule job but get error: {err}")
 
     def add_new_job(self, user_id):
         try:
@@ -153,7 +155,7 @@ class UsersDomainsScannerJob:
             self.add_queue_for_user(user_id)
             self.__add_schedular_job(user_id, total_jobs)
         except Exception as err:
-            self.__logger.log(f"try to add new job but get error: {err}")
+            self.__logger.exception(f"try to add new job but get error: {err}")
 
 
 

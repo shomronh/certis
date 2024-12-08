@@ -52,7 +52,10 @@ class GlobalDomainsQueueDistributer:
             if self.__global_domains_queue.qsize() == 0:
                 self.__populate_global_queue_with_users_data()
 
-            return self.__global_domains_queue.get()
+            if(self.__global_domains_queue.qsize() != 0):
+                return self.__global_domains_queue.get()
+
+            return None
         except Exception as e:
             return None
         

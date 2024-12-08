@@ -6,6 +6,7 @@ from globals.env_variables_handler import EnvVariablesHandler
 
 
 class LogsService:
+
     # Static variables
     _instance = None
     _lock = threading.Lock()
