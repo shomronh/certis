@@ -58,7 +58,7 @@ class UsersDomainsScannerJob:
 
         self.__is_started = True
 
-        is_testing = True
+        is_testing = False
 
         if is_testing:
             self.__users = {"test1": {}}
