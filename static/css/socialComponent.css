@@ -36,13 +36,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px;
+  width: 40px;
   height: 40px;
 }
 
 #google_login_button svg {
   transform: scale(0.6); 
-  width: auto; 
+  width: 40px;
   height: 40px; 
 
   /* for google button*/
