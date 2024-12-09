@@ -42,7 +42,7 @@ class DomainsRepository(AbstractRepository):
             domains_table = self.get_domains(user_id, False)
 
             if domain in domains_table and domains_table[domain]["deleted"] == "false":
-                return f"Domain {domain} already exists.", False
+                return f"Domain {domain} already exists and not deleted.", False
 
             # exists AND deleted == "true" OR not exists
         
@@ -53,6 +53,34 @@ class DomainsRepository(AbstractRepository):
                 "status_error": "N/A",
                 "deleted": "false"
             }
+
+            self._write_file_per_user(user_id, domains_table)
+
+            return f"Domain {domain} added successfully", True
+        finally:
+            self._lock.release()
+
+    def add_domains(self, user_id: str, domains: list[str]):
+
+        try:
+            self._lock.acquire()
+
+            domains_table = self.get_domains(user_id, False)
+
+            for domain in domains:
+                
+                if domain in domains_table and domains_table[domain]["deleted"] == "false":
+                    print(f"Domain {domain} already exists and not deleted.")
+                    continue
+
+                # exists AND deleted == "true" OR not exists
+                domains_table[domain] = {
+                    "domain": domain,
+                    "status": "Pending",
+                    "last_check": "N/A",
+                    "status_error": "N/A",
+                    "deleted": "false"
+                }
 
             self._write_file_per_user(user_id, domains_table)
 

@@ -35,12 +35,15 @@ class DomainsService {
             if (response.ok) {
                 return { isOk: true, message: responseData }
             }
+
+            alert(responseData)
             return { isOk: false, message: responseData }
 
         } catch (error) {
             // Handle any errors and show a message in the messageBox
             // messageBox.textContent = "An error occurred while adding the domain.";
             // messageBox.style.color = "red";
+            alert(error.message)
             console.error(error)
             return { isOk: false, message: `An error occurred: ${error.message}` };
         }
@@ -68,12 +71,15 @@ class DomainsService {
             if (response.ok) {
                 return { isOk: true, message: responseData }
             }
+
+            alert(responseData)
             return { isOk: false, message: responseData }
 
         } catch (error) {
             // Handle any errors and show a message in the messageBox
             // messageBox.textContent = "An error occurred while adding the domain.";
             // messageBox.style.color = "red";
+            alert(error.message)
             console.error(error)
             return { isOk: false, message: `An error occurred: ${error.message}` };
         }
@@ -94,6 +100,8 @@ class DomainsService {
             if (response.ok) {
                 return { isOk: true, message: responseData }
             }
+
+            alert(responseData.message)
             return { isOk: false, message: responseData }
 
         } catch (error) {
@@ -101,7 +109,7 @@ class DomainsService {
             // messageBox.textContent = "An error occurred during the bulk upload.";
             // messageBox.style.color = "red";
             // return { message: "An error occurred", error: true, ok: false };
-
+            alert(error.message)
             console.error(error)
             return { isOk: false, message: `An error occurred: ${error.message}` };
         }
@@ -127,9 +135,13 @@ class DomainsService {
                 return data ? data : [];
             } else {
                 const errorData = await response.json();
-                throw new Error(errorData.message || "Error fetching domains.");
+                const errMessage = errorData.message || "Error fetching domains."
+
+                alert(errMessage)
+                throw new Error(errMessage);
             }
         } catch (error) {
+            alert(error.message)
             // Handle any errors during the fetch request
             throw new Error("An error occurred while fetching domains: " + error.message);
         }

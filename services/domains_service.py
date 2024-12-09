@@ -21,7 +21,7 @@ class DomainsService:
         return cls._instance
 
     def __init__(self):
-        raise RuntimeError('Call get_instance() instead')
+        raise RuntimeError("Call get_instance() instead")
 
     def __init(self):
         self.domain_repository = DomainsRepository.get_instance()
@@ -29,8 +29,8 @@ class DomainsService:
     def add_domain(self, user_id, domain):
 
         # Validations
-        if not user_id or ' ' in user_id or len(user_id) == 0 or len(user_id) <= 3:
-            return 'Empty or Invalid username', False
+        if not user_id or " " in user_id or len(user_id) == 0 or len(user_id) <= 3:
+            return "Empty or Invalid username", False
 
         if not self.is_valid_domain(domain):
             return "Invalid domain format", False
@@ -40,10 +40,26 @@ class DomainsService:
 
         return result
 
+    def add_domains(self, user_id, domains: list[str]):
+
+        if not user_id or " " in user_id or len(user_id) == 0 or len(user_id) <= 3:
+            return "Empty or Invalid username", False
+
+        if not domains or len(domains) == 0:
+            return "domains list is empty", False
+
+        for domain in domains:
+            if not self.is_valid_domain(domain):
+                return f"Invalid domain={domain} format, please correct domains then upload again", False
+
+        result = self.domain_repository.add_domains(user_id, domains)
+
+        return result
+
     def delete_domain(self, user_id, domain):
 
-        if not user_id or ' ' in user_id or len(user_id) == 0 or len(user_id) <= 3:
-            return 'Empty or Invalid username', False
+        if not user_id or " " in user_id or len(user_id) == 0 or len(user_id) <= 3:
+            return "Empty or Invalid username", False
 
         if not self.is_valid_domain(domain):
             return "Invalid domain format", False
@@ -56,18 +72,17 @@ class DomainsService:
     def get_domains(self, user_id):
 
         # Validations
-        if not user_id or ' ' in user_id or len(user_id) == 0 or len(user_id) <= 3:
-            return 'Empty or Invalid username', False
+        if not user_id or " " in user_id or len(user_id) == 0 or len(user_id) <= 3:
+            return "Empty or Invalid username", False
 
         results = self.domain_repository.get_domains_list(user_id)
 
         return results
 
-
     def is_valid_domain(self, domain):
         """Validate domain format using a regex."""
 
-        if not domain or ' ' in domain or len(domain) == 0:
+        if not domain or " " in domain or len(domain) == 0:
             return False
 
         domain = self.clean_domain(domain.lower())
@@ -84,4 +99,4 @@ class DomainsService:
 
     def clean_domain(self, url: str):
         # Regular expression to remove "http://" or "https://"
-        return re.sub(r'^https?://', '', url)
+        return re.sub(r"^https?://", "", url)

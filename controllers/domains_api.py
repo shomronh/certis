@@ -120,8 +120,12 @@ class DomainsApi:
                     # Iterate through each line and eliminate empty lines
                     domains = [line for line in lines if line.strip() != '']
 
-                    for domain in domains:
-                        service.add_domain(user_id, domain)
+                    message, is_ok = service.add_domains(user_id, domains)
+
+                    if not is_ok:
+                        return jsonify({"message": message}), HTTPStatus.BAD_REQUEST
+
+                    return jsonify({"message": message}), HTTPStatus.OK
                 else:
                     jsonify({"message": "No file was uploaded"}), HTTPStatus.BAD_REQUEST
 
