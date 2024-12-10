@@ -26,8 +26,9 @@ body {
 }
 
 .brand-header .logo {
-  max-width: 80px;
   margin-bottom: 0.5rem;
+  width: 80px;
+  height: 54px;
 }
 
 .brand-header h1 {
