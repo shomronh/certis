@@ -5,11 +5,11 @@ import threading
 from jobs.domains_scanner.distributer.user_domains_iterator import UserDomainsIterator
 from repositories.users_repository import UsersRepository
 
-class UserDomainCollectedItem:
+class UserDomainItem:
     user_id: str
     domain: any
 
-class UsersDomainsCollector:
+class UsersDomainsDistributer:
 
     # static variables
     _instance = None
@@ -17,7 +17,7 @@ class UsersDomainsCollector:
 
     # other variables
     __users_queues_table: dict[str, UserDomainsIterator]
-    __users_domains_collections_queue: queue.Queue[UserDomainCollectedItem]
+    __users_domains_collections_queue: queue.Queue[UserDomainItem]
 
     __users_repository: UsersRepository
 
@@ -51,7 +51,7 @@ class UsersDomainsCollector:
             if self.__users_domains_collections_queue.qsize() == 0:
                 self.__populate_global_queue_with_users_data()
 
-            if(self.__users_domains_collections_queue.qsize() != 0):
+            if self.__users_domains_collections_queue.qsize() != 0:
                 return self.__users_domains_collections_queue.get()
 
             return None
@@ -73,7 +73,7 @@ class UsersDomainsCollector:
 
             if next_user_domain:
 
-                item = UserDomainCollectedItem()
+                item = UserDomainItem()
                 item.user_id = user_id
                 item.domain = next_user_domain
 
