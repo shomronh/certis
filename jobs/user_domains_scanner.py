@@ -96,8 +96,6 @@ class UserDomainsScanner:
         self.__logger.log(f"update_domain_status for user_id={user_id} saving domain={domain_obj}")
         self.domain_repository.update_domain_status(user_id, domain_obj)
 
-        self.domain_repository.update_domain_status(user_id, domain_obj)
-
     def scan_domain(self, domain_obj: dict[str, any]):
         try:
             domain = domain_obj["domain"]
