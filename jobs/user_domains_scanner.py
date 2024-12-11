@@ -47,7 +47,7 @@ class UserDomainsScanner:
             max_domains_to_scan = 4
 
             while not domains_queue.empty() and total_domains < max_domains_to_scan:
-                domain_obj = domains_queue.get(0)
+                domain_obj = domains_queue.get()
                 self.do_scans(user_id, domain_obj)
                 total_domains += 1
 

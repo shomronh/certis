@@ -58,7 +58,7 @@ class UsersDomainsScannerJob:
             self.__is_started = False
             return
 
-        is_testing = True
+        is_testing = False
 
         if is_testing:
             total_workers = 1
@@ -99,6 +99,7 @@ class UsersDomainsScannerJob:
         # TODO: use pool of objects to avoid intensive objects creation
 
         self.__scheduler.pause_job(user_id)
+        time.sleep(1)
 
         self.re_schedule_job(user_id)
 
