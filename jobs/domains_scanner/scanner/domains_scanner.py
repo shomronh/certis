@@ -5,6 +5,7 @@ from datetime import datetime
 
 import requests
 
+from cache.DomainsCache import DomainsCache
 from jobs.domains_scanner.distributer.users_domains_distributer import UsersDomainsDistributer
 from repositories.domains_repository import DomainsRepository
 from services.logs_service import LogsService
@@ -15,8 +16,9 @@ class DomainsScanner:
     def __init__(self):
         self.domain_repository = DomainsRepository.get_instance()   
         self.__logger = LogsService.get_instance()
+        self.__cache = DomainsCache.get_instance()
 
-    def scan_user_domains(self, users_domains_distributer: UsersDomainsDistributer):
+    def scan_user_domains(self, user_id, users_domains_distributer: UsersDomainsDistributer):
         try:
             next_domain = users_domains_distributer.get_next_domain()
 
@@ -26,10 +28,10 @@ class DomainsScanner:
 
             t0 = time.time()
 
-            self.do_scans(next_domain.user_id, next_domain.domain)
+            domain_obj, has_returned_data_from_cache = self.do_scans(user_id, next_domain.domain)
             
             time_diff = time.time() - t0
-            self.__logger.log(f"Scanning domain={next_domain.domain["domain"]} for userId={next_domain.user_id} took {time_diff} seconds")
+            self.__logger.log(f"has_returned_data_from_cache={has_returned_data_from_cache}: Scanning domain={domain_obj["domain"]} for userId={user_id} took {time_diff} seconds")
 
         except Exception as e:
             self.__logger.log(str(e))
@@ -53,10 +55,25 @@ class DomainsScanner:
 
         self.__logger.debug(f"start scan user_id={user_id} domain={domain}")
 
+        if "domain" in domain_obj:
+            domain = domain_obj["domain"]
+
+            domain_obj_from_cache = self.__cache.get(domain)
+            if domain_obj_from_cache:
+                # if we have used cache return True
+                return domain_obj_from_cache, True
+
+        # Else
         self.scan_domain(domain_obj)
         self.get_ssl_properties(domain_obj)
 
+        self.__logger.log(f"update_domain_status for user_id={user_id} saving domain={domain_obj}")
         self.domain_repository.update_domain_status(user_id, domain_obj)
+
+        self.__cache.set(domain, domain_obj)
+
+        # if didn't use cache return False
+        return domain_obj, False
 
     def scan_domain(self, domain_obj: dict[str, any]):
         try:
@@ -76,6 +93,10 @@ class DomainsScanner:
 
         except requests.RequestException as e:
             domain_obj["status"] = "Down"
+            domain_obj["status_error"] = str(e)
+
+        except Exception as e:
+            domain_obj["status"] = "N/A"
             domain_obj["status_error"] = str(e)
 
         domain_obj["last_checked"] = datetime.utcnow().isoformat()
@@ -124,5 +145,6 @@ class DomainsScanner:
         except Exception as e:
             domain_obj["ssl_expiration"] = "N/A"
             domain_obj["ssl_issuer"] = "N/A"
+            domain_obj["ssl_status_error"] = str(e)
 
         return False

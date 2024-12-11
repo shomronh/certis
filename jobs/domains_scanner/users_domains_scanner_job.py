@@ -102,7 +102,7 @@ class UsersDomainsScannerJob:
         self.__logger.log(f"starting job triggered by user_id={user_id} \n")
 
         scanner = DomainsScanner()
-        scanner.scan_user_domains(users_domains_distributer)
+        scanner.scan_user_domains(user_id, users_domains_distributer)
 
         # TODO: dispose scanner after completion
         # TODO: use pool of objects to avoid intensive objects creation
