@@ -58,7 +58,7 @@ class UsersDomainsScannerJob:
             self.__is_started = False
             return
 
-        is_testing = False
+        is_testing = True
 
         if is_testing:
             total_workers = 1
@@ -93,7 +93,7 @@ class UsersDomainsScannerJob:
         self.__logger.log(f"starting user_id={user_id} job \n")
 
         scanner = UserDomainsScanner()
-        scanner.scan_user_domains(user_id, user_queue)
+        scanner.scan_user_domains(user_id, user_queue, self.__scheduler)
 
         # TODO: dispose scanner after completion
         # TODO: use pool of objects to avoid intensive objects creation

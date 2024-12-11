@@ -33,7 +33,7 @@ class UserDomainsScanner:
         except Exception as e:
             return queue.Queue()
 
-    def scan_user_domains(self, user_id, user_queue: queue.Queue):
+    def scan_user_domains(self, user_id, user_queue: queue.Queue, scheduler: BackgroundScheduler):
         try:
             domains_queue = self.get_next_domains(user_id, user_queue)
 
@@ -44,15 +44,16 @@ class UserDomainsScanner:
             t0 = time.time()
 
             total_domains = 0
+            max_domains_to_scan = 4
 
-            # while not domains_queue.empty():
-            #     domain_obj = domains_queue.get(0)
-            #     self.do_scans(self.__user_id, domain_obj)
-            #     total_domains += 1
+            while not domains_queue.empty() and total_domains < max_domains_to_scan:
+                domain_obj = domains_queue.get(0)
+                self.do_scans(user_id, domain_obj)
+                total_domains += 1
 
-            total_domains += 1
-            domain_obj = domains_queue.get(0)
-            self.do_scans(user_id, domain_obj)
+            # total_domains += 1
+            # domain_obj = domains_queue.get(0)
+            # self.do_scans(user_id, domain_obj)
 
             time_diff = time.time() - t0
             self.__logger.log(f"complete scan of {total_domains} domains in {time_diff} seconds")
