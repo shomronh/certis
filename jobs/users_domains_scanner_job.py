@@ -1,3 +1,4 @@
+import math
 import os
 import queue
 import threading
@@ -64,7 +65,9 @@ class UsersDomainsScannerJob:
             total_workers = 1
             self.__thread_pool = ThreadPoolExecutor(total_workers)
         else:
-            logical_cores = os.cpu_count()
+            logical_cores = math.floor(os.cpu_count() * 0.7)
+            if logical_cores < 1:
+                logical_cores = 1
             self.__thread_pool = ThreadPoolExecutor(max_workers=logical_cores)
 
         # populate table of users queues

@@ -139,7 +139,7 @@ class UserDomainsScanner:
 
             # Establish a secure connection to fetch the SSL certificate
             context = ssl.create_default_context()
-            with socket.create_connection((hostname, 443)) as sock:
+            with socket.create_connection((hostname, 443), timeout=5) as sock:
                 with context.wrap_socket(sock, server_hostname=hostname) as ssock:
                     cert = ssock.getpeercert()
 
