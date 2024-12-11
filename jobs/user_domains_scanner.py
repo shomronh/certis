@@ -6,6 +6,7 @@ from datetime import datetime
 
 import requests
 
+from cache.DomainsCache import DomainsCache
 from repositories.domains_repository import DomainsRepository
 from services.logs_service import LogsService
 
@@ -15,6 +16,7 @@ class UserDomainsScanner:
     def __init__(self):
         self.domain_repository = DomainsRepository.get_instance()   
         self.__logger = LogsService.get_instance()
+        self.__cache = DomainsCache.get_instance()
 
     def get_next_domains(self, user_id, domains_queue: queue.Queue):
 
@@ -38,13 +40,19 @@ class UserDomainsScanner:
                 self.__logger.log(f"No existing domains to scan for user={user_id}")
                 return
 
-            total_domains = domains_queue.qsize()
-
             t0 = time.time()
+
+            total_domains = 0
 
             while not domains_queue.empty():
                 domain_obj = domains_queue.get(0)
                 self.do_scans(user_id, domain_obj)
+                total_domains += 1
+                time.sleep(1)
+
+            # total_domains += 1
+            # domain_obj = domains_queue.get(0)
+            # self.do_scans(user_id, domain_obj)
 
             time_diff = time.time() - t0
             self.__logger.log(f"complete scan of {total_domains} domains in {time_diff} seconds")
@@ -71,8 +79,21 @@ class UserDomainsScanner:
 
         self.__logger.debug(f"start monitoring user_id={user_id} domain={domain}")
 
+        if "domain" in domain_obj:
+            domain = domain_obj["domain"]
+
+            domain_obj_from_cache = self.__cache.get(domain)
+
+            if domain_obj_from_cache:
+                self.domain_repository.update_domain_status(user_id, domain_obj_from_cache)
+                # if we have used cache return True
+                return domain_obj_from_cache, True
+
         self.scan_domain(domain_obj)
         self.get_ssl_properties(domain_obj)
+
+        self.__logger.log(f"update_domain_status for user_id={user_id} saving domain={domain_obj}")
+        self.domain_repository.update_domain_status(user_id, domain_obj)
 
         self.domain_repository.update_domain_status(user_id, domain_obj)
 
@@ -94,6 +115,10 @@ class UserDomainsScanner:
 
         except requests.RequestException as e:
             domain_obj["status"] = "Down"
+            domain_obj["status_error"] = str(e)
+
+        except Exception as e:
+            domain_obj["status"] = "N/A"
             domain_obj["status_error"] = str(e)
 
         domain_obj["last_checked"] = datetime.utcnow().isoformat()
@@ -142,5 +167,10 @@ class UserDomainsScanner:
         except Exception as e:
             domain_obj["ssl_expiration"] = "N/A"
             domain_obj["ssl_issuer"] = "N/A"
+
+        except Exception as e:
+            domain_obj["ssl_expiration"] = "N/A"
+            domain_obj["ssl_issuer"] = "N/A"
+            domain_obj["ssl_status_error"] = str(e)
 
         return False

@@ -1,6 +1,6 @@
 import threading
 
-from jobs.domains_scanner.users_domains_scanner_job import UsersDomainsScannerJob
+from jobs.users_domains_scanner_job import UsersDomainsScannerJob
 from repositories.users_repository import UsersRepository
 
 

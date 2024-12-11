@@ -12,7 +12,7 @@ from controllers.login_api import LoginApi
 from controllers.register_api import RegisterApi
 from controllers.settings_api import SettingsApi
 from globals.env_variables_handler import EnvVariablesHandler
-from jobs.domains_scanner.users_domains_scanner_job import UsersDomainsScannerJob
+from jobs.users_domains_scanner_job import UsersDomainsScannerJob
 from services.logs_service import LogsService
 
 
