@@ -24,8 +24,8 @@ class UserDomainsIterator:
         domains = self.__domains_repository.get_domains(self.__user_id)
         
         for domainKey in domains:
-            domainObj = domains[domainKey]
-            self.__queue.put(domainObj)
+            domain_obj = domains[domainKey]
+            self.__queue.put(domain_obj)
 
     def get_next_domain(self): 
 

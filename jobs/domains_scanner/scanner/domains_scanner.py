@@ -6,7 +6,7 @@ from datetime import datetime
 import requests
 
 from cache.DomainsCache import DomainsCache
-from jobs.domains_scanner.distributer.users_domains_distributer import UsersDomainsDistributer
+from jobs.domains_scanner.distributer.users_domains_distributer import UsersDomainsDistributer, UserDomainItem
 from repositories.domains_repository import DomainsRepository
 from services.logs_service import LogsService
 
@@ -18,9 +18,9 @@ class DomainsScanner:
         self.__logger = LogsService.get_instance()
         self.__cache = DomainsCache.get_instance()
 
-    def scan_user_domains(self, user_id, users_domains_distributer: UsersDomainsDistributer):
+    def scan_user_domains(self, users_domains_distributer: UsersDomainsDistributer):
         try:
-            next_domain = users_domains_distributer.get_next_domain()
+            next_domain: UserDomainItem | None = users_domains_distributer.get_next_domain()
 
             if not next_domain:
                 self.__logger.log(f"No existing domains currently")
@@ -28,7 +28,7 @@ class DomainsScanner:
 
             t0 = time.time()
 
-            domain_obj, has_returned_data_from_cache = self.do_scans(user_id, next_domain.domain)
+            domain_obj, has_returned_data_from_cache = self.do_scans(next_domain.user_id, next_domain.domain)
             
             time_diff = time.time() - t0
             self.__logger.log(f"has_returned_data_from_cache={has_returned_data_from_cache}: Scanning domain={domain_obj["domain"]} for userId={user_id} took {time_diff} seconds")
