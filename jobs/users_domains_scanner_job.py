@@ -46,11 +46,6 @@ class UsersDomainsScannerJob:
 
         self.__delta_t_increment = 2
 
-        # thread_pool = ThreadPoolExecutor(min(len(self.__users), 5))
-        # thread_pool = ThreadPoolExecutor(max_workers=40)
-        logical_cores = os.cpu_count()
-        self.__thread_pool = ThreadPoolExecutor(max_workers=logical_cores)
-
     def start(self):
 
         if self.__is_started:
@@ -58,26 +53,19 @@ class UsersDomainsScannerJob:
 
         self.__is_started = True
 
-        is_testing = False
+        self.__users = self.__usersRepository.get_users()
+        if len(self.__users) == 0:
+            self.__is_started = False
+            return
+
+        is_testing = True
 
         if is_testing:
-            self.__users = self.__usersRepository.get_users()
-
-            if len(self.__users) > 1:
-                keys = list(self.__users.keys())
-                self.__users = { keys[0]: self.__users[keys[0]] }
-
-            total_workers = min(len(self.__users), 1)
-            if total_workers < 1:
-                total_workers = 1
-
+            total_workers = 1
             self.__thread_pool = ThreadPoolExecutor(total_workers)
         else:
-            self.__users = self.__usersRepository.get_users()
-
-            if len(self.__users) == 0:
-                self.__is_started = False
-                return
+            logical_cores = os.cpu_count()
+            self.__thread_pool = ThreadPoolExecutor(max_workers=logical_cores)
 
         # populate table of users queues
         for user_id in self.__users.keys():
@@ -110,8 +98,7 @@ class UsersDomainsScannerJob:
         # TODO: dispose scanner after completion
         # TODO: use pool of objects to avoid intensive objects creation
 
-        # self.__scheduler.pause_job(user_id)
-        # time.sleep(5)
+        self.__scheduler.pause_job(user_id)
 
         self.re_schedule_job(user_id)
 

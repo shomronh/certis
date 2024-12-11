@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 
 import requests
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from cache.DomainsCache import DomainsCache
 from repositories.domains_repository import DomainsRepository
@@ -14,7 +15,7 @@ from services.logs_service import LogsService
 class UserDomainsScanner:
 
     def __init__(self):
-        self.domain_repository = DomainsRepository.get_instance()   
+        self.domain_repository = DomainsRepository.get_instance()
         self.__logger = LogsService.get_instance()
         self.__cache = DomainsCache.get_instance()
 
@@ -32,7 +33,7 @@ class UserDomainsScanner:
         except Exception as e:
             return queue.Queue()
 
-    def scan_user_domains(self, user_id: str, user_queue: queue.Queue):
+    def scan_user_domains(self, user_id, user_queue: queue.Queue):
         try:
             domains_queue = self.get_next_domains(user_id, user_queue)
 
@@ -44,15 +45,14 @@ class UserDomainsScanner:
 
             total_domains = 0
 
-            while not domains_queue.empty():
-                domain_obj = domains_queue.get(0)
-                self.do_scans(user_id, domain_obj)
-                total_domains += 1
-                time.sleep(1)
+            # while not domains_queue.empty():
+            #     domain_obj = domains_queue.get(0)
+            #     self.do_scans(self.__user_id, domain_obj)
+            #     total_domains += 1
 
-            # total_domains += 1
-            # domain_obj = domains_queue.get(0)
-            # self.do_scans(user_id, domain_obj)
+            total_domains += 1
+            domain_obj = domains_queue.get(0)
+            self.do_scans(user_id, domain_obj)
 
             time_diff = time.time() - t0
             self.__logger.log(f"complete scan of {total_domains} domains in {time_diff} seconds")
