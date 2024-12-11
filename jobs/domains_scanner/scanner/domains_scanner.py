@@ -59,7 +59,9 @@ class DomainsScanner:
             domain = domain_obj["domain"]
 
             domain_obj_from_cache = self.__cache.get(domain)
+
             if domain_obj_from_cache:
+                self.domain_repository.update_domain_status(user_id, domain_obj_from_cache)
                 # if we have used cache return True
                 return domain_obj_from_cache, True
 
