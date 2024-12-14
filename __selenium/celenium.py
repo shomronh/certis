@@ -34,8 +34,9 @@ class S_Testing:
             time.sleep(5)
             alert = Alert(self.driver)
             alert.accept()
+            ## TO DO > Find a way to get Alert context in order to know if to proceed login
         finally:
-            self.Login()
+            pass
             
     def Login(self):
         try:    
@@ -59,22 +60,53 @@ class S_Testing:
             time.sleep(5)
         except Exception as e:
             print("Error during login:", e)
-
+        ## TO DO > Find a way to get Alert context in order to know if to proceed login
         finally:
-            self.addDomain()
+            pass
 
     def addDomain(self):
         add = self.driver.find_element(By.ID, "addDomainBtn")
         add.click()
         submit = self.driver.find_element(By.CLASS_NAME, "submit-btn")
         add_domain = self.driver.find_element(By.ID, "domainName")
-        add_domain.send_keys("bibi.com")
-        time.sleep(10)
+        add_domain.send_keys("rakbibi.com")
+        time.sleep(5)
         submit.click()
-        time.sleep(100)
+        time.sleep(5)
+    
+    def domainBulk(self):
+        file_path = os.path.abspath('__selenium/100domains.txt')
+        add = self.driver.find_element(By.ID, "addDomainBtn")
+        add.click()
+        bulk_button = self.driver.find_element(By.ID,"domainsFile")
+        time.sleep(10)
+        bulk_button.send_keys(file_path)
+        time.sleep(5)
+        submit = self.driver.find_element(By.CLASS_NAME, "submit-btn")
+        submit.click()
+        time.sleep(10)
+    
+    def logout(self):
+        logout = self.driver.find_element(By.CLASS_NAME, "logout")
+        logout.click()
+        time.sleep(10)
+
+
+    def zeroToHero(self):
+        self.Register()
+        self.Login()
+        self.addDomain()
+        self.domainBulk()
+        self.logout()
+        self.driver.quit()
+    ##TO DO > Check if need to create a variable that is in charge of  self.driver.quit or not
+        
+
+
 
 
 
 test = S_Testing()
 
-test.Register()
+test.zeroToHero()
+
