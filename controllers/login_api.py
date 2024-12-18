@@ -81,3 +81,11 @@ class LoginApi:
             return render_template(
                 'loginPage.html',
                 BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())
+
+        @app.errorhandler(404)
+        def page_not_found(err):
+            return dashboard()
+
+        @app.errorhandler(500)
+        def internal_server_error(err):
+            return ashboard()
