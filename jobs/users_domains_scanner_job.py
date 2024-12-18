@@ -12,7 +12,7 @@ from jobs.user_domains_scanner import UserDomainsScanner
 from repositories.domains_repository import DomainsRepository
 from repositories.settings_repository import SettingsRepository
 from repositories.users_repository import UsersRepository
-from services.logs_service import LogsService
+from logger.logs_handler import LogsHandler
 
 
 class UsersDomainsScannerJob:
@@ -35,7 +35,7 @@ class UsersDomainsScannerJob:
         raise RuntimeError('Call get_instance() instead')
 
     def __init(self):
-        self.__logger = LogsService.get_instance()
+        self.__logger = LogsHandler.get_instance()
         self.__usersRepository = UsersRepository.get_instance()
         self.__domain_repository = DomainsRepository.get_instance()
         self.__settings_repository = SettingsRepository.get_instance()

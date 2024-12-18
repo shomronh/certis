@@ -1,8 +1,7 @@
-import os
 import threading
 from datetime import timedelta
 
-from flask import Flask, redirect, url_for
+from flask import Flask
 from flask_cors import CORS
 
 from controllers.domains_api import DomainsApi
@@ -13,7 +12,7 @@ from controllers.register_api import RegisterApi
 from controllers.settings_api import SettingsApi
 from globals.env_variables_handler import EnvVariablesHandler
 from jobs.users_domains_scanner_job import UsersDomainsScannerJob
-from services.logs_service import LogsService
+from logger.logs_handler import LogsHandler
 
 
 class CertisApp:
@@ -128,7 +127,7 @@ class CertisApp:
         # manual injections
 
         envVariablesHandler = EnvVariablesHandler.get_instance()
-        logsService = LogsService.get_instance()
+        logsService = LogsHandler.get_instance()
 
         envVariablesHandler.init(logsService)
         logsService.init(envVariablesHandler)

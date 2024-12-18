@@ -9,14 +9,14 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from cache.DomainsCache import DomainsCache
 from repositories.domains_repository import DomainsRepository
-from services.logs_service import LogsService
+from logger.logs_handler import LogsHandler
 
 
 class UserDomainsScanner:
 
     def __init__(self):
         self.domain_repository = DomainsRepository.get_instance()
-        self.__logger = LogsService.get_instance()
+        self.__logger = LogsHandler.get_instance()
         self.__cache = DomainsCache.get_instance()
 
     def get_next_domains(self, user_id, domains_queue: queue.Queue):

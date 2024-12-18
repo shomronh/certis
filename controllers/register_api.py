@@ -4,7 +4,7 @@ from http import HTTPStatus
 from flask import Flask, render_template, request, jsonify
 
 from globals.env_variables_handler import EnvVariablesHandler
-from services.logs_service import LogsService
+from logger.logs_handler import LogsHandler
 from services.register_service import RegisterService
 
 
@@ -29,7 +29,7 @@ class RegisterApi:
 
     def initRoutes(self, app: Flask):
 
-        logger = LogsService.get_instance()
+        logger = LogsHandler.get_instance()
 
         self._registerService = RegisterService.get_instance()
 

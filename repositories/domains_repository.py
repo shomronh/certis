@@ -1,8 +1,5 @@
-import json
-import os
-
 from repositories.abstract_repository import AbstractRepository
-from services.logs_service import LogsService
+from logger.logs_handler import LogsHandler
 
 
 # TODO:
@@ -29,7 +26,7 @@ class DomainsRepository(AbstractRepository):
 
     def __init(self, directory):
         super().__init__(directory, "", "domains.json")
-        self.__logger = LogsService.get_instance()
+        self.__logger = LogsHandler.get_instance()
         self._create_folder()
 
     # if domain exists in domains file AND deleted == "false" => return already exists

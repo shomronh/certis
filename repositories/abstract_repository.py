@@ -1,7 +1,7 @@
 import threading
 from abc import ABC
 
-from services.logs_service import LogsService
+from logger.logs_handler import LogsHandler
 from files.files_corruptions_handler import FilesCorruptionsHandler
 from files.files_utils import FilesUtils
 
@@ -14,11 +14,11 @@ class AbstractRepository(ABC):
     _file_name: str
     _file_name_postfix: str
 
-    _logger: LogsService
+    _logger: LogsHandler
 
     def __init__(self, directory, file_name: str, file_name_postfix: str):
 
-        self._logger = LogsService.get_instance()
+        self._logger = LogsHandler.get_instance()
 
         self._directory = directory
         self._file_name = file_name

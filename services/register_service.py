@@ -2,7 +2,7 @@ import threading
 
 from jobs.users_domains_scanner_job import UsersDomainsScannerJob
 from repositories.users_repository import UsersRepository
-from services.logs_service import LogsService
+from logger.logs_handler import LogsHandler
 
 
 class RegisterService:
@@ -26,7 +26,7 @@ class RegisterService:
 
     def __init(self):
         self.usersRepository = UsersRepository.get_instance()
-        self.__logger = LogsService.get_instance()
+        self.__logger = LogsHandler.get_instance()
 
     def register(self, username, password):
 
