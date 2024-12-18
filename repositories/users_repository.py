@@ -48,7 +48,8 @@ class UsersRepository(AbstractRepository):
                 self._write_file(users)
 
             return "User registered successfully", True
-
+        except Exception as ex:
+            self.__logger.log(f"Couldn't register: {e}")
         finally:
             self._lock.release()
 

@@ -2,7 +2,7 @@ import os
 import threading
 from datetime import timedelta
 
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_cors import CORS
 
 from controllers.domains_api import DomainsApi
@@ -43,8 +43,14 @@ class CertisApp:
 
         self.__app = Flask(__name__)
         self.__app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1 MB
+        
+        # after restart all users will be logged out
+        # self.__app.secret_key = os.urandom(24)  # secured random key
 
-        self.__app.secret_key = os.urandom(24)  # secured random key
+        # TODO: use secret key more securely 
+        # users will be kept loggedin after a restart
+        self.__app.secret_key = '123456789012345678901234'
+
 
         # Enable CORS for all routes and all origins
         CORS(self.__app, origins='*')
@@ -58,7 +64,7 @@ class CertisApp:
         @self.__app.route('/<filename>')
         def file(filename):
             return self.__app.send_static_file(filename)
-
+        
         HealthCheckApi.get_instance(self.__app)
         GoogleLoginApi.get_instance(self.__app)
         SettingsApi.get_instance(self.__app)

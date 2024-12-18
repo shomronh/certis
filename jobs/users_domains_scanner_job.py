@@ -5,6 +5,7 @@ import threading
 import time
 
 from apscheduler.executors.pool import ThreadPoolExecutor
+from apscheduler.jobstores.base import ConflictingIdError
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from jobs.user_domains_scanner import UserDomainsScanner
@@ -82,12 +83,7 @@ class UsersDomainsScannerJob:
 
         self.__scheduler.start()
 
-        try:
-            # avoid blocking the main thread
-            while True:
-                time.sleep(1)
-        except (KeyboardInterrupt, SystemExit):
-            self.__scheduler.shutdown()
+        self.__logger.log(f"Scheduler started")
 
     def add_queue_for_user(self, user_id: str):
         self.__users_queues_table[user_id] = queue.Queue()
@@ -144,14 +140,16 @@ class UsersDomainsScannerJob:
         try:
             if not self.__is_started:
                 self.start()
-                self.__is_started = True
 
             self.__logger.log(f"add new job for {user_id}")
             total_jobs = len(self.__scheduler.get_jobs())
             self.add_queue_for_user(user_id)
             self.__add_schedular_job(user_id, total_jobs)
+
+        except ConflictingIdError as ex:
+            self.__logger.warn(f"JobId of {user_id} already been started")
         except Exception as err:
-            self.__logger.log(f"try to add new job but get error: {err}")
+            self.__logger.exception(f"try to add new job but get error: {err}")
 
 
 

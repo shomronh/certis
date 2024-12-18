@@ -3,6 +3,7 @@ from http import HTTPStatus
 
 from flask import Flask, render_template, request, jsonify, session
 
+from auths.session_handler import SessionHandler
 from globals.env_variables_handler import EnvVariablesHandler
 from services.login_service import LoginService
 
@@ -14,6 +15,7 @@ class LoginApi:
     _lock = threading.Lock()
 
     # other variables
+    __session_handler: SessionHandler
 
     @classmethod
     def get_instance(cls, app: Flask):
@@ -29,6 +31,7 @@ class LoginApi:
     def __init(self, app: Flask):
 
         self._loginService = LoginService.get_instance()
+        self.__session_handler = SessionHandler.get_instance()
 
         # rest apis
         @app.route('/login', methods=['POST'])
@@ -48,7 +51,6 @@ class LoginApi:
                 if not is_ok:
                     return jsonify({"message": message}), HTTPStatus.UNAUTHORIZED
 
-                session['username'] = username
                 return jsonify({"message": message, "username": username}), HTTPStatus.OK
 
             except Exception as e:
@@ -56,7 +58,7 @@ class LoginApi:
 
         @app.route('/logout')
         def logout():
-            session.clear()
+            self._loginService.logout()
             return render_template(
                 'loginPage.html',
                 BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())
@@ -64,8 +66,9 @@ class LoginApi:
         # Visual Routes
         @app.route('/dashboardPage')
         def dashboard():
-            if "username" in session:
-                username = session["username"]
+            if self.__session_handler.validate_session(session):
+                username = self.__session_handler.get_username(session)
+
                 return render_template(
                     'dashboardPage.html',
                     username=username,
@@ -78,6 +81,3 @@ class LoginApi:
             return render_template(
                 'loginPage.html',
                 BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())
-
-
-
