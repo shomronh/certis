@@ -88,4 +88,4 @@ class LoginApi:
 
         @app.errorhandler(500)
         def internal_server_error(err):
-            return ashboard()
+            return dashboard()
