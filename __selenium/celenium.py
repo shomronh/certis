@@ -21,7 +21,7 @@ class S_Testing:
     def Register(self):
         try:
             #Username
-            self.driver.get("http://10.0.0.14:8080/registerPage")
+            self.driver.get("http://127.0.0.1:8080/registerPage")
             r_username = self.driver.find_element(By.NAME, "username")
             r_username.send_keys("Test111")
             #Password
@@ -69,7 +69,7 @@ class S_Testing:
         add.click()
         submit = self.driver.find_element(By.CLASS_NAME, "submit-btn")
         add_domain = self.driver.find_element(By.ID, "domainName")
-        add_domain.send_keys("rakbibi.com")
+        add_domain.send_keys("google.com")
         time.sleep(5)
         submit.click()
         time.sleep(5)
@@ -79,17 +79,17 @@ class S_Testing:
         add = self.driver.find_element(By.ID, "addDomainBtn")
         add.click()
         bulk_button = self.driver.find_element(By.ID,"domainsFile")
-        time.sleep(10)
+        time.sleep(5)
         bulk_button.send_keys(file_path)
         time.sleep(5)
         submit = self.driver.find_element(By.CLASS_NAME, "submit-btn")
         submit.click()
-        time.sleep(10)
+        time.sleep(5)
     
     def logout(self):
         logout = self.driver.find_element(By.CLASS_NAME, "logout")
         logout.click()
-        time.sleep(10)
+        time.sleep(5)
 
 
     def zeroToHero(self):
