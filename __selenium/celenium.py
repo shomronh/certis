@@ -13,8 +13,10 @@ class S_Testing:
     
     def __init__(self):
         self.driver = None
+        chrome_options = Options()
+        chrome_options.add_argument("--headless=new")
         # Initialize the WebDriver
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome(options=chrome_options)
         
 
 
@@ -28,10 +30,10 @@ class S_Testing:
             r_password = self.driver.find_element(By.NAME, "password")
             r_password.send_keys("Test111")
             #Submit
-            time.sleep(5)
+            time.sleep(3)
             reg_submit = self.driver.find_element(By.ID, "reg-btn")
             reg_submit.click()
-            time.sleep(5)
+            time.sleep(3)
             alert = Alert(self.driver)
             alert.accept()
             ## TO DO > Find a way to get Alert context in order to know if to proceed login
@@ -54,10 +56,10 @@ class S_Testing:
             l_password.send_keys("Test111")                
             log_submit = self.driver.find_element(By.ID, "login-btn")
             log_submit.click()                
-            time.sleep(5)  # Wait for the backend to process the request and give a response
+            time.sleep(3)  # Wait for the backend to process the request and give a response
             alert = Alert(self.driver)
             alert.accept()  # If there's an alert, we accept it (successful login, etc.)
-            time.sleep(5)
+            time.sleep(3)
         except Exception as e:
             print("Error during login:", e)
         ## TO DO > Find a way to get Alert context in order to know if to proceed login
@@ -70,26 +72,26 @@ class S_Testing:
         submit = self.driver.find_element(By.CLASS_NAME, "submit-btn")
         add_domain = self.driver.find_element(By.ID, "domainName")
         add_domain.send_keys("google.com")
-        time.sleep(5)
+        time.sleep(3)
         submit.click()
-        time.sleep(5)
+        time.sleep(3)
     
     def domainBulk(self):
-        file_path = os.path.abspath('__selenium/100domains.txt')
+        file_path = os.path.abspath('100domains.txt')
         add = self.driver.find_element(By.ID, "addDomainBtn")
         add.click()
         bulk_button = self.driver.find_element(By.ID,"domainsFile")
-        time.sleep(5)
+        time.sleep(3)
         bulk_button.send_keys(file_path)
-        time.sleep(5)
+        time.sleep(3)
         submit = self.driver.find_element(By.CLASS_NAME, "submit-btn")
         submit.click()
-        time.sleep(5)
+        time.sleep(3)
     
     def logout(self):
         logout = self.driver.find_element(By.CLASS_NAME, "logout")
         logout.click()
-        time.sleep(5)
+        time.sleep(3)
 
 
     def zeroToHero(self):
