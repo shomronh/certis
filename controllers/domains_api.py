@@ -3,8 +3,8 @@ from http import HTTPStatus
 
 from flask import Flask, request, jsonify, session
 
+from auths.session_handler import SessionHandler
 from services.domains_service import DomainsService
-from services.session_manager_service import SessionManagerService
 
 
 class DomainsApi:
@@ -14,6 +14,7 @@ class DomainsApi:
     _lock = threading.Lock()
 
     # other variables
+    __sessions_handler: SessionHandler
 
     @classmethod
     def get_instance(cls, app: Flask):
@@ -30,6 +31,7 @@ class DomainsApi:
 
         # Initialize repository and service
         service = DomainsService.get_instance()
+        self.__sessions_handler = SessionHandler.get_instance()
 
         @app.route("/domains/add", methods=["POST"])
         def add_domain():
@@ -43,7 +45,7 @@ class DomainsApi:
                 user_id = data.get("user_id")
                 domain = data.get("domain")
 
-                if not SessionManagerService.get_instance().validate_session(session, user_id):
+                if not self.__sessions_handler.validate_session(session, user_id):
                     return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
 
                 message, is_ok = service.add_domain(user_id, domain)
@@ -69,7 +71,7 @@ class DomainsApi:
                 user_id = data.get("user_id")
                 domain = data.get("domain")
 
-                if not SessionManagerService.get_instance().validate_session(session, user_id):
+                if not self.__sessions_handler.validate_session(session, user_id):
                     return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
 
                 message, is_ok = service.delete_domain(user_id, domain)
@@ -87,7 +89,7 @@ class DomainsApi:
         def get_domains(id):
 
             try:
-                if not SessionManagerService.get_instance().validate_session(session, id):
+                if not self.__sessions_handler.validate_session(session, id):
                     return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
 
                 results = service.get_domains(id)
@@ -107,7 +109,7 @@ class DomainsApi:
                 user_id = request.form['user_id']
                 file = request.files.get("file")
 
-                if not SessionManagerService.get_instance().validate_session(session, user_id):
+                if not self.__sessions_handler.validate_session(session, user_id):
                     return jsonify({"message": "user need to login first"}), HTTPStatus.UNAUTHORIZED
 
                 if not allowed_file(file.filename):

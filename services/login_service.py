@@ -1,5 +1,8 @@
 import threading
 
+from flask import session
+
+from auths.session_handler import SessionHandler
 from repositories.users_repository import UsersRepository
 
 
@@ -24,6 +27,7 @@ class LoginService:
 
     def __init(self):
         self.usersRepository = UsersRepository.get_instance()
+        self.__session_handler = SessionHandler.get_instance()
 
     def login(self, username, password):
 
@@ -34,6 +38,12 @@ class LoginService:
         if not password or ' ' in password or len(password) == 0 or len(password) <= 3:
             return 'Empty or Invalid password', False
 
-        result = self.usersRepository.login(username, password)
+        message, is_ok = self.usersRepository.login(username, password)
 
-        return result
+        if is_ok:
+            self.__session_handler.login(username, session)
+
+        return message, is_ok
+    
+    def logout(self):
+        self.__session_handler.logout(session)

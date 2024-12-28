@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify, session
 from google.auth.transport.requests import Request
 from google.oauth2 import id_token
 
+from auths.session_handler import SessionHandler
 from services.login_service import LoginService
 from services.register_service import RegisterService
 
@@ -50,7 +51,6 @@ class GoogleLoginApi:
                 password = id_info['aud']
 
                 # id_info will contain user info such as email, name, etc.
-                # return jsonify(id_info), HTTPStatus.OK  # Return user info or any other response
 
                 message, is_ok = self.__loginService.login(username, password)
 
@@ -59,8 +59,12 @@ class GoogleLoginApi:
 
                     if not is_ok:
                         return jsonify({"message": message}), HTTPStatus.UNAUTHORIZED
+                    
+                    message, is_ok = self.__loginService.login(username, password)
 
-                session['username'] = username
+                    if not is_ok:
+                        return jsonify({"message": message}), HTTPStatus.UNAUTHORIZED
+
                 return jsonify({"message": message, "username": username}), HTTPStatus.OK
 
             except ValueError:

@@ -1,4 +1,3 @@
-import os
 import threading
 from datetime import timedelta
 
@@ -13,7 +12,7 @@ from controllers.register_api import RegisterApi
 from controllers.settings_api import SettingsApi
 from globals.env_variables_handler import EnvVariablesHandler
 from jobs.users_domains_scanner_job import UsersDomainsScannerJob
-from services.logs_service import LogsService
+from logger.logs_handler import LogsHandler
 
 
 class CertisApp:
@@ -43,8 +42,14 @@ class CertisApp:
 
         self.__app = Flask(__name__)
         self.__app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1 MB
+        
+        # after restart all users will be logged out
+        # self.__app.secret_key = os.urandom(24)  # secured random key
 
-        self.__app.secret_key = os.urandom(24)  # secured random key
+        # TODO: use secret key more securely 
+        # users will be kept loggedin after a restart
+        self.__app.secret_key = '123456789012345678901234'
+
 
         # Enable CORS for all routes and all origins
         CORS(self.__app, origins='*')
@@ -58,7 +63,7 @@ class CertisApp:
         @self.__app.route('/<filename>')
         def file(filename):
             return self.__app.send_static_file(filename)
-
+        
         HealthCheckApi.get_instance(self.__app)
         GoogleLoginApi.get_instance(self.__app)
         SettingsApi.get_instance(self.__app)
@@ -122,7 +127,7 @@ class CertisApp:
         # manual injections
 
         envVariablesHandler = EnvVariablesHandler.get_instance()
-        logsService = LogsService.get_instance()
+        logsService = LogsHandler.get_instance()
 
         envVariablesHandler.init(logsService)
         logsService.init(envVariablesHandler)

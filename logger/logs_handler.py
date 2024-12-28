@@ -5,7 +5,7 @@ import coloredlogs  # Use coloredlogs instead of colorlog
 from globals.env_variables_handler import EnvVariablesHandler
 
 
-class LogsService:
+class LogsHandler:
 
     # Static variables
     _instance = None
