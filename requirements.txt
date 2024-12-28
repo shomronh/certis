@@ -3,7 +3,7 @@ Flask-Cors==5.0.0
 APScheduler==3.11.0
 python-dotenv==1.0.1
 requests==2.32.3
-selenium
+selenium==latest
 google-auth==2.36.0
 google-auth-oauthlib==1.2.1
 google-auth-httplib2==0.2.0
