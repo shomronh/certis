@@ -5,7 +5,7 @@ FROM python:3.12.8-slim
 WORKDIR /app
 
 # Copy the application files to the working directory
-COPY . .
+COPY certis .
 
 
 # Install dependencies
