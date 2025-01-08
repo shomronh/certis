@@ -9,7 +9,7 @@ COPY . .
 
 
 # Install dependencies
-RUN pip install --no-cache-dir -r certis/srequirements.txt
+RUN pip install --no-cache-dir -r certis/requirements.txt
 
 
 # Expose the port your application will run on (e.g., 5000 for Flask)
