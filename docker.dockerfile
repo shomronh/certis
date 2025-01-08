@@ -5,11 +5,11 @@ FROM python:3.12.8-slim
 WORKDIR /app
 
 # Copy the application files to the working directory
-COPY certis .
+COPY . .
 
 
 # Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r certis/srequirements.txt
 
 
 # Expose the port your application will run on (e.g., 5000 for Flask)
