@@ -17,5 +17,5 @@ EXPOSE 8080
 
 # Define the command to run your application
 # Adjust this line based on your application entry point
-CMD ["python", "certis_app.py"]
+CMD ["python", "certis/certis_app.py"]
 
