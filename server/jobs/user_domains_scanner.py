@@ -1,0 +1,175 @@
+import queue
+import socket
+import ssl
+import time
+from datetime import datetime
+
+import requests
+from apscheduler.schedulers.background import BackgroundScheduler
+
+from cache.DomainsCache import DomainsCache
+from repositories.domains_repository import DomainsRepository
+from logger.logs_handler import LogsHandler
+
+
+class UserDomainsScanner:
+
+    def __init__(self):
+        self.domain_repository = DomainsRepository.get_instance()
+        self.__logger = LogsHandler.get_instance()
+        self.__cache = DomainsCache.get_instance()
+
+    def get_next_domains(self, user_id, domains_queue: queue.Queue):
+
+        try:
+            if domains_queue.qsize() == 0:
+                domains_table = self.domain_repository.get_domains(user_id)
+
+                for value in domains_table.values():
+                    domains_queue.put(value)
+
+            return domains_queue
+
+        except Exception as e:
+            return queue.Queue()
+
+    def scan_user_domains(self, user_id, user_queue: queue.Queue, scheduler: BackgroundScheduler):
+        try:
+            domains_queue = self.get_next_domains(user_id, user_queue)
+
+            if domains_queue.qsize() == 0:
+                self.__logger.log(f"No existing domains to scan for user={user_id}")
+                return
+
+            t0 = time.time()
+
+            total_domains = 0
+            max_domains_to_scan = 4
+
+            while not domains_queue.empty() and total_domains < max_domains_to_scan:
+                domain_obj = domains_queue.get()
+                self.do_scans(user_id, domain_obj)
+                total_domains += 1
+
+            # total_domains += 1
+            # domain_obj = domains_queue.get(0)
+            # self.do_scans(user_id, domain_obj)
+
+            time_diff = time.time() - t0
+            self.__logger.log(f"complete scan of {total_domains} domains in {time_diff} seconds")
+
+        except Exception as e:
+            self.__logger.log(str(e))
+
+    def do_scans(self, user_id, domain_obj: dict[str, any]):
+
+        if not "domain" in domain_obj:
+            self.__logger.log("domain property is missing, skipping")
+            return
+
+        if not "deleted" in domain_obj:
+            self.__logger.log("deleted property is missing, skipping")
+            return
+
+        domain = domain_obj["domain"]
+        deleted = domain_obj["deleted"]
+
+        if deleted == "true":
+            self.__logger.log(f"domain={domain} considered deleted, no need to monitor")
+            return
+
+        self.__logger.debug(f"start monitoring user_id={user_id} domain={domain}")
+
+        if "domain" in domain_obj:
+            domain = domain_obj["domain"]
+
+            domain_obj_from_cache = self.__cache.get(domain)
+
+            if domain_obj_from_cache:
+                self.domain_repository.update_domain_status(user_id, domain_obj_from_cache)
+                # if we have used cache return True
+                return domain_obj_from_cache, True
+
+        self.scan_domain(domain_obj)
+        self.get_ssl_properties(domain_obj)
+
+        self.__logger.log(f"update_domain_status for user_id={user_id} saving domain={domain_obj}")
+        self.domain_repository.update_domain_status(user_id, domain_obj)
+
+    def scan_domain(self, domain_obj: dict[str, any]):
+        try:
+            domain = domain_obj["domain"]
+
+            ip_address = socket.gethostbyname(domain)
+            response = requests.get(f"https://{domain}", timeout=5)
+
+            # status: Pending/Live/Down
+
+            if response.status_code == 200:
+                domain_obj["status"] = "Live"
+                domain_obj["status_error"] = "N/A"
+            else:
+                domain_obj["status"] = "Failed"
+                domain_obj["status_error"] = f"{response.status_code}"
+
+        except requests.RequestException as e:
+            domain_obj["status"] = "Down"
+            domain_obj["status_error"] = str(e)
+
+        except Exception as e:
+            domain_obj["status"] = "N/A"
+            domain_obj["status_error"] = str(e)
+
+        domain_obj["last_checked"] = datetime.utcnow().isoformat()
+
+        if domain_obj["status"] == "Live":
+            return True
+
+        return False
+
+    def get_ssl_properties(self, domain_obj: dict[str, any]):
+        try:
+            domain: str = domain_obj["domain"]
+
+            # Remove "https://", "http://", "www." from the URL if present
+            hostname = domain.replace("https://", "")
+            hostname = hostname.replace("http://", "")
+            hostname = hostname.replace("www.", "")
+            hostname = hostname.split("/")[0]
+
+            # Establish a secure connection to fetch the SSL certificate
+            context = ssl.create_default_context()
+            with socket.create_connection((hostname, 443), timeout=5) as sock:
+                with context.wrap_socket(sock, server_hostname=hostname) as ssock:
+                    cert = ssock.getpeercert()
+
+            # Get the certificate's expiration date
+            expiry_date_str = cert['notAfter']
+            expiry_date = datetime.strptime(expiry_date_str, "%b %d %H:%M:%S %Y %Z")
+
+            # Convert expiration date to a readable string format
+            ssl_expiration = expiry_date.strftime("%Y-%m-%d %H:%M:%S")
+
+            ssl_issuer = cert['issuer']
+
+            # Check if the certificate is expired
+            # if expiry_date < datetime.utcnow():
+            #     return 'Expired', expiry_date_formatted
+            # else:
+            #     return 'Valid', expiry_date_formatted
+
+            domain_obj["ssl_expiration"] = ssl_expiration
+            domain_obj["ssl_issuer"] = ssl_issuer
+
+            return True
+
+        except Exception as e:
+            domain_obj["ssl_expiration"] = "N/A"
+            domain_obj["ssl_issuer"] = "N/A"
+
+        except Exception as e:
+            domain_obj["ssl_expiration"] = "N/A"
+            domain_obj["ssl_issuer"] = "N/A"
+            domain_obj["ssl_status_error"] = str(e)
+
+        return False

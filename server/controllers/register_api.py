@@ -59,9 +59,3 @@ class RegisterApi:
 
             except Exception as e:
                 return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR
-
-        @app.route('/registerPage')
-        def RegisterPage():
-            return render_template(
-                'registerPage.html',
-                BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())

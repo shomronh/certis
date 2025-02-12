@@ -52,17 +52,29 @@ class CertisApp:
 
 
         # Enable CORS for all routes and all origins
-        CORS(self.__app, origins='*')
+        CORS(self.__app, 
+            # supports_credentials=True,
+            methods=['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+             origins=['http://127.0.0.1:8080'])
 
         self.__setup_session()
 
+        # self.__app.config.update(
+        #     SESSION_COOKIE_SAMESITE='None',  # Allow cross-domain cookies
+        #     SESSION_COOKIE_SECURE=False,     # Disable Secure flag (since you're not using HTTPS)
+        #     SESSION_COOKIE_HTTPONLY=True     # Ensure the cookie is only accessible via HTTP(S), not JavaScript
+        # )
+
+        # @self.__app.after_request
+        # def add_cors_headers(response):
+        #     response.headers['Access-Control-Allow-Origin'] = 'http://127.0.0.1:8080'
+        #     response.headers['Access-Control-Allow-Credentials'] = 'true'
+        #     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        #     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        #     return response
+
         # Services bootstrap
         # UsersDomainsScannerJob.get_instance().start()
-
-        # APIs creations
-        @self.__app.route('/<filename>')
-        def file(filename):
-            return self.__app.send_static_file(filename)
         
         HealthCheckApi.get_instance(self.__app)
         GoogleLoginApi.get_instance(self.__app)
@@ -82,7 +94,7 @@ class CertisApp:
 
         # 'debug': True requires to run flask on main thread
         # flask_config = {'host': '0.0.0.0', 'port': 8080, 'debug': True}
-        flask_config = {'host': '0.0.0.0', 'port': 8080, 'debug': False}
+        flask_config = {'host': '0.0.0.0', 'port': 3000, 'debug': False}
 
         # TODO: if in production mode use instead:
         # flask_config = {'host': '0.0.0.0', 'port': 8080, 'debug': False}
@@ -117,9 +129,11 @@ class CertisApp:
             self.__app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript from accessing cookies (basic protection).
             self.__app.config['REMEMBER_COOKIE_HTTPONLY'] = True
             self.__app.config['SESSION_COOKIE_SECURE'] = False  # Do not enforce HTTPS in development (HTTPS may not be set up in local dev).
-            self.__app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Prevent cookies from being sent in cross-site requests (basic CSRF protection).
-            self.__app.config['SESSION_PERMANENT'] = False  # Sessions are not permanent by default in development.
+            self.__app.config['SESSION_COOKIE_SAMESITE'] = 'None'  
+            self.__app.config['SESSION_PERMANENT'] = True  # Sessions are not permanent by default in development.
             self.__app.config['SESSION_TYPE'] = 'filesystem'  # Store session data in the file system for easy debugging.
+
+            self.__app.config['SESSION_COOKIE_PATH'] = '/'
 
 
     def create_dependencies_injections(self):

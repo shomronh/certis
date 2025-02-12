@@ -26,7 +26,8 @@ class LoginService {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ username, password }),
+                // credentials: 'include'
             });
 
             const data = await response.json();
@@ -38,7 +39,8 @@ class LoginService {
                 alert(data.message); // Successful login
                 LocalStorageService.getInstance().setItem('username', username)
 
-                window.location.href = `${this.#backendUrl}/dashboardPage`;
+                // window.location.href = `${this.#backendUrl}/dashboardPage`;
+                window.location.href = `/dashboardPage`;
 
             } else if (response.status === 404) {
                 alert(data.message); // Missing users.json or registration required
@@ -92,7 +94,8 @@ class LoginService {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id_token: idToken })
+            body: JSON.stringify({ id_token: idToken }),
+            // credentials: 'include'
         });
 
         const data = await response.json();

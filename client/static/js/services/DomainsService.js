@@ -25,7 +25,7 @@ class DomainsService {
                     "Content-Type": "application/json",
                 },
                 // Sends cookies from the current session
-                credentials: 'include',
+                // credentials: 'include',
                 body: JSON.stringify({ user_id: username, domain })
             });
 

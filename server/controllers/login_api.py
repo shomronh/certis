@@ -59,33 +59,12 @@ class LoginApi:
         @app.route('/logout')
         def logout():
             self._loginService.logout()
-            return render_template(
-                'loginPage.html',
-                BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())
+            return jsonify({"message": f"user {username} was logged out"}), HTTPStatus.OK
 
-        # Visual Routes
-        @app.route('/dashboardPage')
-        def dashboard():
-            if self.__session_handler.validate_session(session):
-                username = self.__session_handler.get_username(session)
-
-                return render_template(
-                    'dashboardPage.html',
-                    username=username,
-                    BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())
-            else:
-                return loginPage()
-
-        @app.route('/')
-        def loginPage():
-            return render_template(
-                'loginPage.html',
-                BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())
-
-        @app.errorhandler(404)
-        def page_not_found(err):
-            return dashboard()
-
-        @app.errorhandler(500)
-        def internal_server_error(err):
-            return dashboard()
+        # @app.errorhandler(404)
+        # def page_not_found(err):
+        #     return dashboard()
+        #
+        # @app.errorhandler(500)
+        # def internal_server_error(err):
+        #     return dashboard()

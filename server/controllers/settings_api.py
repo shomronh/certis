@@ -57,15 +57,3 @@ class SettingsApi:
 
             except Exception as e:
                 return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR
-
-        @app.route('/settingsPage')
-        def settingsPage():
-            if self.__session_handler.validate_session(session):
-                username = self.__session_handler.get_username(session)
-
-                return render_template(
-                    'settingsPage.html',
-                    username=username,
-                    BACKEND_URL=EnvVariablesHandler.get_instance().get_backend_url())
-            else:
-                return render_template('loginPage.html')

@@ -1,0 +1,45 @@
+#!/bin/bash
+
+set -e 
+
+sudo -i
+
+apt -y update && apt -y install python3-pip
+
+cd /
+
+rm -rf /certis
+
+git clone https://github.com/shomronh/certis.git
+echo "clone https://github.com/shomronh/certis.git completed"
+
+cd /certis
+
+git checkout dev
+echo "switched to dev branch completed"
+
+chmod +x /certis/__automation/certis_app.sh
+
+cp -f /certis/__automation/certis_app.sh /usr/local/bin/certis_app.sh 
+cp -f /certis/__automation/certis.service /lib/systemd/system/certis.service
+echo "copied certis_app and certis.service to targets completed"
+
+pip install -r requirements.txt --break-system-packages
+echo "install requirements.txt completed"
+
+systemctl start ufw
+sudo ufw allow 8080/tcp
+echo "firewall configured to use port 8080"
+
+systemctl stop certis
+systemctl daemon-reload 
+systemctl start certis
+systemctl enable certis
+systemctl status certis
+echo "certis.service has started and enabled"
+
+
+
+
+
+
