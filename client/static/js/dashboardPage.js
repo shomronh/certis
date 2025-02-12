@@ -98,6 +98,13 @@ function handleAddDomainPopup() {
   const closeModalBtn = document.getElementById('closeModalBtn');
   const addDomainForm = document.getElementById('addDomainForm');
   const domainTable = document.getElementById('domainsTable').getElementsByTagName('tbody')[0];
+  const logoutButton = document.getElementById('logoutButton')
+
+  logoutButton.addEventListener('click', (e) => {
+    e.preventDefault()
+
+    LoginService.getInstance().logout()
+  })
 
   // Open the modal when "Add Domain" is clicked
   addDomainBtn.addEventListener('click', () => {

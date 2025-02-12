@@ -27,7 +27,7 @@ class LoginService {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ username, password }),
-                // credentials: 'include'
+                credentials: 'include'
             });
 
             const data = await response.json();
@@ -50,6 +50,33 @@ class LoginService {
                 alert("An unexpected error occurred. Please try again.");
             }
 
+        } catch (error) {
+            console.error('Error during fetch:', error);
+            alert("An error occurred while trying to log in. Please try again later.");
+        }
+    }
+
+    async logout() {
+        try {
+            const username = LocalStorageService.getInstance().getItem('username')
+
+            const response = await fetch(`${this.#backendUrl}/logout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username }),
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                LocalStorageService.getInstance().setItem('username', null)
+
+                // window.location.href = `${this.#backendUrl}/dashboardPage`;
+                window.location.href = `/`;
+            } else {
+                alert("An unexpected error occurred. Please try again.");
+            }
         } catch (error) {
             console.error('Error during fetch:', error);
             alert("An error occurred while trying to log in. Please try again later.");
@@ -109,7 +136,7 @@ class LoginService {
             const username = data.username
             LocalStorageService.getInstance().setItem('username', username)
 
-            window.location.href = `${this.#backendUrl}/dashboardPage`;
+            window.location.href = `/dashboardPage`;
 
         } else if (response.status === 404) {
             alert(data.message);

@@ -56,10 +56,20 @@ class LoginApi:
             except Exception as e:
                 return jsonify({"message": f"Something wrong happend: {e}"}), HTTPStatus.INTERNAL_SERVER_ERROR
 
-        @app.route('/logout')
+        @app.route('/logout', methods=['POST'])
         def logout():
+
+            data = request.get_json()
+
+            if not data:
+                return jsonify({"message": "Please enter credentials"}), HTTPStatus.UNAUTHORIZED
+
+            usernameFromRequest = data.get('username')
+            if not self.__session_handler.validate_session(session, usernameFromRequest):
+                return jsonify({"message": "{usernameFromRequest} wasn't logged in"}), HTTPStatus.NO_CONTENT
+
             self._loginService.logout()
-            return jsonify({"message": f"user {username} was logged out"}), HTTPStatus.OK
+            return jsonify({"message": f"user {usernameFromRequest} was logged out"}), HTTPStatus.OK
 
         # @app.errorhandler(404)
         # def page_not_found(err):

@@ -133,7 +133,12 @@ class DomainsService {
             if (response.ok) {
                 const data = await response.json();
                 return data ? data : [];
-            } else {
+            } 
+            else if (response.status === 401) {
+                console.log('user is not logged in yet'); 
+                window.location.href = `/`;
+            }
+            else {
                 const errorData = await response.json();
                 const errMessage = errorData.message || "Error fetching domains."
 
